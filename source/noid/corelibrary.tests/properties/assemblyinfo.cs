@@ -1,15 +1,11 @@
-﻿// Copyright (c) 2016 NoID Developers
-// Distributed under the MIT/X11 software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("NoID Core Reference Implementation")]
-[assembly: AssemblyDescription ("NoID Core Libraries")]
+[assembly: AssemblyTitle ("NoID Core Reference Implementation Test")]
+[assembly: AssemblyDescription ("NoID Core Library Tests")]
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
 #else
@@ -27,7 +23,6 @@ using System.Runtime.CompilerServices;
 
 // major version starts at 0.  ISO date the minor, build and revision.
 [assembly: AssemblyVersion ("0.2016.07.30")]
-
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.
 

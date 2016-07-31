@@ -3,11 +3,15 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using NoID.Base.Data;
+using Couchbase.Core;
+using Couchbase.Views;
 
 namespace NoID.Base.Protocol
 {
+    // Gets & Sets protocol bucket data
     public class MatchWeights : EntityBase
     {
         [JsonProperty("matchweightID")]
@@ -55,6 +59,75 @@ namespace NoID.Base.Protocol
         ~Protocol ()
         {
             //TODO (Amir): Make sure all JSON & Coachbase objects are closed and disposed
+        }
+    }
+
+    public class ProtocolMatchWeights : Repository<MatchWeights>
+    {
+        public ProtocolMatchWeights(IBucket bucket)
+            : base(bucket)
+        {
+        }
+
+        public IEnumerable<ViewRow<MatchWeights>> SelectAllHashAlgorithms(int index, int limit)
+        {
+            var query = Bucket.CreateQuery("match_weights", "all_match_weights")
+                .Skip(index)
+                .Limit(limit);
+
+            var results = Bucket.Query<MatchWeights>(query);
+            if (!results.Success)
+            {
+                var message = results.Error;
+                throw new ViewRequestException(message, results.StatusCode);
+            }
+            return results.Rows;
+        }
+    }
+
+    public class ProtocolHashAlgorithms : Repository<HashAlgorithms>
+    {
+        public ProtocolHashAlgorithms(IBucket bucket)
+            : base(bucket)
+        {
+        }
+
+        public IEnumerable<ViewRow<HashAlgorithms>> SelectAllHashAlgorithms(int index, int limit)
+        {
+            var query = Bucket.CreateQuery("hash_algorithms", "all_hash_algorithms")
+                .Skip(index)
+                .Limit(limit);
+
+            var results = Bucket.Query<HashAlgorithms>(query);
+            if (!results.Success)
+            {
+                var message = results.Error;
+                throw new ViewRequestException(message, results.StatusCode);
+            }
+            return results.Rows;
+        }
+    }
+
+    public class ProtocolRootNames : Repository<RootNames>
+    {
+        public ProtocolRootNames(IBucket bucket)
+            : base(bucket)
+        {
+        }
+
+        public IEnumerable<ViewRow<RootNames>> SelectAllRootName(int index, int limit)
+        {
+            var query = Bucket.CreateQuery("root_names", "all_root_names")
+                .Skip(index)
+                .Limit(limit);
+
+            var results = Bucket.Query<RootNames>(query);
+            if (!results.Success)
+            {
+                var message = results.Error;
+                throw new ViewRequestException(message, results.StatusCode);
+            }
+            return results.Rows;
         }
     }
 }

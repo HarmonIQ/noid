@@ -78,6 +78,7 @@
     <Compile Include="base\data\repository.cs" />
     <Compile Include="base\data\document-results.cs" />
     <Compile Include="base\data\entity-base.cs" />
+    <Compile Include="base\algorithms\cryptohash\sha256.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -88,6 +89,9 @@
     <Folder Include="base\algorithms\phonetic\" />
     <Folder Include="base\exceptions\" />
     <Folder Include="base\data\" />
+    <Folder Include="base\configurations\" />
+    <Folder Include="base\security\" />
+    <Folder Include="base\algorithms\cryptohash\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

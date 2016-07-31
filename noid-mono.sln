@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "noidcorelib", "source\noid\corelibrary\noidcorelib.csproj", "{31FCDC8B-4B3A-419F-AC59-24E436F17E50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "corelibrary", "source\noid\corelibrary\corelibrary.csproj", "{31FCDC8B-4B3A-419F-AC59-24E436F17E50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "corelibrary.tests", "source\noid\corelibrary.tests\corelibrary.tests.csproj", "{1357F460-780C-4DD3-A69E-9BC71AC46009}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,6 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1357F460-780C-4DD3-A69E-9BC71AC46009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1357F460-780C-4DD3-A69E-9BC71AC46009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1357F460-780C-4DD3-A69E-9BC71AC46009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1357F460-780C-4DD3-A69E-9BC71AC46009}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31FCDC8B-4B3A-419F-AC59-24E436F17E50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31FCDC8B-4B3A-419F-AC59-24E436F17E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31FCDC8B-4B3A-419F-AC59-24E436F17E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
