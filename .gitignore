@@ -1,0 +1,13 @@
+*.dll
+*.dll.config
+*.pdb
+*.suo
+*.user
+*.userprefs
+
+[Bb]in/
+[Oo]bj/
+[Dd]eploy
+[Mm][Ss][Ii][Ss]
+
+src/nuget/packages
