@@ -1,0 +1,156 @@
+<ui version="4.0" >
+ <class>ModeDialog</class>
+ <widget class="QDialog" name="ModeDialog" >
+  <property name="windowModality" >
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>241</width>
+    <height>181</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>Select Mode</string>
+  </property>
+  <property name="modal" >
+   <bool>true</bool>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox" >
+   <property name="geometry" >
+    <rect>
+     <x>40</x>
+     <y>140</y>
+     <width>161</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="layoutDirection" >
+    <enum>Qt::RightToLeft</enum>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons" >
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox" >
+   <property name="geometry" >
+    <rect>
+     <x>30</x>
+     <y>10</y>
+     <width>181</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="title" >
+    <string>Mode</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>161</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <widget class="QRadioButton" name="stillRadioButton" >
+       <property name="text" >
+        <string>Classical Still Image</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="videoRadioButton" >
+       <property name="text" >
+        <string>Distant Video Frame</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ModeDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>218</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>182</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ModeDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>220</x>
+     <y>160</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>233</x>
+     <y>182</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stillRadioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ModeDialog</receiver>
+   <slot>modeButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>126</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>226</x>
+     <y>36</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>videoRadioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ModeDialog</receiver>
+   <slot>modeButtonClicked()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>108</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>231</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>modeButtonClicked()</slot>
+ </slots>
+</ui>

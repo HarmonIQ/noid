@@ -1,0 +1,18 @@
+# On Dash Development VM (Ubuntu 14):
+
+Test Data for Iris biometrics:
+http://www.cbsr.ia.ac.cn/english/IrisDatabase.asp
+
+VASIR:
+Install instructions.  http://www.nist.gov/itl/iad/ig/vasir.cfm
+
+#Install OpenCV:
+sudo apt-get install build-essential
+sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+
+git clone https://github.com/Itseez/opencv.git
+cd opencv && mkdir release && cd release && cmake ../ && make
+sudo make install
+# For 64-bit Linux:
+echo "/usr/lib/x86_64-linux-gnu/" | sudo tee /etc/ld.so.conf.d/opencv.conf

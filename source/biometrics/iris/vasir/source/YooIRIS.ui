@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>YooIRIS</class>
+ <widget class="QMainWindow" name="YooIRIS">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>711</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>715</width>
+    <height>720</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>VASIR Beta 2.2</string>
+  </property>
+  <widget class="QWidget" name="m_centralwidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>691</width>
+      <height>661</height>
+     </rect>
+    </property>
+    <property name="baseSize">
+     <size>
+      <width>0</width>
+      <height>2</height>
+     </size>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="Detection">
+     <attribute name="title">
+      <string>Detection</string>
+     </attribute>
+     <widget class="ImageWidget" name="imgWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>661</width>
+        <height>611</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="Match">
+     <attribute name="title">
+      <string>Match</string>
+     </attribute>
+     <widget class="ImageWidget" name="imgLeftWidget1" native="true">
+      <property name="geometry">
+       <rect>
+        <x>19</x>
+        <y>50</y>
+        <width>241</width>
+        <height>160</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOpenLeft1">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>20</y>
+        <width>191</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Open Left Image (Target)</string>
+      </property>
+     </widget>
+     <widget class="ImageWidget" name="imgLeftWidget2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>289</x>
+        <y>50</y>
+        <width>241</width>
+        <height>160</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOpenLeft2">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>20</y>
+        <width>191</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Open Left Image (Query)</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOpenRight1">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>280</y>
+        <width>191</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Open Right Image (Target)</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnOpenRight2">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>280</y>
+        <width>191</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Open Right Image (Query)</string>
+      </property>
+     </widget>
+     <widget class="ImageWidget" name="imgRightWidget1" native="true">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>19</x>
+        <y>310</y>
+        <width>241</width>
+        <height>160</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="ImageWidget" name="imgRightWidget2" native="true">
+      <property name="geometry">
+       <rect>
+        <x>289</x>
+        <y>310</y>
+        <width>241</width>
+        <height>160</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnGoMatch">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>550</y>
+        <width>121</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Go!</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txtLeftResult">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>50</y>
+        <width>121</width>
+        <height>160</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>?</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txtRightResult">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>310</y>
+        <width>121</width>
+        <height>160</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>?</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txtLeftDataType1">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>220</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+        <strikeout>false</strikeout>
+       </font>
+      </property>
+      <property name="text">
+       <string>Data Type here</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txtLeftDataType2">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>220</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+        <strikeout>false</strikeout>
+       </font>
+      </property>
+      <property name="text">
+       <string>Data Type here</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txtRightDataType1">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>480</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+        <strikeout>false</strikeout>
+       </font>
+      </property>
+      <property name="text">
+       <string>Data Type here</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="txtRightDataType2">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>480</y>
+        <width>201</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+        <strikeout>false</strikeout>
+       </font>
+      </property>
+      <property name="text">
+       <string>Data Type here</string>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="m_menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>711</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFiles">
+    <property name="title">
+     <string>Detect</string>
+    </property>
+    <addaction name="actionOpen_AVI"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_IRIS_AVI"/>
+    <addaction name="separator"/>
+    <addaction name="actionOpen_CAM"/>
+   </widget>
+   <widget class="QMenu" name="menuCascade">
+    <property name="title">
+     <string>Cascade</string>
+    </property>
+    <addaction name="actionSelect_cascade"/>
+   </widget>
+   <widget class="QMenu" name="menuMatch">
+    <property name="title">
+     <string>Match</string>
+    </property>
+    <addaction name="actionStart_Match"/>
+   </widget>
+   <widget class="QMenu" name="menuQuality">
+    <property name="title">
+     <string>Quality</string>
+    </property>
+    <addaction name="actionImage_Quality"/>
+   </widget>
+   <widget class="QMenu" name="menuAnalysis">
+    <property name="title">
+     <string>Analysis</string>
+    </property>
+    <addaction name="actionReports"/>
+   </widget>
+   <addaction name="menuCascade"/>
+   <addaction name="menuFiles"/>
+   <addaction name="menuQuality"/>
+   <addaction name="menuMatch"/>
+   <addaction name="menuAnalysis"/>
+  </widget>
+  <widget class="QStatusBar" name="m_statusBar"/>
+  <action name="actionOpen_AVI">
+   <property name="text">
+    <string>Open FACE AVI</string>
+   </property>
+  </action>
+  <action name="actionOpen_CAM">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Open CAM</string>
+   </property>
+  </action>
+  <action name="actionSelect_cascade">
+   <property name="text">
+    <string comment="Select cascade for the eye detection">Select cascade</string>
+   </property>
+  </action>
+  <action name="actionStart_Match">
+   <property name="text">
+    <string>Choose...</string>
+   </property>
+  </action>
+  <action name="actionOpen_IRIS_AVI">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Open IRIS AVI</string>
+   </property>
+  </action>
+  <action name="actionImage_Quality">
+   <property name="text">
+    <string>Choose...</string>
+   </property>
+  </action>
+  <action name="actionMatching">
+   <property name="text">
+    <string>Matching</string>
+   </property>
+  </action>
+  <action name="actionNonmatching">
+   <property name="text">
+    <string>Nonmatching</string>
+   </property>
+  </action>
+  <action name="actionROC">
+   <property name="text">
+    <string>ROC</string>
+   </property>
+  </action>
+  <action name="actionReducedROC">
+   <property name="text">
+    <string>ReducedROC</string>
+   </property>
+  </action>
+  <action name="actionReports">
+   <property name="text">
+    <string>Reports</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ImageWidget</class>
+   <extends>QWidget</extends>
+   <header>ImageWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionOpen_AVI</sender>
+   <signal>triggered()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>OpenAVIFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen_CAM</sender>
+   <signal>triggered()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>OpenCAM()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSelect_cascade</sender>
+   <signal>triggered()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>SelectCascade()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStart_Match</sender>
+   <signal>triggered()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>StartMatch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen_IRIS_AVI</sender>
+   <signal>triggered()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>OpenIrisAVIFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionImage_Quality</sender>
+   <signal>triggered()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>checkQuality()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnOpenLeft1</sender>
+   <signal>clicked()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>openLeftEye1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>157</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnOpenLeft2</sender>
+   <signal>clicked()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>openLeftEye2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>447</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnOpenRight1</sender>
+   <signal>clicked()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>openRightEye1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>323</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnOpenRight2</sender>
+   <signal>clicked()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>openRightEye2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>312</x>
+     <y>323</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnGoMatch</sender>
+   <signal>clicked()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>goMatch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>533</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionReports</sender>
+   <signal>triggered()</signal>
+   <receiver>YooIRIS</receiver>
+   <slot>generateReports()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>OpenAVIFile()</slot>
+  <slot>OpenCAM()</slot>
+  <slot>SelectCascade()</slot>
+  <slot>StartMatch()</slot>
+  <slot>OpenIrisAVIFile()</slot>
+  <slot>checkQuality()</slot>
+  <slot>autoStart()</slot>
+  <slot>openLeftEye1()</slot>
+  <slot>openLeftEye2()</slot>
+  <slot>openRightEye1()</slot>
+  <slot>openRightEye2()</slot>
+  <slot>goMatch()</slot>
+  <slot>generateReports()</slot>
+ </slots>
+</ui>
