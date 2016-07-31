@@ -32,9 +32,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Mono.Security" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="Common.Logging.Core">
       <HintPath>..\..\..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
@@ -44,16 +41,26 @@
     <Reference Include="Couchbase.NetClient">
       <HintPath>..\..\..\packages\CouchbaseNetClient.2.3.4\lib\net45\Couchbase.NetClient.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\assemblyinfo.cs" />
     <Compile Include="fhir\person.cs" />
     <Compile Include="fhir\organization.cs" />
     <Compile Include="fhir\patient.cs" />
+    <Compile Include="base\base.cs" />
+    <Compile Include="base\exception.cs" />
+    <Compile Include="base\data.cs" />
+    <Compile Include="base\protocol.cs" />
+    <Compile Include="base\entitybase.cs" />
+    <Compile Include="base\ientity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="fhir\" />
+    <Folder Include="base\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
