@@ -4,6 +4,7 @@
 
 using System;
 using Newtonsoft.Json;
+using NoID.Base.Data;
 
 namespace NoID.Base.Protocol
 {

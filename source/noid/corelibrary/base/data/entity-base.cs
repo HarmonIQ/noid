@@ -5,7 +5,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace NoID.Base
+namespace NoID.Base.Data
 {
     public abstract class EntityBase : IEntity
     {
