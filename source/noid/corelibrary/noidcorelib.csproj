@@ -46,7 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\assemblyinfo.cs" />
+    <Compile Include="properties\assemblyinfo.cs" />
     <Compile Include="fhir\person.cs" />
     <Compile Include="fhir\organization.cs" />
     <Compile Include="fhir\patient.cs" />
@@ -56,11 +56,19 @@
     <Compile Include="base\protocol.cs" />
     <Compile Include="base\entitybase.cs" />
     <Compile Include="base\ientity.cs" />
+    <Compile Include="base\algorithms\damerau–levenshtein.cs" />
+    <Compile Include="base\algorithms\double-metaphone.cs" />
+    <Compile Include="base\algorithms\daitch-mokotoff-soundex.cs" />
+    <Compile Include="base\algorithms\phonetics.cs" />
+    <Compile Include="base\algorithms\craver-phone.cs" />
+    <Compile Include="base\algorithms\match-rating.cs" />
+    <Compile Include="base\algorithms\phonetic-helper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="fhir\" />
     <Folder Include="base\" />
+    <Folder Include="base\algorithms\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
