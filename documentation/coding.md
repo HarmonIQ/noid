@@ -5,7 +5,7 @@ Various coding styles have been used during the history of the codebase,
 and the result is not very consistent. However, we're now trying to converge to
 a single style, so please use it in new code. Old code will be converted
 gradually.
-- Basic rules specified in src/.clang-format. Use a recent clang-format-3.5 to format automatically.
+- Basic rules specified in source/.clang-format. Use a recent clang-format-3.5 to format automatically.
   - Braces on new lines for namespaces, classes, functions, methods.
   - Braces on the same line for everything else.
   - 4 space indentation (no tabs) for every block except namespaces.
@@ -133,6 +133,6 @@ Threads
 
 - ThreadRPCServer : Remote procedure call handler, listens on port 8332 for connections and services them.
 
-- silkMiner : Generates silks (if wallet is enabled).
+- NoIDMiner : Generates silks (if wallet is enabled).
 
 - Shutdown : Does an orderly shutdown of everything.
