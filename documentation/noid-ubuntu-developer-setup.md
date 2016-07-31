@@ -13,9 +13,13 @@ sudo apt-get update -y && sudo apt-get install -y monodevelop
 # https://www.nuget.org/packages/CouchbaseNetClient/
 
 
-
-# Install Emercoin Blockchain dependancies
+# Install Emercoin DDNS Blockchain dependancies
 sudo apt-get install -y build-essential libtool autotools-dev autoconf pkg-config libssl-dev libcrypto++-dev git libboost-all-dev libqt4-dev libprotobuf-dev protobuf-compiler
 # optional tools
 sudo apt-get install -y zip unzip libminiupnpc-dev
 sudo add-apt-repository ppa:bitcoin/bitcoin && sudo apt-get update -y && sudo apt-get install -y libdb4.8-dev libdb4.8++-dev
+
+sudo apt-get install -y make libqt5webkit5-dev libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools qtcreator libboost-system-dev
+sudo apt-get install -y libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libstdc++6 libevent-dev libcurl4-openssl-dev libpng-dev qrencode libqrencode-dev
+sudo add-apt-repository ppa:bitcoin/bitcoin && sudo apt-get update -y && sudo apt-get install -y libdb4.8-dev libdb4.8++-dev
+sudo apt-get update -y && sudo apt-get upgrade -y
