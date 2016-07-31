@@ -4,18 +4,13 @@ using NoID.Base.Algorithms;
 
 namespace NoID.Base.Tests
 {
-	class MainClass
+	class NoIDTests
 	{
 		public static void Main (string[] args)
 		{
-			Console.Write (TestSHAHash("Test Hash"));
+			HashTests htest = new HashTests ();
+			Console.WriteLine (htest.HashValue);
 			Console.Read ();
-		}
-
-		private static string TestSHAHash(string input)
-		{
-			sha256 SHA = new sha256(input,"salt-test");
-			return SHA.Hash;
 		}
 	}
 }

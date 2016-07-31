@@ -35,6 +35,7 @@
   <ItemGroup>
     <Compile Include="properties\assemblyinfo.cs" />
     <Compile Include="tests.cs" />
+    <Compile Include="hash-test.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
