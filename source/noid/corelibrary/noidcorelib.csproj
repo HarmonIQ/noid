@@ -56,19 +56,32 @@
     <Compile Include="base\protocol.cs" />
     <Compile Include="base\entitybase.cs" />
     <Compile Include="base\ientity.cs" />
-    <Compile Include="base\algorithms\damerau–levenshtein.cs" />
-    <Compile Include="base\algorithms\double-metaphone.cs" />
-    <Compile Include="base\algorithms\daitch-mokotoff-soundex.cs" />
-    <Compile Include="base\algorithms\phonetics.cs" />
-    <Compile Include="base\algorithms\craver-phone.cs" />
-    <Compile Include="base\algorithms\match-rating.cs" />
-    <Compile Include="base\algorithms\phonetic-helper.cs" />
+    <Compile Include="base\algorithms\string-difference\sorensen-dice-distance.cs" />
+    <Compile Include="base\algorithms\string-difference\tanimoto-coefficient.cs" />
+    <Compile Include="base\algorithms\string-difference\overlap-coefficient.cs" />
+    <Compile Include="base\algorithms\string-difference\longest-common-subsequence.cs" />
+    <Compile Include="base\algorithms\string-difference\longest-common-substring.cs" />
+    <Compile Include="base\algorithms\string-difference\hamming-distance.cs" />
+    <Compile Include="base\algorithms\string-difference\jaccard-distance.cs" />
+    <Compile Include="base\algorithms\string-difference\jaro-distance.cs" />
+    <Compile Include="base\algorithms\string-difference\jaro-wrinkle-distance.cs" />
+    <Compile Include="base\algorithms\string-difference\levenshtein-distance.cs" />
+    <Compile Include="base\algorithms\string-difference\damerau–levenshtein.cs" />
+    <Compile Include="base\algorithms\string-difference\match-rating.cs" />
+    <Compile Include="base\algorithms\string-difference\ratcliff-obershelp-similarity.cs" />
+    <Compile Include="base\algorithms\phonetic\craver-phone.cs" />
+    <Compile Include="base\algorithms\phonetic\daitch-mokotoff-soundex.cs" />
+    <Compile Include="base\algorithms\phonetic\double-metaphone.cs" />
+    <Compile Include="base\algorithms\phonetic\phonetic-helper.cs" />
+    <Compile Include="base\algorithms\phonetic\phonetics.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="fhir\" />
     <Folder Include="base\" />
     <Folder Include="base\algorithms\" />
+    <Folder Include="base\algorithms\string-difference\" />
+    <Folder Include="base\algorithms\phonetic\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
