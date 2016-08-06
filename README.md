@@ -1,4 +1,11 @@
 ## NoID Platform for Patient Identity and Record Location Management
+
+# **NoID Version 0.16.8.6*
+### Project Status: ![Backlog](https://badge.waffle.io/harmoniq/noid.png?label=Ready&title=Backlog)
+
+[Project Boards](https://waffle.io/HarmonIQ/noid "Waffle.io Project Management Board")
+
+## About NoID
 A global patient identifier is dangerous. A GPI, if compromised, could provide access to Protected Health Information. We believe that a better approach is to create a hashed patient resource, based on the current HL7 FHIR protocol, which contains patient demographic and biometric data, and which in its entirety acts as the means for patient identification. The methodology to achieve this goal uses current block chain and public ledger technology to manage participants, encryption and hashing to protect communication and patient data, HL7 FHIR protocols for interoperability, and hardware such as smartphones to gather and validate biometric data. This is the NoID protocol.
 * NoID provides simple and fast patient enrollment
 * Enrollment occurs at Healthcare Organization Nodes 
