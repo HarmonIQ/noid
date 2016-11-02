@@ -1,0 +1,3 @@
+[submodule "source/spark.fhir.server"]
+	path = source/spark.fhir.server
+	url = https://github.com/furore-fhir/spark.git
