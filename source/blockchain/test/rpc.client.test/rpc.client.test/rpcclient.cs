@@ -20,10 +20,11 @@ namespace Blockchain.RPC
 
         static public string CallBlockchainRPC(Chain chain, SequenceRpcMethods rpcMethod, params object[] parameters)
         {
+            // TODO (Amir): Move these varible values to conf file.
             string URL = "http://localhost:16663";
             string username = "fekSZZMb";
             string password = "6iFPVw0bRWGhtNiZ";
-            int RpcRequestTimeoutInSeconds = 3000;
+            int RpcRequestTimeoutMilliSeconds = 3000;
 
             var jsonRpcRequest = new JsonRpcRequest(1, rpcMethod.ToString(), parameters);
             var webRequest = (HttpWebRequest)WebRequest.Create(URL);
@@ -32,7 +33,7 @@ namespace Blockchain.RPC
             webRequest.ContentType = "application/json-rpc";
             webRequest.Method = "POST";
             webRequest.Proxy = null;
-            webRequest.Timeout = RpcRequestTimeoutInSeconds;
+            webRequest.Timeout = RpcRequestTimeoutMilliSeconds;
             var byteArray = jsonRpcRequest.GetBytes();
             webRequest.ContentLength = jsonRpcRequest.GetBytes().Length;
 
