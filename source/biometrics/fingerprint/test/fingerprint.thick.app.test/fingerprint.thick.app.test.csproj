@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B0D7C4FA-CEB2-49E5-8893-81FA4DAE5970}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NoID.Biometrics</RootNamespace>
+    <AssemblyName>NoID.Biometrics</AssemblyName>
+    <PlatformFamilyName>WindowsCE</PlatformFamilyName>
+    <PlatformID>E2BECB1F-8C8C-41ba-B736-9BE7D946A398</PlatformID>
+    <OSVersion>5.0</OSVersion>
+    <DeployDirSuffix>dprv</DeployDirSuffix>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <NativePlatformName>Windows CE</NativePlatformName>
+    <FormFactorID>
+    </FormFactorID>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <FileAlignment>512</FileAlignment>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>NoID.Biometrics.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>fpmv.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DPCtlUruNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libraries\.NET\DPCtlUruNet.dll</HintPath>
+    </Reference>
+    <Reference Include="DPUruNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libraries\.NET\DPUruNet.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Presentation" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Capabilities.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Capabilities.Designer.cs">
+      <DependentUpon>Capabilities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Capture.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Capture.Designer.cs">
+      <DependentUpon>Capture.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Enrollment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Enrollment.Designer.cs">
+      <DependentUpon>Enrollment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EnrollmentControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EnrollmentControl.Designer.cs">
+      <DependentUpon>EnrollmentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form_Main.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form_Main.Designer.cs">
+      <DependentUpon>Form_Main.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Identification.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Identification.Designer.cs">
+      <DependentUpon>Identification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IdentificationControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IdentificationControl.Designer.cs">
+      <DependentUpon>IdentificationControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReaderSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReaderSelection.Designer.cs">
+      <DependentUpon>ReaderSelection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="source.afis\EdgeShape.cs" />
+    <Compile Include="source.afis\FingerprintMatcher.cs" />
+    <Compile Include="source.afis\FingerprintMinutia.cs" />
+    <Compile Include="source.afis\FingerprintMinutiaType.cs" />
+    <Compile Include="source.afis\FingerprintSkeleton.cs" />
+    <Compile Include="source.afis\FingerprintTemplate.cs" />
+    <Compile Include="source.afis\NeighborEdge.cs" />
+    <Compile Include="source.afis\SkeletonMinutia.cs" />
+    <Compile Include="source.afis\SkeletonRidge.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\Extractor.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\AbsoluteContrast.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\ClippedContrast.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\CrossRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\Equalizer.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\HillOrientation.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\ImageInverter.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\InnerMask.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\LinesByOrientation.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\LocalHistogram.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\OrientedSmoother.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\RelativeContrast.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\SegmentationMask.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\Thinner.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\ThresholdBinarizer.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\filters\VotingFilter.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\minutiae\MinutiaCloudRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\minutiae\MinutiaCollector.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\minutiae\MinutiaMask.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\minutiae\MinutiaShuffler.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\minutiae\StandardDpiScaling.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\minutiae\UniqueMinutiaSorter.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\BranchMinutiaRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\DotRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\FragmentRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\GapRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\ISkeletonFilter.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\KnotRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\PoreRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\RidgeTracer.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\SkeletonBuilder.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\SkeletonShadow.cs" />
+    <Compile Include="source.afis\sourceAFIS\extraction\model\TailRemover.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\Angle.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\AssertException.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\BinaryMap.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\BlockMap.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\Calc.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\CircularArray.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\DetailLogger.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\GdiIO.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\Neighborhood.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\Point.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\PointF.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\PointS.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\PolarPoint.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\PriorityQueueF.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\Range.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\RangeF.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\RectangleC.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\ReversedList.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\Size.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\SizeF.cs" />
+    <Compile Include="source.afis\sourceAFIS\general\WpfIO.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\BestMatchSkipper.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\MatchAnalysis.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\MatchScoring.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\EdgeConstructor.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\EdgeHash.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\EdgeLocation.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\EdgeLookup.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\EdgePair.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\EdgeShape.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\EdgeTable.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\HashLookup.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\IndexedEdge.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\MinutiaMatcher.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\MinutiaPair.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\MinutiaPairing.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\NeighborEdge.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\PairInfo.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\PairSelector.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\minutia\RootPairSelector.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\ParallelMatcher.cs" />
+    <Compile Include="source.afis\sourceAFIS\matching\ProbeIndex.cs" />
+    <Compile Include="source.afis\sourceAFIS\meta\DpiAdjustedAttribute.cs" />
+    <Compile Include="source.afis\sourceAFIS\meta\DpiAdjuster.cs" />
+    <Compile Include="source.afis\sourceAFIS\meta\NestedAttribute.cs" />
+    <Compile Include="source.afis\sourceAFIS\meta\ObjectTree.cs" />
+    <Compile Include="source.afis\sourceAFIS\meta\ParameterAttribute.cs" />
+    <Compile Include="source.afis\sourceAFIS\meta\ParameterSet.cs" />
+    <Compile Include="source.afis\sourceAFIS\meta\ParameterValue.cs" />
+    <Compile Include="source.afis\sourceAFIS\simple\AfisEngine.cs" />
+    <Compile Include="source.afis\sourceAFIS\simple\Finger.cs" />
+    <Compile Include="source.afis\sourceAFIS\simple\Fingerprint.cs" />
+    <Compile Include="source.afis\sourceAFIS\simple\Person.cs" />
+    <Compile Include="source.afis\sourceAFIS\templates\CompactFormat.cs" />
+    <Compile Include="source.afis\sourceAFIS\templates\IsoFormat.cs" />
+    <Compile Include="source.afis\sourceAFIS\templates\ITemplateFormat.cs" />
+    <Compile Include="source.afis\sourceAFIS\templates\SerializedFormat.cs" />
+    <Compile Include="source.afis\sourceAFIS\templates\Template.cs" />
+    <Compile Include="source.afis\sourceAFIS\templates\TemplateBuilder.cs" />
+    <Compile Include="source.afis\sourceAFIS\templates\TemplateFormatBase.cs" />
+    <Compile Include="source.afis\sourceAFIS\templates\XmlFormat.cs" />
+    <Compile Include="source.afis\utils\Angle.cs" />
+    <Compile Include="source.afis\utils\BlockMap.cs" />
+    <Compile Include="source.afis\utils\CircularArray.cs" />
+    <Compile Include="source.afis\utils\MathEx.cs" />
+    <Compile Include="source.afis\utils\Point.cs" />
+    <Compile Include="source.afis\utils\PointF.cs" />
+    <Compile Include="source.afis\utils\PriorityQueueF.cs" />
+    <Compile Include="source.afis\utils\Range.cs" />
+    <Compile Include="source.afis\utils\Rectangle.cs" />
+    <Compile Include="source.afis\utils\ReversedList.cs" />
+    <Compile Include="Stream.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Stream.Designer.cs">
+      <DependentUpon>Stream.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Verification.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Verification.Designer.cs">
+      <DependentUpon>Verification.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Capabilities.resx">
+      <DependentUpon>Capabilities.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Capture.resx">
+      <DependentUpon>Capture.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Enrollment.resx">
+      <DependentUpon>Enrollment.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EnrollmentControl.resx">
+      <DependentUpon>EnrollmentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form_Main.resx">
+      <DependentUpon>Form_Main.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Identification.resx">
+      <DependentUpon>Identification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IdentificationControl.resx">
+      <DependentUpon>IdentificationControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="ReaderSelection.resx">
+      <DependentUpon>ReaderSelection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Stream.resx">
+      <DependentUpon>Stream.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Verification.resx">
+      <DependentUpon>Verification.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fpmv.ico" />
+    <Content Include="images\fpmv.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}">
+        <HostingProcess disable="1" />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
