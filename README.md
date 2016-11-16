@@ -48,27 +48,36 @@ or  specifications for fingerprint minutiae data.e a secure web interface which 
 
 #### Message and Schema Standard
 HL7 FHIR
+
 #### Blockchain and RPC API (C++/C#/JSON)
 Duality Binary Blockchain system constisting of Dynamic and Sequence.
+
 #### Embedded Browser (C++/C#)
 Chromium Embedded Framework or CEF
 * Windows .NET using CEFSharp (C#)
 * MacOS, Linux, CEF using Qt Framework (C++).  U++ might be a good alternative.
+
 #### FHIR Server (C#) 
 Using FHIR Spark with MongoDB
+
 #### Core Matching (C#) etc will use
 Metaphone 2 or 3 or phonetics 
 Standard first name database
 Levinstien Distance (only for non-hashed matching)
 Fingerprint Minutiae Data Format: ISO/IEC 19794-2:2005 (Want to move to ANSI INSITS 378-2004)
+
 #### Demographic Hash Algorithm (C/C++/C#) 
 Argon2i (Password Hash Winner 2015).  Slow hashing on CPU & GPU.  No ASICS
+
 #### UI(HTML5, CSS3, JavaScript, maybe AngularJS)
 Bootstrap, JQuery, etc..  TBD
+
 ### UI Data Layer (C# web services)
 ASP.NET Web Handler Pages or WebSockets.
+
 #### Data Layer.
 Clustered Database (persistence): MongoDB or Couchbase Server
 Embedded Database (cache/memory): DBreeze for match engine
+
 #### App Store
 Health Services Platform Consortium App Store.
