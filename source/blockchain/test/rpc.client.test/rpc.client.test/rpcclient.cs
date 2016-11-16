@@ -106,6 +106,10 @@ namespace Blockchain.RPC
                                         {
                                             throw new RpcException(result, webException);
                                         }
+                                        catch (RpcInternalServerErrorException)
+                                        {
+                                            throw new RpcException(result, webException);
+                                        }
                                     }
                                 }
                             }
