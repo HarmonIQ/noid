@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="enrollment" xml:space="preserve">
-    <value>html/enrollment.html</value>
+    <value>file:///enrollment.html</value>
   </data>
 </root>

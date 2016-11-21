@@ -61,7 +61,7 @@ namespace NoID.Browser {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to html/enrollment.html.
+        ///   Looks up a localized string similar to file:///enrollment.html.
         /// </summary>
         internal static string enrollment {
             get {
