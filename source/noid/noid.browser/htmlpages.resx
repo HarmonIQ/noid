@@ -120,4 +120,7 @@
   <data name="enrollment" xml:space="preserve">
     <value>file:///enrollment.html</value>
   </data>
+  <data name="identity" xml:space="preserve">
+    <value>file:///identity.html</value>
+  </data>
 </root>

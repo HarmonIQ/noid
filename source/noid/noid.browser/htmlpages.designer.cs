@@ -68,5 +68,14 @@ namespace NoID.Browser {
                 return ResourceManager.GetString("enrollment", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to file:///identity.html.
+        /// </summary>
+        internal static string identity {
+            get {
+                return ResourceManager.GetString("identity", resourceCulture);
+            }
+        }
     }
 }
