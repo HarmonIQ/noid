@@ -22,7 +22,8 @@ namespace NoID.Browser
             Text = "NoID Browser";
             WindowState = FormWindowState.Maximized;
 
-            browser = new ChromiumWebBrowser(@"file:///enrollment.html")
+            //browser = new ChromiumWebBrowser(@"file:///enrollment.html")
+            browser = new ChromiumWebBrowser(@"file:///C:/Source/noid/source/noid/noid.browser/enrollment.html")
 
             {
                 Dock = DockStyle.Fill
