@@ -2,27 +2,52 @@
 label {
 	font-size: 18px;
 }
-        .wizard {
+
+.wizard {
     margin: 20px auto;
     background: #fff;
 }
+h2 {
+    display: block;
+    font-size: 3.5em;
+    margin-left: 0;
+    margin-right: 0;
+}
 
-    .wizard .nav-tabs {
-        position: relative;
-        margin: 40px auto;
-        margin-bottom: 0;
-        border-bottom-color: #e0e0e0;
-    }
+.setHeight {
+    min-height: 916px;
+}
 
-    .wizard > div.wizard-inner {
-        position: relative;
-    }
+.pull-down {
+    position: fixed;
+    top: 88%;
+}
+
+.hidden {
+    visibility: hidden;    
+}
+
+.pull-right2 {
+    position: fixed;
+    left: 75%;
+}
+
+.wizard .nav-tabs {
+    position: relative;
+    margin: 40px auto;
+    margin-bottom: 0;
+    border-bottom-color: #e0e0e0;
+}
+
+.wizard > div.wizard-inner {
+    position: relative;
+}
 
 .connecting-line {
     height: 2px;
     background: #e0e0e0;
     position: absolute;
-    width: 90%;
+    width: 95%;
     margin: 0 auto;
     left: 0;
     right: 0;
@@ -77,7 +102,7 @@ span.round-tab:hover {
 }
 
 .wizard .nav-tabs > li {
-    width: 10%;
+    width: 8.3%;
 }
 
 .wizard li:after {
