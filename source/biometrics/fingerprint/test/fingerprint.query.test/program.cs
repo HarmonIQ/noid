@@ -11,15 +11,25 @@ namespace NoID.Biometrics
         private static MatchDatabase matchDB = new MatchDatabase();
         static void Main(string[] args)
         {
+            string cmd = "";
             DateTime start = DateTime.Now;
             matchDB.LoadTestFingerPrintImages(FINGERPRINT_IMAGE_PATH);
             Console.WriteLine("Finished loading in " + (DateTime.Now - start).TotalSeconds.ToString() + " seconds");
             Console.WriteLine("Loaded " + matchDB.nextID);
-            start = DateTime.Now;
+            while(cmd.ToLower() != "q")
+            {
+                cmd = Console.ReadLine();
+                if (cmd.ToLower() == "s")
+                    Search();
+            }
+            
+        }
+        private static void Search()
+        {
+            DateTime start = DateTime.Now;
             float score = matchDB.SearchTest();
-            Console.WriteLine("Finished searching in " + (DateTime.Now - start).TotalSeconds.ToString() + " seconds");
+            Console.WriteLine("Match found. Finished searching in " + (DateTime.Now - start).TotalSeconds.ToString() + " seconds");
             Console.WriteLine("Score = " + score.ToString());
-            Console.Read();
         }
     }
 }

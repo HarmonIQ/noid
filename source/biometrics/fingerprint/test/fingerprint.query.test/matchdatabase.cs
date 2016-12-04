@@ -39,8 +39,11 @@ namespace NoID.Biometrics
                             {
                                 fingerprint = new Fingerprint();
                                 fingerprint.AsBitmapSource = WpfIO.Load(file.FullName);
-                                fingerprintList.Add(fingerprint);                        
-                                nextID = nextID + 1;
+                                if (fingerprint.Image != null)
+                                { 
+                                    fingerprintList.Add(fingerprint);                        
+                                    nextID = nextID + 1;
+                                }
                             }
                         }
                     }   
