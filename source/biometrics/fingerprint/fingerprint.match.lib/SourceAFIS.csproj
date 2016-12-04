@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0F1D6FCB-F813-4E2F-9D6C-DE4BD7866233}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SourceAFIS</RootNamespace>
+    <AssemblyName>SourceAFIS</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Presentation" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="properties\assemblyinfo.cs" />
+    <Compile Include="EdgeShape.cs" />
+    <Compile Include="FingerprintMatcher.cs" />
+    <Compile Include="FingerprintMinutia.cs" />
+    <Compile Include="FingerprintMinutiaType.cs" />
+    <Compile Include="FingerprintSkeleton.cs" />
+    <Compile Include="FingerprintTemplate.cs" />
+    <Compile Include="NeighborEdge.cs" />
+    <Compile Include="SkeletonMinutia.cs" />
+    <Compile Include="SkeletonRidge.cs" />
+    <Compile Include="extraction\Extractor.cs" />
+    <Compile Include="extraction\filters\AbsoluteContrast.cs" />
+    <Compile Include="extraction\filters\ClippedContrast.cs" />
+    <Compile Include="extraction\filters\CrossRemover.cs" />
+    <Compile Include="extraction\filters\Equalizer.cs" />
+    <Compile Include="extraction\filters\HillOrientation.cs" />
+    <Compile Include="extraction\filters\ImageInverter.cs" />
+    <Compile Include="extraction\filters\InnerMask.cs" />
+    <Compile Include="extraction\filters\LinesByOrientation.cs" />
+    <Compile Include="extraction\filters\LocalHistogram.cs" />
+    <Compile Include="extraction\filters\OrientedSmoother.cs" />
+    <Compile Include="extraction\filters\RelativeContrast.cs" />
+    <Compile Include="extraction\filters\SegmentationMask.cs" />
+    <Compile Include="extraction\filters\Thinner.cs" />
+    <Compile Include="extraction\filters\ThresholdBinarizer.cs" />
+    <Compile Include="extraction\filters\VotingFilter.cs" />
+    <Compile Include="extraction\minutiae\MinutiaCloudRemover.cs" />
+    <Compile Include="extraction\minutiae\MinutiaCollector.cs" />
+    <Compile Include="extraction\minutiae\MinutiaMask.cs" />
+    <Compile Include="extraction\minutiae\MinutiaShuffler.cs" />
+    <Compile Include="extraction\minutiae\StandardDpiScaling.cs" />
+    <Compile Include="extraction\minutiae\UniqueMinutiaSorter.cs" />
+    <Compile Include="extraction\model\BranchMinutiaRemover.cs" />
+    <Compile Include="extraction\model\DotRemover.cs" />
+    <Compile Include="extraction\model\FragmentRemover.cs" />
+    <Compile Include="extraction\model\GapRemover.cs" />
+    <Compile Include="extraction\model\ISkeletonFilter.cs" />
+    <Compile Include="extraction\model\KnotRemover.cs" />
+    <Compile Include="extraction\model\PoreRemover.cs" />
+    <Compile Include="extraction\model\RidgeTracer.cs" />
+    <Compile Include="extraction\model\SkeletonBuilder.cs" />
+    <Compile Include="extraction\model\SkeletonShadow.cs" />
+    <Compile Include="extraction\model\TailRemover.cs" />
+    <Compile Include="general\Angle.cs" />
+    <Compile Include="general\AssertException.cs" />
+    <Compile Include="general\BinaryMap.cs" />
+    <Compile Include="general\BlockMap.cs" />
+    <Compile Include="general\Calc.cs" />
+    <Compile Include="general\CircularArray.cs" />
+    <Compile Include="general\DetailLogger.cs" />
+    <Compile Include="general\GdiIO.cs" />
+    <Compile Include="general\Neighborhood.cs" />
+    <Compile Include="general\Point.cs" />
+    <Compile Include="general\PointF.cs" />
+    <Compile Include="general\PointS.cs" />
+    <Compile Include="general\PolarPoint.cs" />
+    <Compile Include="general\PriorityQueueF.cs" />
+    <Compile Include="general\Range.cs" />
+    <Compile Include="general\RangeF.cs" />
+    <Compile Include="general\RectangleC.cs" />
+    <Compile Include="general\ReversedList.cs" />
+    <Compile Include="general\Size.cs" />
+    <Compile Include="general\SizeF.cs" />
+    <Compile Include="general\WpfIO.cs" />
+    <Compile Include="matching\BestMatchSkipper.cs" />
+    <Compile Include="matching\MatchAnalysis.cs" />
+    <Compile Include="matching\MatchScoring.cs" />
+    <Compile Include="matching\minutia\EdgeConstructor.cs" />
+    <Compile Include="matching\minutia\EdgeHash.cs" />
+    <Compile Include="matching\minutia\EdgeLocation.cs" />
+    <Compile Include="matching\minutia\EdgeLookup.cs" />
+    <Compile Include="matching\minutia\EdgePair.cs" />
+    <Compile Include="matching\minutia\EdgeShape.cs" />
+    <Compile Include="matching\minutia\EdgeTable.cs" />
+    <Compile Include="matching\minutia\HashLookup.cs" />
+    <Compile Include="matching\minutia\IndexedEdge.cs" />
+    <Compile Include="matching\minutia\MinutiaMatcher.cs" />
+    <Compile Include="matching\minutia\MinutiaPair.cs" />
+    <Compile Include="matching\minutia\MinutiaPairing.cs" />
+    <Compile Include="matching\minutia\NeighborEdge.cs" />
+    <Compile Include="matching\minutia\PairInfo.cs" />
+    <Compile Include="matching\minutia\PairSelector.cs" />
+    <Compile Include="matching\minutia\RootPairSelector.cs" />
+    <Compile Include="matching\ParallelMatcher.cs" />
+    <Compile Include="matching\ProbeIndex.cs" />
+    <Compile Include="meta\DpiAdjustedAttribute.cs" />
+    <Compile Include="meta\DpiAdjuster.cs" />
+    <Compile Include="meta\NestedAttribute.cs" />
+    <Compile Include="meta\ObjectTree.cs" />
+    <Compile Include="meta\ParameterAttribute.cs" />
+    <Compile Include="meta\ParameterSet.cs" />
+    <Compile Include="meta\ParameterValue.cs" />
+    <Compile Include="simple\AfisEngine.cs" />
+    <Compile Include="simple\Finger.cs" />
+    <Compile Include="simple\Fingerprint.cs" />
+    <Compile Include="simple\Person.cs" />
+    <Compile Include="templates\CompactFormat.cs" />
+    <Compile Include="templates\IsoFormat.cs" />
+    <Compile Include="templates\ITemplateFormat.cs" />
+    <Compile Include="templates\SerializedFormat.cs" />
+    <Compile Include="templates\Template.cs" />
+    <Compile Include="templates\TemplateBuilder.cs" />
+    <Compile Include="templates\TemplateFormatBase.cs" />
+    <Compile Include="templates\XmlFormat.cs" />
+    <Compile Include="utils\Angle.cs" />
+    <Compile Include="utils\BlockMap.cs" />
+    <Compile Include="utils\CircularArray.cs" />
+    <Compile Include="utils\MathEx.cs" />
+    <Compile Include="utils\Point.cs" />
+    <Compile Include="utils\PointF.cs" />
+    <Compile Include="utils\PriorityQueueF.cs" />
+    <Compile Include="utils\Range.cs" />
+    <Compile Include="utils\Rectangle.cs" />
+    <Compile Include="utils\ReversedList.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
