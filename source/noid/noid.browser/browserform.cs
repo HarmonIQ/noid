@@ -22,7 +22,9 @@ namespace NoID.Browser
             Text = "NoID Browser";
             WindowState = FormWindowState.Maximized;
 
-            browser = new ChromiumWebBrowser(@"file:///enrollment.html")
+            string pathAppDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string pathEnrollment = @pathAppDirectory + @"/html/enrollment.html";
+            browser = new ChromiumWebBrowser(pathEnrollment)
 
             {
                 Dock = DockStyle.Fill
