@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="matchdatabase.cs" />
+    <Compile Include="MatchProbes.cs" />
     <Compile Include="program.cs" />
     <Compile Include="properties\assemblyinfo.cs" />
     <Compile Include="properties\settings.designer.cs">
