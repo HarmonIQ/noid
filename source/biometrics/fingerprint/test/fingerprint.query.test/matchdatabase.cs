@@ -15,7 +15,7 @@ namespace NoID.Biometrics
         {
         }
 
-        public Fingerprint Probe = null;
+        private Fingerprint _probe = null;
         
         static AfisEngine Afis = new AfisEngine();
         public int nextID = 1;
@@ -48,14 +48,17 @@ namespace NoID.Biometrics
                         }
                     }   
                 }
-                Probe = fingerprint;
+                _probe = fingerprint;
             }
         }
 
-        public float SearchTest()
+        public float SearchTest(Fingerprint probe = null)
         {
-            Afis.ExtractFingerprint(Probe);
-            return Afis.IdentifyFinger(Probe, fingerprintList);
+            if (probe == null)
+                probe = _probe;
+
+            Afis.ExtractFingerprint(probe);
+            return Afis.IdentifyFinger(probe, fingerprintList);
         } 
     }
 }
