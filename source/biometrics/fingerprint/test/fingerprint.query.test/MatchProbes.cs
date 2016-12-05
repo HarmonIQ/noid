@@ -25,7 +25,7 @@ namespace NoID.Biometrics
             if (_ordinal < 0)
                 return null;
 
-            if (_ordinal > _probeList.Count)
+            if (_ordinal >= _probeList.Count)
                 _ordinal = 0; //start over
 
             _currentProbe = _probeList[_ordinal];
