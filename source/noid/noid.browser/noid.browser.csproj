@@ -122,7 +122,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="app.manifest" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="fonts\fontawesome-webfont.eot" />
     <None Include="fonts\fontawesome-webfont.ttf" />
     <None Include="fonts\fontawesome-webfont.woff" />
