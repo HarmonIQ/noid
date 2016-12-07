@@ -191,4 +191,19 @@
   <Import Project="packages\cef.redist.x86.3.2785.1482\build\cef.redist.x86.targets" Condition="Exists('packages\cef.redist.x86.3.2785.1482\build\cef.redist.x86.targets')" />
   <Import Project="packages\CefSharp.Common.53.0.0\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.53.0.0\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.WinForms.53.0.0\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.53.0.0\build\CefSharp.WinForms.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>mkdir  $(TargetDir)html\
+copy $(ProjectDir)*.html $(TargetDir)html\
+mkdir  $(TargetDir)html\style\
+copy $(ProjectDir)style\*.css $(TargetDir)html\style\
+mkdir  $(TargetDir)html\scripts\
+copy $(ProjectDir)scripts\*.js $(TargetDir)html\scripts\
+mkdir  $(TargetDir)html\fonts\
+copy $(ProjectDir)fonts\*.* $(TargetDir)html\fonts\
+mkdir  $(TargetDir)html\resources\
+copy $(ProjectDir)resources\*.* $(TargetDir)html\resources\</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>rmdir $(TargetDir)html\  /s /q</PreBuildEvent>
+  </PropertyGroup>
 </Project>
