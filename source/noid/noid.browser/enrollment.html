@@ -40,13 +40,13 @@
                                     </span>
                                 </a>
                             </li>
-                            <li role="presentation" class="disabled">
+                            <!--<li role="presentation" class="disabled">
                                 <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Step 3">
                                     <span class="round-tab">
                                         <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
                                     </span>
                                 </a>
-                            </li>
+                            </li>-->
                             <li role="presentation" class="disabled">
                                 <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Step 4">
                                     <span class="round-tab">
@@ -151,13 +151,13 @@
                                             <hr>
                                             <div class="radio">
                                                 <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked onclick="hideExceptions()">
                                                     Yes, I can use both finger tips
                                                 </label>
                                             </div>
                                             <div class="radio">
                                                 <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="showExceptions()">
                                                     No, I can not use both finger tips
                                                 </label>
                                             </div>
@@ -167,14 +167,14 @@
                                     </div>
                                 </div>
                                 <ul class="list-inline">
-                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down" onclick="wait('left')"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
-                            <div class="tab-pane" role="tabpanel" id="step3">
-                                <div class="step3">
+                            <div class="tab-pane hidden" role="tabpanel" id="exceptions">
+                                <div class="step99">
                                     <div class="row">
                                         <div class="jumbotron">
                                             <h1>Fingerprint scanning exceptions</h1>
@@ -237,7 +237,7 @@
                                     </div>
                                 </div>
                                 <ul class="list-inline">
-                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-lg pull-down" onclick="hideExceptions()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="wait('left')"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
