@@ -322,6 +322,11 @@ namespace SourceAFIS.Simple
 
         internal Template Decoded;
 
+        public Template GetTemplate()
+        {
+            return Decoded;
+        }
+
         /// <summary>
         /// Create deep copy of the <see cref="Fingerprint"/>.
         /// </summary>

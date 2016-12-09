@@ -3,6 +3,8 @@ using System.IO;
 using SourceAFIS.Simple;
 using SourceAFIS.General;
 using System.Collections.Generic;
+using SourceAFIS.Templates;
+using SourceAFIS.Extraction;
 
 namespace NoID.Biometrics
 {
@@ -15,15 +17,19 @@ namespace NoID.Biometrics
         {
         }
 
+        private static int MATCH_THRESHOLD = 50;
         private Fingerprint _probe = null;
         
         static AfisEngine Afis = new AfisEngine();
         public int nextID = 1;
 
-        List<Fingerprint> fingerprintList = new List<Fingerprint>();
+        //List<Fingerprint> fingerprintList = new List<Fingerprint>();
+        List<Template> fingerprintList = new List<Template>();
 
         private static string DATABASE_PATH = ConfigurationManager.AppSettings.Get("DatabaseLocation");
-       
+
+        Extractor Extractor = new Extractor();
+
         public void LoadTestFingerPrintImages(string imageDirectory)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(imageDirectory);
@@ -40,8 +46,9 @@ namespace NoID.Biometrics
                                 fingerprint = new Fingerprint();
                                 fingerprint.AsBitmapSource = WpfIO.Load(file.FullName);
                                 if (fingerprint.Image != null)
-                                { 
-                                    fingerprintList.Add(fingerprint);                        
+                                {
+                                    Afis.ExtractFingerprint(fingerprint);        
+                                    fingerprintList.Add(fingerprint.GetTemplate());
                                     nextID = nextID + 1;
                                 }
                             }
@@ -58,7 +65,8 @@ namespace NoID.Biometrics
                 probe = _probe;
 
             Afis.ExtractFingerprint(probe);
-            return Afis.IdentifyFinger(probe, fingerprintList);
-        } 
+            Afis.Threshold = MATCH_THRESHOLD;
+            return Afis.IdentifyFinger(probe.GetTemplate(), fingerprintList);
+        }
     }
 }
