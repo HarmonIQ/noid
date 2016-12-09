@@ -331,6 +331,25 @@ namespace SourceAFIS.Simple
             return 0;
         }
 
+        public float IdentifyFinger(Template probe, List<Template> candidateTemplates)
+        {
+            lock (this)
+            {
+                ParallelMatcher.PreparedProbe probeIndex = Matcher.Prepare(probe);
+                float[] scores = Matcher.Match(probeIndex, candidateTemplates);
+
+                if (scores.Length > 0)
+                {
+                    for (int i = 0; i < scores.Count(); i++)
+                    {
+                        if (scores[i] > 50)
+                            return scores[i];
+                    }
+                }
+            }
+            return 0;
+        }
+        
         IEnumerable<Person> GetMatchingCandidates(Person[] candidateArray, BestMatchSkipper.PersonsSkipScore[] results)
         {
             foreach (var match in results)

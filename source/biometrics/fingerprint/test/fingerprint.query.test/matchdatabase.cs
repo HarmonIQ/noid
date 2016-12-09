@@ -3,6 +3,8 @@ using System.IO;
 using SourceAFIS.Simple;
 using SourceAFIS.General;
 using System.Collections.Generic;
+using SourceAFIS.Templates;
+using SourceAFIS.Extraction;
 
 namespace NoID.Biometrics
 {
@@ -15,15 +17,19 @@ namespace NoID.Biometrics
         {
         }
 
+        private static int MATCH_THRESHOLD = 50;
         private Fingerprint _probe = null;
         
         static AfisEngine Afis = new AfisEngine();
-        public int nextID = 1;
+        public ulong nextID = 1;
 
-        List<Fingerprint> fingerprintList = new List<Fingerprint>();
+        List<Template> fingerprintList = new List<Template>();
+        List<PatientFingerprintMinutia> dbFingerprintMinutiaList = new List<PatientFingerprintMinutia>();
 
         private static string DATABASE_PATH = ConfigurationManager.AppSettings.Get("DatabaseLocation");
-       
+
+        Extractor Extractor = new Extractor();
+
         public void LoadTestFingerPrintImages(string imageDirectory)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(imageDirectory);
@@ -40,8 +46,11 @@ namespace NoID.Biometrics
                                 fingerprint = new Fingerprint();
                                 fingerprint.AsBitmapSource = WpfIO.Load(file.FullName);
                                 if (fingerprint.Image != null)
-                                { 
-                                    fingerprintList.Add(fingerprint);                        
+                                {
+                                    Afis.ExtractFingerprint(fingerprint);        
+                                    fingerprintList.Add(fingerprint.GetTemplate());
+                                    PatientFingerprintMinutia dbFingerprintMinutia = new PatientFingerprintMinutia(nextID, 1, fingerprint.GetTemplate());
+                                    dbFingerprintMinutiaList.Add(dbFingerprintMinutia);
                                     nextID = nextID + 1;
                                 }
                             }
@@ -50,6 +59,8 @@ namespace NoID.Biometrics
                 }
                 _probe = fingerprint;
             }
+            SerializeDatabaseProto serialize = new SerializeDatabaseProto();
+            serialize.WriteToDisk(DATABASE_PATH + @"finger.hive.0001.biodb", dbFingerprintMinutiaList);
         }
 
         public float SearchTest(Fingerprint probe = null)
@@ -58,7 +69,8 @@ namespace NoID.Biometrics
                 probe = _probe;
 
             Afis.ExtractFingerprint(probe);
-            return Afis.IdentifyFinger(probe, fingerprintList);
-        } 
+            Afis.Threshold = MATCH_THRESHOLD;
+            return Afis.IdentifyFinger(probe.GetTemplate(), fingerprintList);
+        }
     }
 }
