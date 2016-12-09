@@ -60,9 +60,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fingerprintminutiae.cs" />
+    <Compile Include="fingerprintminutia.cs" />
     <Compile Include="matchdatabase.cs" />
     <Compile Include="MatchProbes.cs" />
+    <Compile Include="patientfingerprintminutia.cs" />
     <Compile Include="program.cs" />
     <Compile Include="properties\assemblyinfo.cs" />
     <Compile Include="properties\settings.designer.cs">
