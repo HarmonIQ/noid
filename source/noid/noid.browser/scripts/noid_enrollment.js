@@ -14,3 +14,12 @@ function wait(whichStep) {
     }, 5000);
 
 };
+function showExceptions() {
+    document.getElementById('exceptions').setAttribute('class', 'tab-pane active');
+    document.getElementById('step2').setAttribute('class', 'tab-pane');
+};
+function hideExceptions() {    
+    document.getElementById('optionsRadios1').checked = true;
+    document.getElementById('exceptions').setAttribute('class', 'tab-pane');
+    document.getElementById('step2').setAttribute('class', 'tab-pane active');
+};
