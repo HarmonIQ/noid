@@ -159,6 +159,7 @@
     <Content Include="style\bootstrap.min.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="style\font-awesome.min.css" />
+    <Content Include="style\noid_identity.css" />
     <Content Include="style\noid_enrollment.css" />
   </ItemGroup>
   <ItemGroup>
