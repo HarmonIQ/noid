@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>NoID Enrollment Wizard</title>
+    <title>NoID Patient Identification</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
@@ -12,11 +12,6 @@
     <script type="text/javascript" src="scripts/noid_enrollment.js"></script>
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
-    <script>
-        window.onload = function () {
-            $('#myModal').modal('show');
-        }
-    </script>
 </head>
 <body>
     <div class="container">
@@ -27,9 +22,9 @@
                         <div class="connecting-line"></div>
                         <ul class="nav nav-tabs" role="tablist">
                             <li role="presentation" class="active">
-                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Consent">
+                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Search">
                                     <span class="round-tab">
-                                        <i class="glyphicon glyphicon-pencil"></i>
+                                        <i class="glyphicon glyphicon-search"></i>
                                     </span>
                                 </a>
                             </li>
@@ -40,13 +35,6 @@
                                     </span>
                                 </a>
                             </li>
-                            <!--<li role="presentation" class="disabled">
-                                <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Step 3">
-                                    <span class="round-tab">
-                                        <i class="fa fa-hand-paper-o" aria-hidden="true"></i>
-                                    </span>
-                                </a>
-                            </li>-->
                             <li role="presentation" class="disabled">
                                 <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Step 4">
                                     <span class="round-tab">
@@ -119,16 +107,320 @@
                                 <div class="step1">
                                     <div class="row">
                                         <div class="jumbotron">
-                                            <h1>Consent</h1>
+                                            <h1>Patient Selection</h1>
                                             <hr>
-                                            <h3>
-                                                By clicking “Next” you Agree to the below terms and conditions of participation in the NoID patient identification system. This system will allow for healthcare organizations already engaged in your care to easily identify you across systems.
-                                                <br />
-                                                <small>
-                                                    NoID Terms and Conditions. You must submit two fingerprints (unless physically unable??) in order to participate in NoID. Your fingerprint scans will never leave your healthcare organization, nor will your fingerprint data be stored centrally with any other personally identifiable information. All fingerprint data stored locally has been fully encrypted and abstracted from your personally identifiable information (name, address, etc).
-                                                    Section 1: Legalese…
-                                                </small>
-                                            </h3>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <h3>
+                                                        Please Select Patient
+                                                    </h3>
+                                                    <select id="patientSelect" class="form-control" onchange="showPatient()">
+                                                        <option></option>
+                                                        <option value="SJones">Steve Jones</option>
+                                                        <option value="MSmith">Mary Smith</option>
+                                                        <option value="CJones">Casey Jones</option>
+                                                        <option value="JDoe">John Doe</option>
+                                                    </select>
+                                                </div>
+                                                <div id="JDoe" class="patients col-md-9 hidden">
+                                                    <div class="form-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Internal ID:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                               MRN1011
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Name:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                John Doe
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Date of Birth:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                January 1, 1980
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Gender:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Male
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                123 Oak St <br /> New Orleans, LA <br />70112
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Phone number:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                (888) 888-8888
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Email address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                jdoe@email.com
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="MSmith" class="patients col-md-9 hidden">
+                                                    <div class="form-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Internal ID:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                MRN1012
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Name:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Mary Smith
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Date of Birth:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                July 1, 1968
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Gender:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Female
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                123 Main St <br /> New Orleans, LA <br />70118
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Phone number:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                (777) 777-7777
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Email address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                msmith68@email.com
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="CJones" class="patients col-md-9 hidden">
+                                                    <div class="form-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Internal ID:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                MRN103
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Name:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Casey Jones
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Date of Birth:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                September 1, 2008
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Gender:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Male
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                1111 Patient Way
+                                                                                <br /> Dallas, TX <br />75238
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Phone number:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                (555) 555-5555
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Email address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                patient@patient.com
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="SJones" class="patients col-md-9 hidden">
+                                                    <div class="form-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Internal ID:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                MRN101
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Name:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Steve Jones
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Date of Birth:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                March 27, 1975
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Gender:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Male
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                1111 Patient Way
+                                                                                 <br /> Dallas, TX <br />75238
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Phone number:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                (555) 555-5555
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Email address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                patient@patient.com
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -167,10 +459,10 @@
                                     </div>
                                 </div>
                                 <ul class="list-inline">
-                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down" onclick="wait('left')"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="wait('left')"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
                             <div class="tab-pane hidden" role="tabpanel" id="exceptions">
@@ -809,33 +1101,6 @@
                     </form>
                 </div>
             </section>
-        </div>
-        <div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Select Language</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row mar_ned">
-                            <div class="col-md-4 col-xs-3">
-                                <p align="right"><stong>Please select a language:</stong></p>
-                            </div>
-                            <div class="col-md-8 col-xs-9">
-                                <select name="visa_status" id="visa_status" class="dropselectsec1">
-                                    <option value="English">English</option>
-                                    <option value="Español">Español</option>
-                                    <option value="François">François</option>
-                                    <option value="Deutsch">Deutsch</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Select</button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
         </div>
     </div>
     <script type="text/javascript">

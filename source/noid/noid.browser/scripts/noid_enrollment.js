@@ -23,3 +23,12 @@ function hideExceptions() {
     document.getElementById('exceptions').setAttribute('class', 'tab-pane');
     document.getElementById('step2').setAttribute('class', 'tab-pane active');
 };
+function showPatient() {
+    var x = document.getElementById("patientSelect").selectedIndex;
+    var y = document.getElementsByTagName("option")[x].value;
+    var pts = document.getElementsByClassName('patients');
+    for (var j = 0; j < pts.length; j++) {
+            pts[j].setAttribute('class', 'patients hidden');
+    };
+    document.getElementById(y).setAttribute('class', 'patients col-md-9');
+};

@@ -3,6 +3,13 @@ label {
 	font-size: 18px;
 }
 
+.divSearch {
+    width: 350px;
+    height: 175px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
 .wizard {
     margin: 20px auto;
     background: #fff;

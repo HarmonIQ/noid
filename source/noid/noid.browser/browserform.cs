@@ -23,8 +23,23 @@ namespace NoID.Browser
             WindowState = FormWindowState.Maximized;
 
             string pathAppDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            string pathEnrollment = @pathAppDirectory + @"/html/enrollment.html";
-            browser = new ChromiumWebBrowser(pathEnrollment)
+            string endPath = "";
+            string approle = System.Configuration.ConfigurationManager.AppSettings["approle"].ToString();
+
+            switch (approle)
+            {
+                case "enrollment":
+                    endPath = @pathAppDirectory + @"/html/enrollment.html";
+                    break;
+                case "identity":
+                    endPath = @pathAppDirectory + @"/html/identity.html";
+                    break;
+                default:
+                    endPath = @pathAppDirectory + @"/html/enrollment.html";
+                    break;
+            }
+
+            browser = new ChromiumWebBrowser(endPath)
 
             {
                 Dock = DockStyle.Fill
