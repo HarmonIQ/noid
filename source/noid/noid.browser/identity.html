@@ -1,0 +1,650 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>NoID Patient Identification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="style/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="style/noid_identity.css" />
+    <link rel="stylesheet" type="text/css" href="style/font-awesome.min.css" />
+    <script type="text/javascript" src="scripts/noid_enrollment.js"></script>
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row setHeight">
+            <section>
+                <div class="wizard">
+                    <div class="wizard-inner">
+                        <div class="connecting-line"></div>
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active">
+                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Search">
+                                    <span class="round-tab">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li role="presentation" class="disabled">
+                                <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Step 2">
+                                    <span class="round-tab">
+                                        <i class="fa fa-hand-o-up fa-flip-horizontal" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li role="presentation" class="disabled">
+                                <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Step 4">
+                                    <span class="round-tab">
+                                        <i class="glyphicon glyphicon-ok" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li role="presentation" class="disabled hidden">
+                                <a href="#step5" data-toggle="tab" aria-controls="step5" role="tab" title="Step 5">
+                                    <span class="round-tab hidden">
+                                        <i class="fa fa-hand-o-up" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li role="presentation" class="disabled hidden">
+                                <a href="#step6" data-toggle="tab" aria-controls="step6" role="tab" title="Step 6">
+                                    <span class="round-tab hidden">
+                                        <i class="fa fa-id-card-o" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <form role="form">
+                        <div class="tab-content">
+                            <div class="tab-pane active" role="tabpanel" id="step1">
+                                <div class="step1">
+                                    <div class="row">
+                                        <div class="jumbotron">
+                                            <h1>Patient Selection</h1>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <h3>
+                                                        My Patients
+                                                    </h3>
+                                                    <select id="patientSelect" class="form-control" onchange="showPatient()">
+                                                        <option></option>
+                                                        <option value="SJones">Steve Jones</option>
+                                                        <option value="MSmith">Mary Smith</option>
+                                                        <option value="CJones">Casey Jones</option>
+                                                        <option value="JDoe">John Doe</option>
+                                                    </select>
+                                                    <br />
+                                                    <button type="button" class="btn btn-primary">Submit</button>
+                                                </div>
+                                                <div id="JDoe" class="patients col-md-9 hidden">
+                                                    <div class="form-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Internal ID:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                MRN1011
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Name:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                John Doe
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Date of Birth:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                January 1, 1980
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Gender:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Male
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                123 Oak St <br /> New Orleans, LA <br />70112
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Phone number:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                (888) 888-8888
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Email address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                jdoe@email.com
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="MSmith" class="patients col-md-9 hidden">
+                                                    <div class="form-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Internal ID:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                MRN1012
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Name:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Mary Smith
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Date of Birth:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                July 1, 1968
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Gender:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Female
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                123 Main St <br /> New Orleans, LA <br />70118
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Phone number:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                (777) 777-7777
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Email address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                msmith68@email.com
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="CJones" class="patients col-md-9 hidden">
+                                                    <div class="form-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Internal ID:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                MRN103
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Name:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Casey Jones
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Date of Birth:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                September 1, 2008
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Gender:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Male
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                1111 Patient Way
+                                                                                <br /> Dallas, TX <br />75238
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Phone number:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                (555) 555-5555
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Email address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                patient@patient.com
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="SJones" class="patients col-md-9 hidden">
+                                                    <div class="form-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Internal ID:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                MRN101
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Name:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Steve Jones
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Date of Birth:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                March 27, 1975
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Gender:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                Male
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="panel panel-default">
+                                                                    <div class="panel-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                1111 Patient Way
+                                                                                <br /> Dallas, TX <br />75238
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Phone number:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                (555) 555-5555
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <label>Email address:</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                patient@patient.com
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="list-inline pull-right pull-right2">
+                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="wait('left', 'success')"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" role="tabpanel" id="step2">
+                                <div class="step2">
+                                    <div class="row">
+                                        <div class="col-md-12 jumbotron">
+                                            <div class="row">
+                                                <div class="col-md-12 ">
+                                                    <h2>Collect Primary Patient Biometric</h2>
+                                                </div>
+                                                <h3 class="col-md-12 center" id="patientInfo">
+                                                    <label>Name:</label>
+                                                    John Doe
+                                                </h3>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h3>
+                                                        Please Direct Patient to Scan left index finger
+                                                        <small>
+                                                            <label>
+                                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="showExceptions()">
+                                                                Unable to scan left index finger. Use alternate finger.
+                                                            </label>
+                                                        </small>
+                                                    </h3>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <img src="resources/ScanInstruction.png" alt="Scan image" class="img-rounded">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <img src="resources/LeftHand.png" alt="left hand" class="img-rounded">
+                                                </div>
+                                                <div class="col-md-6 push-down">
+                                                    <i id="checkLeft" class="fa fa-spinner fa-spin fa-5x fa-fw pull-right incomplete"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="list-inline">
+                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                </ul>
+                                <ul class="list-inline pull-right pull-right2">
+                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane hidden" role="tabpanel" id="exceptions">
+                                <div class="step99">
+                                    <div class="row">
+                                        <div class="jumbotron">
+                                            <h1>Fingerprint scanning exceptions</h1>
+                                            <h3>
+                                                Please select one option from the below:
+                                            </h3>
+                                            <hr>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios1" id="optionsRadios1" value="option1" checked>
+                                                    I can scan at least one finger from each hand (Allow user to choose finger or walk through choices from index finger out.)
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios1" id="optionsRadios2" value="option2">
+                                                    I can scan two fingers from my left hand only
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios1" id="optionsRadios3" value="option3">
+                                                    I can scan two fingers from my right hand only
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios1" id="optionsRadios4" value="option4">
+                                                    I can scan only one finger from my left hand
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios1" id="optionsRadios5" value="option5">
+                                                    I can scan only one finger from my right hand
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios1" id="optionsRadios6" value="option6">
+                                                    I am unable to provide any fingerprints
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="list-inline">
+                                    <li><button type="button" class="btn btn-primary btn-lg pull-down" onclick="hideExceptions()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                </ul>
+                                <ul class="list-inline pull-right pull-right2">
+                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" role="tabpanel" id="step4">
+                                <div class="step4">
+                                    <div class="row">
+                                        <div class="jumbotron">
+                                            <h2>Identify Confirmed and Linked with NoID</h2>
+                                            <hr>
+                                            <h3 id="patientConfirm">
+                                                Steve Jones has been positively identified and linked to your local NoID system.
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="list-inline">
+                                    <li><button type="button" class="btn btn-primary btn-lg pull-down" onclick="showFailure();wait('left', 'fail')"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                </ul>
+                                <ul class="list-inline pull-right pull-right2">
+                                    <li><button type="button" class="btn btn-default btn-lg btn-block maxWidth pull-down2">Click here to view other NoID nodes with existing relationships with this patient</button></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" role="tabpanel" id="step5">
+                                <div class="step5">
+                                    <div class="row">
+                                        <div class="col-md-12 jumbotron">
+                                            <div class="row">
+                                                <div class="col-md-12 ">
+                                                    <h2>Collect Primary Patient Biometric</h2>
+                                                </div>
+                                                <h3 class="col-md-12 center" id="patientInfo">
+                                                    <label>Name:</label>
+                                                    John Doe
+                                                </h3>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h3>
+                                                        Please Direct Patient to Scan left index finger
+                                                        <small>
+                                                            <label>
+                                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="showExceptions()">
+                                                                Unable to scan left index finger. Use alternate finger.
+                                                            </label>
+                                                        </small>
+                                                    </h3>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <img src="resources/ScanInstruction.png" alt="Scan image" class="img-rounded">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <img src="resources/LeftHand.png" alt="left hand" class="img-rounded">
+                                                </div>
+                                                <div class="col-md-6 push-down">
+                                                    <i id="checkLeft2" class="fa fa-spinner fa-spin fa-5x fa-fw pull-right incomplete"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul class="list-inline">
+                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                </ul>
+                                <ul class="list-inline pull-right pull-right2">
+                                    <li><button type="button" class="btn btn-primary btn-lg pull-down" onclick="confirmFailure()"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane" role="tabpanel" id="step6">
+                                <div class="step6">
+                                    <div class="row">
+                                        <div class="jumbotron">
+                                            <h2>NoID Identity Unable to be Confirmed</h2>
+                                            <hr>
+                                            <h3 id="patientFail">
+                                                The patient fingerprint does not match the NoID patient profile.
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    <ul class="list-inline">
+                                        <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Initialize tooltips
+            $('.nav-tabs > li a[title]').tooltip();
+
+            //Wizard
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+
+                var $target = $(e.target);
+
+                if ($target.parent().hasClass('disabled')) {
+                    return false;
+                }
+            });
+
+            $(".next-step").click(function (e) {
+
+                var $active = $('.wizard .nav-tabs li.active');
+                $active.next().removeClass('disabled');
+                nextTab($active);
+
+            });
+            $(".prev-step").click(function (e) {
+
+                var $active = $('.wizard .nav-tabs li.active');
+                prevTab($active);
+
+            });
+        });
+
+        function nextTab(elem) {
+            $(elem).next().find('a[data-toggle="tab"]').click();
+        }
+        function prevTab(elem) {
+            $(elem).prev().find('a[data-toggle="tab"]').click();
+        }
+
+
+        //according menu
+
+        $(document).ready(function () {
+            //Add Inactive Class To All Accordion Headers
+            $('.accordion-header').toggleClass('inactive-header');
+
+            //Set The Accordion Content Width
+            var contentwidth = $('.accordion-header').width();
+            $('.accordion-content').css({});
+
+            //Open The First Accordion Section When Page Loads
+            $('.accordion-header').first().toggleClass('active-header').toggleClass('inactive-header');
+            $('.accordion-content').first().slideDown().toggleClass('open-content');
+
+            // The Accordion Effect
+            $('.accordion-header').click(function () {
+                if ($(this).is('.inactive-header')) {
+                    $('.active-header').toggleClass('active-header').toggleClass('inactive-header').next().slideToggle().toggleClass('open-content');
+                    $(this).toggleClass('active-header').toggleClass('inactive-header');
+                    $(this).next().slideToggle().toggleClass('open-content');
+                }
+
+                else {
+                    $(this).toggleClass('active-header').toggleClass('inactive-header');
+                    $(this).next().slideToggle().toggleClass('open-content');
+                }
+            });
+
+            return false;
+        });
+    </script>
+</body>
+</html>

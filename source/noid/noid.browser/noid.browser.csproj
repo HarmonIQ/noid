@@ -75,6 +75,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>4.5</RequiredTargetFramework>
     </Reference>
@@ -145,6 +146,7 @@
     <None Include="resources\chromium-256.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="identity.html" />
     <Content Include="enrollment.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
@@ -157,6 +159,7 @@
     <Content Include="style\bootstrap.min.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="style\font-awesome.min.css" />
+    <Content Include="style\noid_identity.css" />
     <Content Include="style\noid_enrollment.css" />
   </ItemGroup>
   <ItemGroup>
