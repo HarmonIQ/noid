@@ -23,7 +23,7 @@ namespace NoID.Base.Algorithms
             else { distance = 1; }
 
             return Math.Min(Math.Min(LevenshteinDistance(source.Substring(0, source.Length - 1), target) + 1,
-                LevenshteinDistance(source, target.Substring(0, target.Length - 1))) + 1,
+                LevenshteinDistance(source, target.Substring(0, target.Length - 1)) + 1),
                 LevenshteinDistance(source.Substring(0, source.Length - 1), target.Substring(0, target.Length - 1)) + distance);
         }
 
