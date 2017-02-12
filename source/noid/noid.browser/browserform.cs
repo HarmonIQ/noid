@@ -42,11 +42,15 @@ namespace NoID.Browser
             {
                 Dock = DockStyle.Fill
             };
+#if NAVIGATE
             toolStripContainer.ContentPanel.Controls.Add(browser);
-
+#else
+            this.Controls.Add(browser);
+#endif
+#if NAVIGATE
             browser.StatusMessage += OnBrowserStatusMessage;
             browser.TitleChanged += OnBrowserTitleChanged;
-#if NAVIGATE
+
             browser.ConsoleMessage += OnBrowserConsoleMessage;
             browser.LoadingStateChanged += OnLoadingStateChanged;
             browser.AddressChanged += OnBrowserAddressChanged;
@@ -56,7 +60,7 @@ namespace NoID.Browser
             DisplayOutput(version);
 #endif
         }
-
+#if NAVIGATE
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
         {
             this.InvokeOnUiThreadIfRequired(() => statusLabel.Text = args.Value);
@@ -67,7 +71,6 @@ namespace NoID.Browser
             this.InvokeOnUiThreadIfRequired(() => Text = args.Title);
         }
 
-#if NAVIGATE
         private void OnBrowserConsoleMessage(object sender, ConsoleMessageEventArgs args)
         {
             DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
