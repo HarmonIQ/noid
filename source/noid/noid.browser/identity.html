@@ -405,8 +405,7 @@
                                                     <h2>Collect Primary Patient Biometric</h2>
                                                 </div>
                                                 <h3 class="col-md-12 center" id="patientInfo">
-                                                    <label>Name:</label>
-                                                    John Doe
+                                                    <label>Name:&nbsp;</label>John Doe
                                                 </h3>
                                             </div>
                                             <hr>
@@ -415,6 +414,7 @@
                                                     <h3>
                                                         Please Direct Patient to Scan left index finger
                                                         <small>
+                                                            <p></p>
                                                             <label>
                                                                 <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="showExceptions()">
                                                                 Unable to scan left index finger. Use alternate finger.
@@ -446,46 +446,58 @@
                                 <div class="step99">
                                     <div class="row">
                                         <div class="jumbotron">
-                                            <h1>Fingerprint scanning exceptions</h1>
-                                            <h3>
-                                                Please select one option from the below:
-                                            </h3>
-                                            <hr>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios1" id="optionsRadios1" value="option1" checked>
-                                                    I can scan at least one finger from each hand (Allow user to choose finger or walk through choices from index finger out.)
-                                                </label>
+                                            <h1>Missing Biometric Information</h1>
+                                            <p></p>
+                                            <p></p>
+                                            <div class="row mar_ned">
+                                                <div class="col-md-4 col-xs-3">
+                                                    <p align="right"><stong>Reason For Missing Biometric:</stong></p>
+                                                </div>
+                                                <div class="col-md-8 col-xs-9">
+                                                    <select id="exceptionMissingReason" class="form-control">
+                                                        <option value="disfigurement">Permanent Disfigurement Such As Burn</option>
+                                                        <option value="reason2">Amputated Limbs</option>
+                                                        <option value="reason3">Reason 3</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios1" id="optionsRadios2" value="option2">
-                                                    I can scan two fingers from my left hand only
-                                                </label>
+                                            <div class="row mar_ned">
+                                                <div class="col-md-4 col-xs-3">
+                                                    <p align="right"><stong>Select Secret Question 1:</stong></p>
+                                                </div>
+                                                <div class="col-md-8 col-xs-9">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <select id="exceptionMissingReason1" class="form-control">
+                                                                <option value="cityBorn">What is my mother’s maiden name?</option>
+                                                                <option value="question1Answer2">Question 2</option>
+                                                                <option value="question1Answer3">Question 3</option>
+                                                            </select>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <input type="text" class="form-control" id="secretAnswer1" placeholder="Your Answer">
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios1" id="optionsRadios3" value="option3">
-                                                    I can scan two fingers from my right hand only
-                                                </label>
-                                            </div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios1" id="optionsRadios4" value="option4">
-                                                    I can scan only one finger from my left hand
-                                                </label>
-                                            </div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios1" id="optionsRadios5" value="option5">
-                                                    I can scan only one finger from my right hand
-                                                </label>
-                                            </div>
-                                            <div class="radio">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios1" id="optionsRadios6" value="option6">
-                                                    I am unable to provide any fingerprints
-                                                </label>
+                                            <div class="row mar_ned">
+                                                <div class="col-md-4 col-xs-3">
+                                                    <p align="right"><stong>Select Secret Question 2:</stong></p>
+                                                </div>
+                                                <div class="col-md-8 col-xs-9">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <select id="exceptionMissingReason2" class="form-control">
+                                                                <option value="cityBorn">What city were you born in?</option>
+                                                                <option value="question2Answer2">Question 2</option>
+                                                                <option value="question2Answer3">Question 3</option>
+                                                            </select>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <input type="text" class="form-control" id="secretAnswer2" placeholder="Your Answer">
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
