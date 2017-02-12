@@ -2,7 +2,6 @@
 // Copyright © 2010-2015 The CefSharp Authors. All rights reserved.
 //
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-
 using System;
 using System.Windows.Forms;
 using NoID.Browser.Controls;
@@ -40,31 +39,38 @@ namespace NoID.Browser
             }
 
             browser = new ChromiumWebBrowser(endPath)
-
             {
                 Dock = DockStyle.Fill
             };
             toolStripContainer.ContentPanel.Controls.Add(browser);
 
-            browser.LoadingStateChanged += OnLoadingStateChanged;
-            browser.ConsoleMessage += OnBrowserConsoleMessage;
             browser.StatusMessage += OnBrowserStatusMessage;
             browser.TitleChanged += OnBrowserTitleChanged;
+#if NAVIGATE
+            browser.ConsoleMessage += OnBrowserConsoleMessage;
+            browser.LoadingStateChanged += OnLoadingStateChanged;
             browser.AddressChanged += OnBrowserAddressChanged;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
             var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}, Environment: {3}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion, bitness);
             DisplayOutput(version);
-        }
-
-        private void OnBrowserConsoleMessage(object sender, ConsoleMessageEventArgs args)
-        {
-            DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
+#endif
         }
 
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
         {
             this.InvokeOnUiThreadIfRequired(() => statusLabel.Text = args.Value);
+        }
+
+        private void OnBrowserTitleChanged(object sender, TitleChangedEventArgs args)
+        {
+            this.InvokeOnUiThreadIfRequired(() => Text = args.Title);
+        }
+
+#if NAVIGATE
+        private void OnBrowserConsoleMessage(object sender, ConsoleMessageEventArgs args)
+        {
+            DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
         }
 
         private void OnLoadingStateChanged(object sender, LoadingStateChangedEventArgs args)
@@ -75,16 +81,11 @@ namespace NoID.Browser
             this.InvokeOnUiThreadIfRequired(() => SetIsLoading(!args.CanReload));
         }
 
-        private void OnBrowserTitleChanged(object sender, TitleChangedEventArgs args)
-        {
-            this.InvokeOnUiThreadIfRequired(() => Text = args.Title);
-        }
-
         private void OnBrowserAddressChanged(object sender, AddressChangedEventArgs args)
         {
             this.InvokeOnUiThreadIfRequired(() => urlTextBox.Text = args.Address);
         }
-
+        
         private void SetCanGoBack(bool canGoBack)
         {
             this.InvokeOnUiThreadIfRequired(() => backButton.Enabled = canGoBack);
@@ -94,7 +95,7 @@ namespace NoID.Browser
         {
             this.InvokeOnUiThreadIfRequired(() => forwardButton.Enabled = canGoForward);
         }
-
+        
         private void SetIsLoading(bool isLoading)
         {
             goButton.Text = isLoading ?
@@ -106,7 +107,7 @@ namespace NoID.Browser
 
             HandleToolStripLayout();
         }
-
+        
         public void DisplayOutput(string output)
         {
             this.InvokeOnUiThreadIfRequired(() => outputLabel.Text = output);
@@ -116,7 +117,7 @@ namespace NoID.Browser
         {
             HandleToolStripLayout();
         }
-
+        
         private void HandleToolStripLayout()
         {
             var width = toolStrip1.Width;
@@ -129,7 +130,7 @@ namespace NoID.Browser
             }
             urlTextBox.Width = Math.Max(0, width - urlTextBox.Margin.Horizontal - 18);
         }
-
+        
         private void ExitMenuItemClick(object sender, EventArgs e)
         {
             browser.Dispose();
@@ -151,7 +152,7 @@ namespace NoID.Browser
         {
             browser.Forward();
         }
-
+        
         private void UrlTextBoxKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Enter)
@@ -169,5 +170,6 @@ namespace NoID.Browser
                 browser.Load(url);
             }
         }
+#endif
     }
 }
