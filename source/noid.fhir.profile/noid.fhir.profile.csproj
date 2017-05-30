@@ -62,5 +62,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\noid.demographic.hasher\noid.demographic.hasher.csproj">
+      <Project>{beef4d63-efc2-4134-976c-98ed93188e43}</Project>
+      <Name>noid.demographic.hasher</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
