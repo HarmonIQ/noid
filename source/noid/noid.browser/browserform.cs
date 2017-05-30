@@ -105,8 +105,8 @@ namespace NoID.Browser
                 "Stop" :
                 "Go";
             goButton.Image = isLoading ?
-                Properties.Resources.nav_plain_red :
-                Properties.Resources.nav_plain_green;
+                properties.resources.nav_plain_red :
+                properties.resources.nav_plain_green;
 
             HandleToolStripLayout();
         }
