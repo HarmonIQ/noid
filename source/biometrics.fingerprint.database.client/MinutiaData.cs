@@ -2,18 +2,18 @@
 
 namespace NoID.Biometrics.Fingerprint
 {
-    public enum MinutiaType : byte
+    public enum MinutiaDataType : byte
     {
         Ending = 0,
         Bifurcation = 1,
         Other = 2
     }
 
-    public struct Minutia
+    public struct MinutiaData
     {
         public short X;
         public short Y;
         public byte Direction;
-        public MinutiaType Type;
+        public MinutiaDataType Type;
     }
 }

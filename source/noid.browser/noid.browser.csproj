@@ -82,6 +82,9 @@
       <RequiredTargetFramework>4.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
@@ -123,13 +126,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="app.manifest" />
     <None Include="fonts\fontawesome-webfont.eot" />
     <None Include="fonts\fontawesome-webfont.ttf" />
     <None Include="fonts\fontawesome-webfont.woff" />
     <None Include="fonts\fontawesome-webfont.woff2" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="resources\nav_left_green.png" />
     <None Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="fonts\glyphicons-halflings-regular.ttf" />
@@ -176,15 +183,17 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\noid.demographic.hasher\noid.demographic.hasher.csproj">
+      <Project>{beef4d63-efc2-4134-976c-98ed93188e43}</Project>
+      <Name>noid.demographic.hasher</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\noid.fhir.profile\noid.fhir.profile.csproj">
+      <Project>{8af257d1-3bd7-4709-b5ba-b42bd07a45fb}</Project>
+      <Name>noid.fhir.profile</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\CefSharp.WinForms.53.0.0\build\CefSharp.WinForms.targets" Condition="Exists('..\packages\CefSharp.WinForms.53.0.0\build\CefSharp.WinForms.targets')" />
-  <Import Project="..\packages\cef.redist.x86.3.2785.1482\build\cef.redist.x86.targets" Condition="Exists('..\packages\cef.redist.x86.3.2785.1482\build\cef.redist.x86.targets')" />
-  <Import Project="..\packages\CefSharp.Common.53.0.0\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.53.0.0\build\CefSharp.Common.targets')" />
-  <Import Project="..\packages\cef.redist.x64.3.2785.1482\build\cef.redist.x64.targets" Condition="Exists('..\packages\cef.redist.x64.3.2785.1482\build\cef.redist.x64.targets')" />
-  <Import Project="packages\cef.redist.x64.3.2785.1482\build\cef.redist.x64.targets" Condition="Exists('packages\cef.redist.x64.3.2785.1482\build\cef.redist.x64.targets')" />
-  <Import Project="packages\cef.redist.x86.3.2785.1482\build\cef.redist.x86.targets" Condition="Exists('packages\cef.redist.x86.3.2785.1482\build\cef.redist.x86.targets')" />
-  <Import Project="packages\CefSharp.Common.53.0.0\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.53.0.0\build\CefSharp.Common.targets')" />
-  <Import Project="packages\CefSharp.WinForms.53.0.0\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.53.0.0\build\CefSharp.WinForms.targets')" />
   <PropertyGroup>
     <PostBuildEvent>mkdir  $(TargetDir)html\
 copy $(ProjectDir)*.html $(TargetDir)html\
@@ -204,4 +213,11 @@ copy $(ProjectDir)resources\*.* $(TargetDir)html\resources\</PostBuildEvent>
   <Import Project="..\..\packages\cef.redist.x86.3.2987.1601\build\cef.redist.x86.targets" Condition="Exists('..\..\packages\cef.redist.x86.3.2987.1601\build\cef.redist.x86.targets')" />
   <Import Project="..\..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.targets" Condition="Exists('..\..\packages\CefSharp.Common.57.0.0\build\CefSharp.Common.targets')" />
   <Import Project="..\..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.targets" Condition="Exists('..\..\packages\CefSharp.WinForms.57.0.0\build\CefSharp.WinForms.targets')" />
+  <Import Project="..\..\packages\Liphsoft.Crypto.Argon2.1.0.5\build\Liphsoft.Crypto.Argon2.targets" Condition="Exists('..\..\packages\Liphsoft.Crypto.Argon2.1.0.5\build\Liphsoft.Crypto.Argon2.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Liphsoft.Crypto.Argon2.1.0.5\build\Liphsoft.Crypto.Argon2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Liphsoft.Crypto.Argon2.1.0.5\build\Liphsoft.Crypto.Argon2.targets'))" />
+  </Target>
 </Project>
