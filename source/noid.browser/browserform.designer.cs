@@ -107,7 +107,7 @@
             // backButton
             // 
             this.backButton.Enabled = false;
-            this.backButton.Image = global::NoID.Browser.Properties.Resources.nav_left_green;
+            this.backButton.Image = global::NoID.Browser.properties.resources.nav_left_green;
             this.backButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.backButton.Name = "backButton";
             this.backButton.Size = new System.Drawing.Size(52, 22);
@@ -117,7 +117,7 @@
             // forwardButton
             // 
             this.forwardButton.Enabled = false;
-            this.forwardButton.Image = global::NoID.Browser.Properties.Resources.nav_right_green;
+            this.forwardButton.Image = global::NoID.Browser.properties.resources.nav_right_green;
             this.forwardButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.forwardButton.Name = "forwardButton";
             this.forwardButton.Size = new System.Drawing.Size(70, 22);
@@ -133,7 +133,7 @@
             // 
             // goButton
             // 
-            this.goButton.Image = global::NoID.Browser.Properties.Resources.nav_plain_green;
+            this.goButton.Image = global::NoID.Browser.properties.resources.nav_plain_green;
             this.goButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.goButton.Name = "goButton";
             this.goButton.Size = new System.Drawing.Size(42, 22);
@@ -174,7 +174,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BrowserForm";
             this.Text = "BrowserForm";
-        #if NAVIGATE
+#if NAVIGATE
             this.Controls.Add(this.toolStripContainer);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;

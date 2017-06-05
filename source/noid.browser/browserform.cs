@@ -7,12 +7,14 @@ using System.Windows.Forms;
 using NoID.Browser.Controls;
 using CefSharp.WinForms;
 using CefSharp;
+using NoID.Message;
 
 namespace NoID.Browser
 {
     public partial class BrowserForm : Form
     {
         private readonly ChromiumWebBrowser browser;
+        private PatientProfile patientProfile_FHIR = new PatientProfile();
 
         public BrowserForm()
         {
@@ -27,14 +29,38 @@ namespace NoID.Browser
 
             switch (approle)
             {
-                case "enrollment":
+                case "enrollment-kiosk":
+                    endPath = @pathAppDirectory + @"/html/enrollment-kiosk.html";
+                    break;
+                case "enrollment-pc":
                     endPath = @pathAppDirectory + @"/html/enrollment.html";
                     break;
-                case "identity":
+                case "identity-kiosk":
+                    endPath = @pathAppDirectory + @"/html/identity-kiosk.html";
+                    break;
+                case "identity-pc":
                     endPath = @pathAppDirectory + @"/html/identity.html";
                     break;
+                case "patient-portal-kiosk":
+                    endPath = @pathAppDirectory + @"/html/patient-portal-kiosk.html";
+                    break;
+                case "patient-portal-pc":
+                    endPath = @pathAppDirectory + @"/html/patient-portal-pc.html";
+                    break;
+                case "healthcare-node-admin-kiosk":
+                    endPath = @pathAppDirectory + @"/html/healthcare-node-admin-kiosk.html";
+                    break;
+                case "healthcare-node-admin-pc":
+                    endPath = @pathAppDirectory + @"/html/healthcare-node-admin-pc.html";
+                    break;
+                case "match-hub-admin-kiosk":
+                    endPath = @pathAppDirectory + @"/html/match-hub-admin-kiosk.html";
+                    break;
+                case "match-hub-admin-pc":
+                    endPath = @pathAppDirectory + @"/html/match-hub-admin-pc.html";
+                    break;
                 default:
-                    endPath = @pathAppDirectory + @"/html/enrollment.html";
+                    endPath = @pathAppDirectory + @"/html/enrollment-kiosk.html";
                     break;
             }
 
@@ -105,8 +131,8 @@ namespace NoID.Browser
                 "Stop" :
                 "Go";
             goButton.Image = isLoading ?
-                Properties.Resources.nav_plain_red :
-                Properties.Resources.nav_plain_green;
+                properties.resources.nav_plain_red :
+                properties.resources.nav_plain_green;
 
             HandleToolStripLayout();
         }
