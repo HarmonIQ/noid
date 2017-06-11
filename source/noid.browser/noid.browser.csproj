@@ -76,6 +76,8 @@
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DPUruNet, Version=1.0.0.1, Culture=neutral, PublicKeyToken=7f32ef930fec5e5f" />
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
@@ -85,7 +87,10 @@
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Presentation" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="browserform.cs">
@@ -184,6 +189,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\biometrics.fingerprint.devices\biometrics.devices.csproj">
+      <Project>{ca817c90-afb0-4b29-884c-609c239e1d32}</Project>
+      <Name>biometrics.devices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\biometrics.fingerprint.match.lib\biometrics.fingerprint.match.lib.csproj">
+      <Project>{0f1d6fcb-f813-4e2f-9d6c-de4bd7866233}</Project>
+      <Name>biometrics.fingerprint.match.lib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\noid.demographic.hasher\noid.demographic.hasher.csproj">
       <Project>{beef4d63-efc2-4134-976c-98ed93188e43}</Project>
       <Name>noid.demographic.hasher</Name>
