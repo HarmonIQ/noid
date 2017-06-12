@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright © 2016-2017 NoID Developers. All rights reserved.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 namespace NoID.Biometrics.Managers
 {

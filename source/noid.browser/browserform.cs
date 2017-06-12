@@ -1,6 +1,7 @@
-﻿// Copyright © 2016 NoID Developers. All rights reserved.
-// Copyright © 2010-2015 The CefSharp Authors. All rights reserved.
-//
+﻿// Copyright © 2016-2017 NoID Developers. All rights reserved.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// Copyright © 2010-2017 The CefSharp Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 using System;
 using System.Windows.Forms;
@@ -57,6 +58,7 @@ namespace NoID.Browser
         public BrowserForm()
         {
             InitializeComponent();
+            //TODO: Organization name, NoID-TestA, should be configured during authorization and selected after that.
             noidFHIRProfile = new PatientFHIRProfile("NoID-TestA", healthcareNodeFHIRAddress);
             Afis.Threshold = MATCH_THRESHOLD;
             
