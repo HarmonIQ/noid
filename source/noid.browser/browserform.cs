@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using NoID.Browser.Controls;
 using CefSharp.WinForms;
 using CefSharp;
-using NoID.Message;
+using NoID.FHIR.Profile;
 using NoID.Biometrics.Managers;
 using DPUruNet;
 using SourceAFIS.Simple;
@@ -19,12 +19,14 @@ namespace NoID.Browser
         private static AfisEngine Afis = new AfisEngine();
         private const float MATCH_THRESHOLD = 23;
         private readonly ChromiumWebBrowser browser;
+        //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
         private DigitalPersona biometricDevice;
-        private PatientProfile patientProfile_FHIR = new PatientProfile();
+        private PatientFHIRProfile noidFHIRProfile;
         private Person currentCapture;
         private Person previousCapture;
         private bool match = false;
         private float score = 0;
+        private readonly Uri healthcareNodeFHIRAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString());
 
         //TODO: Abstract CaptureResult so it will work with any fingerprint scanner.
         private void OnCaptured(CaptureResult captureResult)
@@ -55,9 +57,9 @@ namespace NoID.Browser
         public BrowserForm()
         {
             InitializeComponent();
-
+            noidFHIRProfile = new PatientFHIRProfile("NoID-TestA", healthcareNodeFHIRAddress);
             Afis.Threshold = MATCH_THRESHOLD;
-
+            
             Text = "NoID Browser";
             WindowState = FormWindowState.Maximized;
 
