@@ -1,25 +1,67 @@
-﻿// Copyright © 2016 NoID Developers. All rights reserved.
-// Copyright © 2010-2015 The CefSharp Authors. All rights reserved.
-//
+﻿// Copyright © 2016-2017 NoID Developers. All rights reserved.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// Copyright © 2010-2017 The CefSharp Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 using System;
 using System.Windows.Forms;
 using NoID.Browser.Controls;
 using CefSharp.WinForms;
 using CefSharp;
-using NoID.Message;
+using NoID.FHIR.Profile;
+using NoID.Biometrics.Managers;
+using DPUruNet;
+using SourceAFIS.Simple;
 
 namespace NoID.Browser
 {
     public partial class BrowserForm : Form
     {
+        private static AfisEngine Afis = new AfisEngine();
+        private const float MATCH_THRESHOLD = 23;
         private readonly ChromiumWebBrowser browser;
-        private PatientProfile patientProfile_FHIR = new PatientProfile();
+        //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
+        private DigitalPersona biometricDevice;
+        private PatientFHIRProfile noidFHIRProfile;
+        private Person currentCapture;
+        private Person previousCapture;
+        private bool match = false;
+        private float score = 0;
+        private readonly Uri healthcareNodeFHIRAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString());
+
+        //TODO: Abstract CaptureResult so it will work with any fingerprint scanner.
+        private void OnCaptured(CaptureResult captureResult)
+        {
+            DisplayOutput("Captured finger image....");
+            match = false;
+            currentCapture = new Person();
+            // Check capture quality and throw an error if bad.
+            if (!biometricDevice.CheckCaptureResult(captureResult)) return;
+
+            Fingerprint newFingerPrint = new Fingerprint();
+            foreach (Fid.Fiv fiv in captureResult.Data.Views)
+            {
+                newFingerPrint.AsBitmap = ImageUtilities.CreateBitmap(fiv.RawImage, fiv.Width, fiv.Height);
+            }
+            currentCapture.Fingerprints.Add(newFingerPrint);
+            Afis.Extract(currentCapture);
+            if (!(previousCapture is null))
+            {
+                score = Afis.Verify(currentCapture, previousCapture);
+                match = (score > Afis.Threshold);
+            }
+            previousCapture = currentCapture;
+            var matchResults = String.Format("Match: {0}, Score: {1}", match, score);
+            DisplayOutput(matchResults);
+        }
 
         public BrowserForm()
         {
             InitializeComponent();
-
+            //TODO: Organization name, NoID-TestA, should be configured during authorization and selected after that.
+            noidFHIRProfile = new PatientFHIRProfile("NoID-TestA", healthcareNodeFHIRAddress);
+            Afis.Threshold = MATCH_THRESHOLD;
+            
             Text = "NoID Browser";
             WindowState = FormWindowState.Maximized;
 
@@ -68,6 +110,12 @@ namespace NoID.Browser
             {
                 Dock = DockStyle.Fill
             };
+
+            biometricDevice = new DigitalPersona();
+            if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
+            {
+                this.Close();
+            }
 #if NAVIGATE
             toolStripContainer.ContentPanel.Controls.Add(browser);
 #else

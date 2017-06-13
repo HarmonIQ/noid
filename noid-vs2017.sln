@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "biometrics.fingerprint.data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "biometrics.fingerprint.match.lib", "source\biometrics.fingerprint.match.lib\biometrics.fingerprint.match.lib.csproj", "{0F1D6FCB-F813-4E2F-9D6C-DE4BD7866233}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "biometrics.devices", "source\biometrics.fingerprint.devices\biometrics.devices.csproj", "{CA817C90-AFB0-4B29-884C-609C239E1D32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,18 @@ Global
 		{0F1D6FCB-F813-4E2F-9D6C-DE4BD7866233}.Release|x64.Build.0 = Release|x64
 		{0F1D6FCB-F813-4E2F-9D6C-DE4BD7866233}.Release|x86.ActiveCfg = Release|Any CPU
 		{0F1D6FCB-F813-4E2F-9D6C-DE4BD7866233}.Release|x86.Build.0 = Release|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Release|x64.Build.0 = Release|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA817C90-AFB0-4B29-884C-609C239E1D32}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
