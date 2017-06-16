@@ -33,6 +33,7 @@ namespace NoID.Browser
         private bool match = false;
         private float score = 0;
         private readonly Uri healthcareNodeFHIRAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString());
+        private readonly string healthcareNodeWebAddress = System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString();
 
         //TODO: Abstract CaptureResult so it will work with any fingerprint scanner.
         private void OnCaptured(CaptureResult captureResult)
@@ -98,45 +99,44 @@ namespace NoID.Browser
             
             Text = "NoID Browser";
             WindowState = FormWindowState.Maximized;
-
-            string pathAppDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            
             string endPath = "";
             string approle = System.Configuration.ConfigurationManager.AppSettings["approle"].ToString();
 
             switch (approle)
             {
                 case "enrollment-kiosk":
-                    endPath = @pathAppDirectory + @"/html/enrollment-kiosk.html";
+                    endPath = healthcareNodeWebAddress + "/enrollment-kiosk.html";
                     break;
                 case "enrollment-pc":
-                    endPath = @pathAppDirectory + @"/html/enrollment.html";
+                    endPath = endPath = healthcareNodeWebAddress + "/enrollment.html";
                     break;
                 case "identity-kiosk":
-                    endPath = @pathAppDirectory + @"/html/identity-kiosk.html";
+                    endPath = endPath = healthcareNodeWebAddress + "/identity-kiosk.html";
                     break;
                 case "identity-pc":
-                    endPath = @pathAppDirectory + @"/html/identity.html";
+                    endPath = healthcareNodeWebAddress + "/identity.html";
                     break;
                 case "patient-portal-kiosk":
-                    endPath = @pathAppDirectory + @"/html/patient-portal-kiosk.html";
+                    endPath = healthcareNodeWebAddress + "/patient-portal-kiosk.html";
                     break;
                 case "patient-portal-pc":
-                    endPath = @pathAppDirectory + @"/html/patient-portal-pc.html";
+                    endPath = healthcareNodeWebAddress + "patient-portal-pc.html";
                     break;
                 case "healthcare-node-admin-kiosk":
-                    endPath = @pathAppDirectory + @"/html/healthcare-node-admin-kiosk.html";
+                    endPath = healthcareNodeWebAddress + "/healthcare-node-admin-kiosk.html";
                     break;
                 case "healthcare-node-admin-pc":
-                    endPath = @pathAppDirectory + @"/html/healthcare-node-admin-pc.html";
+                    endPath = healthcareNodeWebAddress + "/healthcare-node-admin-pc.html";
                     break;
                 case "match-hub-admin-kiosk":
-                    endPath = @pathAppDirectory + @"/html/match-hub-admin-kiosk.html";
+                    endPath = healthcareNodeWebAddress + "/match-hub-admin-kiosk.html";
                     break;
                 case "match-hub-admin-pc":
-                    endPath = @pathAppDirectory + @"/html/match-hub-admin-pc.html";
+                    endPath = healthcareNodeWebAddress + "/match-hub-admin-pc.html";
                     break;
                 default:
-                    endPath = @pathAppDirectory + @"/html/enrollment-kiosk.html";
+                    endPath = healthcareNodeWebAddress + "/enrollment.html";
                     break;
             }
 
