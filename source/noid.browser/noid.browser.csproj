@@ -73,7 +73,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationIcon>curve_points.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DPUruNet, Version=1.0.0.1, Culture=neutral, PublicKeyToken=7f32ef930fec5e5f" />
@@ -160,6 +160,7 @@
     <None Include="resources\chromium-256.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="curve_points.ico" />
     <Content Include="identity.html" />
     <Content Include="enrollment.html" />
     <Content Include="favicon.ico" />
