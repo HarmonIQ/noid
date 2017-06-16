@@ -2,14 +2,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+using System;
 using ProtoBuf;
 using System.IO;
 
 namespace NoID.FHIR.Profile
 {
     /// <summary cref="FingerPrintMinutiaSerialize">  
-    /// Lightweight object used for transport and persisting a fingerprint minutia.
-    /// </summary>  
+    /// Lightweight fingerprint minutia objected used for persisting.
+    /// </summary>
     public abstract class FingerPrintMinutiaSerialize
     {
         public byte[] Serialize()
@@ -23,41 +24,31 @@ namespace NoID.FHIR.Profile
             return result;
         }
     }
+
     /// <summary cref="FingerPrintMinutia">  
-    /// Lightweight object used for transport and persisting a fingerprint minutia template.
-    /// </summary>  
+    /// Lightweight fingerprint minutia objected used for persisting.
+    /// </summary>
     [ProtoContract]
     public class FingerPrintMinutia : FingerPrintMinutiaSerialize
     {
-        public enum MinutiaType
-        {
-            Ending = 0,
-            Bifurcation = 1,
-            Other = 2
-        }
-
         [ProtoMember(1)]
         public short PositionX { get; private set; }
         [ProtoMember(2)]
         public short PositionY { get; private set; }
         [ProtoMember(3)]
-        public short Direction { get; private set; }
+        public byte Direction { get; private set; }
         [ProtoMember(4)]
-        public MinutiaType Type { get; private set; }  //Ending = 0,Bifurcation = 1,Other = 2
-
-        [ProtoMember(5)]
-        public string PatientPointer { get; private set; }
+        public byte Type { get; private set; }  //Ending = 0,Bifurcation = 1,Other = 2
 
         public FingerPrintMinutia()
         { }
 
-        public FingerPrintMinutia(short x, short y, short direction, MinutiaType type, string referencePointer)
+        public FingerPrintMinutia(short x, short y, byte direction, byte type)
         {
             PositionX = x;
             PositionY = y;
             Direction = direction;
             Type = type;
-            PatientPointer = referencePointer;
         }
 
         public static FingerPrintMinutia Deserialize(byte[] message)
