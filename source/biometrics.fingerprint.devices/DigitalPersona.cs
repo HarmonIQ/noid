@@ -79,7 +79,7 @@ namespace NoID.Biometrics.Managers
         public Exception Exception
         {
             get { return _exception; }
-            set { _exception = value; }
+            private set { _exception = value; }
         }
         public Reader CurrentReader
         {

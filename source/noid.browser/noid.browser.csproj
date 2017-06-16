@@ -73,7 +73,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationIcon>curve_points.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DPUruNet, Version=1.0.0.1, Culture=neutral, PublicKeyToken=7f32ef930fec5e5f" />
@@ -154,19 +154,14 @@
     <None Include="resources\nav_plain_red.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\nav_right_green.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="resources\chromium-256.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="curve_points.ico" />
     <Content Include="identity.html" />
     <Content Include="enrollment.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
-    <Content Include="resources\LeftHand.png" />
-    <Content Include="resources\RightHand.png" />
-    <Content Include="resources\ScanInstruction.png" />
     <Content Include="scripts\bootstrap.min.js" />
     <Content Include="scripts\jquery-1.11.1.min.js" />
     <Content Include="scripts\noid_enrollment.js" />

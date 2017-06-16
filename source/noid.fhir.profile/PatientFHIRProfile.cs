@@ -12,6 +12,23 @@ namespace NoID.FHIR.Profile
 {
     public class PatientFHIRProfile
     {
+        //TODO: add right and left feet
+        public enum CaptureSiteSnoMedCode : uint
+        {
+            IndexFinger = 48856004, // SnoMedCT Description: Skin structure of palmar surface of index finger
+            MiddleFinger = 65271000, // SnoMedCT Description: Skin structure of palmar surface of middle finger
+            RingFinger = 28404007, // SnoMedCT Description: Skin structure of palmar surface of ring finger
+            LittleFinger = 43825009, // SnoMedCT Description: Skin structure of palmar surface of little finger
+            Thumb = 72331001 // SnoMedCT Description: Skin structure of palmar surface of thumb
+        }
+
+        public enum LateralitySnoMedCode : uint
+        {
+            Left = 419161000, // SnoMedCT Description: Unilateral left
+            Right = 419165000, //  SnoMedCT Description: Unilateral right
+            Bilateral = 51440002 // SnoMedCT Description: Bilateral
+        }
+
         // Argon2 Hash parameters. 
         // Currently a protocol level setting for now but could be a setting defined per healthcare and/or match hub.
         // TODO: increase the difficulty of the hash parameters after the prototype.
@@ -23,6 +40,16 @@ namespace NoID.FHIR.Profile
 
         //TODO: load and use saltList from matching hubs
         private string hashSalt = "C560325F";
+
+        private string FingerTipSnoMedCTCode(CaptureSiteSnoMedCode fingerTip)
+        {
+            return fingerTip.ToString();
+        }
+
+        private string SnoMedCTLaterality(LateralitySnoMedCode laterality)
+        {
+            return laterality.ToString();
+        }
 
         public PatientFHIRProfile(string organizationName, Uri fhirAddress)
         {
@@ -52,13 +79,13 @@ namespace NoID.FHIR.Profile
         private string _emailAddress = "";
         private bool   _twinIndicator = false;
         private Element _multipleBirth;
-        private string _patientCertificate;
+        private string _patientCertificateID;
 
-        //TODO: store captured finger SnoMedCT code with minutias.
-        private List<FingerPrintMinutia> _leftFingerPrints;
-        private List<FingerPrintMinutia> _rightFingerPrints;
-        private List<FingerPrintMinutia> _alternate1FingerPrints;
-        private List<FingerPrintMinutia> _alternate2FingerPrints;
+        //TODO: store captured finger SnoMedCT code with minutias
+        private FingerPrintMinutias _leftFingerPrints;
+        private FingerPrintMinutias _rightFingerPrints;
+        private FingerPrintMinutias _leftAlternateFingerPrints;
+        private FingerPrintMinutias _rightAlternateFingerPrints;
 
         public Uri FHIRAddress
         {
@@ -265,7 +292,19 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_multipleBirth.ToString(), hashSalt, argonParams); }
         }
 
-        public List<FingerPrintMinutia> LeftFingerPrints
+        public string PatientCertificateID
+        {
+            get { return _patientCertificateID; }
+            set { _patientCertificateID = value; }
+        }
+
+        public string PatientCertificateIDHash
+        {
+            get { return HashWriter.Hash(_patientCertificateID, hashSalt, argonParams); }
+        }
+
+        
+        public FingerPrintMinutias LeftFingerPrints
         {
             get { return _leftFingerPrints; }
             set { _leftFingerPrints = value; }
@@ -276,7 +315,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_leftFingerPrints.ToString(), hashSalt, argonParams); }
         }
 
-        public List<FingerPrintMinutia> RightFingerPrints
+        public FingerPrintMinutias RightFingerPrints
         {
             get { return _rightFingerPrints; }
             set { _rightFingerPrints = value; }
@@ -287,37 +326,79 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_rightFingerPrints.ToString(), hashSalt, argonParams); }
         }
 
-        public List<FingerPrintMinutia> Alternate1FingerPrints
+        public FingerPrintMinutias LeftAlternateFingerPrints
         {
-            get { return _alternate1FingerPrints; }
-            set { _alternate1FingerPrints = value; }
+            get { return _leftAlternateFingerPrints; }
+            set { _leftAlternateFingerPrints = value; }
         }
 
-        public string Alternate1FingerPrintHash
+        public string LeftAlternateFingerPrintsHash
         {
-            get { return HashWriter.Hash(_alternate1FingerPrints.ToString(), hashSalt, argonParams); }
+            get { return HashWriter.Hash(_leftAlternateFingerPrints.ToString(), hashSalt, argonParams); }
         }
 
-        public List<FingerPrintMinutia> Alternate2FingerPrints
+        public FingerPrintMinutias RightAlternateFingerPrints
         {
-            get { return _alternate2FingerPrints; }
-            set { _alternate2FingerPrints = value; }
+            get { return _rightAlternateFingerPrints; }
+            set { _rightAlternateFingerPrints = value; }
         }
 
-        public string Alternate2FingerPrintHash
+        public string RightAlternateFingerPrintsHash
         {
-            get { return HashWriter.Hash(_alternate2FingerPrints.ToString(), hashSalt, argonParams); }
+            get { return HashWriter.Hash(_rightAlternateFingerPrints.ToString(), hashSalt, argonParams); }
         }
 
-        public string PatientCertificate
+        public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
         {
-            get { return _patientCertificate; }
-            set { _patientCertificate = value; }
+            try   
+            {
+                LateralitySnoMedCode lateralitySnoMedCode = patientFingerprintMinutia.LateralitySnoMedCode;
+                CaptureSiteSnoMedCode captureSiteSnoMedCode = patientFingerprintMinutia.CaptureSiteSnoMedCode;
+
+                switch (captureSiteSnoMedCode)
+                {
+                    case CaptureSiteSnoMedCode.IndexFinger:
+                        {
+                            if (lateralitySnoMedCode == LateralitySnoMedCode.Left)
+                            {
+                                _leftFingerPrints = patientFingerprintMinutia;
+                            }
+                            else if (lateralitySnoMedCode == LateralitySnoMedCode.Right)
+                            {
+                                _rightFingerPrints = patientFingerprintMinutia;
+                            }
+                            break;
+                        }
+                    case CaptureSiteSnoMedCode.MiddleFinger:
+                    case CaptureSiteSnoMedCode.RingFinger:
+                    case CaptureSiteSnoMedCode.LittleFinger:
+                    case CaptureSiteSnoMedCode.Thumb:
+                        {
+                            if (lateralitySnoMedCode == LateralitySnoMedCode.Left)
+                            {
+                                _leftAlternateFingerPrints = patientFingerprintMinutia;
+                            }
+                            else if (lateralitySnoMedCode == LateralitySnoMedCode.Right)
+                            {
+                                _rightAlternateFingerPrints = patientFingerprintMinutia;
+                            }
+                            break;
+                        }
+                    default:
+                        return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+                return false;
+            }
+            return true;
         }
 
         public string PatientCertificateHash
         {
-            get { return HashWriter.Hash(_patientCertificate.ToString(), hashSalt, argonParams); }
+            get { return HashWriter.Hash(_patientCertificateID.ToString(), hashSalt, argonParams); }
         }
 
         public Patient CreateFHIRProfile()
@@ -328,7 +409,7 @@ namespace NoID.FHIR.Profile
                 pt = new Patient();
                 // Add patient certificate hash.
                 Identifier id = new Identifier();
-                id.Value = PatientCertificate; //hash of local patient certificate
+                id.Value = PatientCertificateID; //hash of local patient certificate
                 pt.Identifier = new List<Identifier> { id };
                 // Add healthcare node certificate hash.
                 pt.ManagingOrganization.Identifier = new Identifier("", PatientCertificateHash);
@@ -389,14 +470,14 @@ namespace NoID.FHIR.Profile
                 // Add fingerprint minutia points to FHIR message
                 Media leftFingerprintMedia = null;
                 Media rightFingerprintMedia = null;
-                Media alt1FingerprintMedia = null;
-                Media alt2FingerprintMedia = null;
+                Media leftAlternateFingerPrints = null;
+                Media rightAlternateFingerPrints = null;
                 Extension extMinutiaPositionX;
                 Extension extMinutiaPositionY;
                 Extension extMinutiaDirection;
                 Extension extMinutiaType;
 
-                foreach (var Minutia in LeftFingerPrints)
+                foreach (var Minutia in LeftFingerPrints.Minutiae)
                 {
                     if (leftFingerprintMedia is null) {
                         leftFingerprintMedia = new Media();
@@ -417,7 +498,7 @@ namespace NoID.FHIR.Profile
                     leftFingerprintMedia.Extension.Add(extMinutiaType);
                 }
 
-                foreach (var Minutia in LeftFingerPrints)
+                foreach (var Minutia in RightFingerPrints.Minutiae)
                 {
                     if (rightFingerprintMedia is null)
                     {
@@ -439,11 +520,11 @@ namespace NoID.FHIR.Profile
                     rightFingerprintMedia.Extension.Add(extMinutiaType);
                 }
 
-                foreach (var Minutia in Alternate1FingerPrints)
+                foreach (var Minutia in LeftAlternateFingerPrints.Minutiae)
                 {
-                    if (alt1FingerprintMedia is null)
+                    if (leftAlternateFingerPrints is null)
                     {
-                        alt1FingerprintMedia = new Media();
+                        leftAlternateFingerPrints = new Media();
                     }
 
                     extMinutiaPositionX = new Extension();
@@ -455,17 +536,17 @@ namespace NoID.FHIR.Profile
                     extMinutiaType = new Extension();
                     extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
 
-                    alt1FingerprintMedia.Extension.Add(extMinutiaPositionX);
-                    alt1FingerprintMedia.Extension.Add(extMinutiaPositionY);
-                    alt1FingerprintMedia.Extension.Add(extMinutiaDirection);
-                    alt1FingerprintMedia.Extension.Add(extMinutiaType);
+                    leftAlternateFingerPrints.Extension.Add(extMinutiaPositionX);
+                    leftAlternateFingerPrints.Extension.Add(extMinutiaPositionY);
+                    leftAlternateFingerPrints.Extension.Add(extMinutiaDirection);
+                    leftAlternateFingerPrints.Extension.Add(extMinutiaType);
                 }
 
-                foreach (var Minutia in Alternate2FingerPrints)
+                foreach (var Minutia in RightAlternateFingerPrints.Minutiae)
                 {
-                    if (alt2FingerprintMedia is null)
+                    if (rightAlternateFingerPrints is null)
                     {
-                        alt2FingerprintMedia = new Media();
+                        rightAlternateFingerPrints = new Media();
                     }
 
                     extMinutiaPositionX = new Extension();
@@ -477,10 +558,10 @@ namespace NoID.FHIR.Profile
                     extMinutiaType = new Extension();
                     extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
 
-                    alt2FingerprintMedia.Extension.Add(extMinutiaPositionX);
-                    alt2FingerprintMedia.Extension.Add(extMinutiaPositionY);
-                    alt2FingerprintMedia.Extension.Add(extMinutiaDirection);
-                    alt2FingerprintMedia.Extension.Add(extMinutiaType);
+                    rightAlternateFingerPrints.Extension.Add(extMinutiaPositionX);
+                    rightAlternateFingerPrints.Extension.Add(extMinutiaPositionY);
+                    rightAlternateFingerPrints.Extension.Add(extMinutiaDirection);
+                    rightAlternateFingerPrints.Extension.Add(extMinutiaType);
                 }
             }
             catch (Exception ex)
@@ -495,8 +576,8 @@ namespace NoID.FHIR.Profile
         {
             try
             {
-                var endpoint = FHIRAddress;
-                var client = new FhirClient(endpoint);
+                Uri endpoint = FHIRAddress;
+                FhirClient client = new FhirClient(endpoint);
                 Patient pt = CreateFHIRProfile();
                 var newpatient = client.Create(pt);
             }
@@ -510,8 +591,8 @@ namespace NoID.FHIR.Profile
 
         public bool TestEnrollmentSave()
         {
-            var endpoint = FHIRAddress;
-            var client = new FhirClient(endpoint);
+            Uri endpoint = FHIRAddress;
+            FhirClient client = new FhirClient(endpoint);
             Patient newPatient = CreateFHIRProfile();
             if (!(newPatient is null))
             {
