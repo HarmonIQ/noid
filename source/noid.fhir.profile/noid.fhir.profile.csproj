@@ -60,6 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FingerPrintMinutia.cs" />
+    <Compile Include="FingerprintMinutiaConvertor.cs" />
+    <Compile Include="FingerPrintMinutias.cs" />
     <Compile Include="PatientFHIRProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -67,6 +69,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\biometrics.fingerprint.match.lib\biometrics.fingerprint.match.lib.csproj">
+      <Project>{0f1d6fcb-f813-4e2f-9d6c-de4bd7866233}</Project>
+      <Name>biometrics.fingerprint.match.lib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\noid.demographic.hasher\noid.demographic.hasher.csproj">
       <Project>{beef4d63-efc2-4134-976c-98ed93188e43}</Project>
       <Name>noid.demographic.hasher</Name>
