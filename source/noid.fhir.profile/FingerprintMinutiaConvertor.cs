@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using SourceAFIS.Templates;
+using SourceAFIS.Simple;
+using static SourceAFIS.Templates.TemplateBuilder;
 
 namespace NoID.FHIR.Profile
 {
@@ -24,9 +26,21 @@ namespace NoID.FHIR.Profile
             return listFingerPrintMinutia;
         }
 
-        static Template ConvertTemplate(FingerPrintMinutias template, ulong certificateID, ushort fingerOrdinal)
+        public static Template ConvertFingerPrintMinutias(FingerPrintMinutias fingerPrintMinutias)
         {
+            List <Minutia> listMinutia = new List<Minutia>();
+            foreach (FingerPrintMinutia fingerPrintMinutia in fingerPrintMinutias.Minutiae)
+            {
+                Minutia newMinutiaPoint = new Minutia();
+                newMinutiaPoint.Position.X = fingerPrintMinutia.PositionX;
+                newMinutiaPoint.Position.Y = fingerPrintMinutia.PositionY;
+                newMinutiaPoint.Direction = fingerPrintMinutia.Direction;
+                newMinutiaPoint.Type = (MinutiaType)fingerPrintMinutia.Type;
+
+                listMinutia.Add(newMinutiaPoint);
+            }
             TemplateBuilder tb = new TemplateBuilder();
+            tb.Minutiae = listMinutia;
             Template convertedTemplate = new Template(tb);
 
             return convertedTemplate;
