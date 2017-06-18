@@ -156,17 +156,10 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="app.manifest" />
-    <None Include="fonts\fontawesome-webfont.eot" />
-    <None Include="fonts\fontawesome-webfont.ttf" />
-    <None Include="fonts\fontawesome-webfont.woff" />
-    <None Include="fonts\fontawesome-webfont.woff2" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="resources\nav_left_green.png" />
-    <None Include="fonts\glyphicons-halflings-regular.eot" />
-    <None Include="fonts\glyphicons-halflings-regular.ttf" />
-    <None Include="fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\nav_plain_green.png" />
@@ -179,18 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="curve_points.ico" />
-    <Content Include="identity.html" />
-    <Content Include="enrollment.html" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\fontawesome-webfont.svg" />
-    <Content Include="scripts\bootstrap.min.js" />
-    <Content Include="scripts\jquery-1.11.1.min.js" />
-    <Content Include="scripts\noid_enrollment.js" />
-    <Content Include="style\bootstrap.min.css" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="style\font-awesome.min.css" />
-    <Content Include="style\noid_identity.css" />
-    <Content Include="style\noid_enrollment.css" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
