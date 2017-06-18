@@ -35,6 +35,8 @@ namespace NoID.Browser
         private Uri healthcareNodeFHIRAddress;
         private string healthcareNodeWebAddress;
         private string healthcareNodeChainVerifyAddress;
+        private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        private readonly string NoIDServicePassword = System.Configuration.ConfigurationManager.AppSettings["NoIDServicePassword"].ToString();
 
         //TODO: Abstract CaptureResult so it will work with any fingerprint scanner.
         private void OnCaptured(CaptureResult captureResult)
