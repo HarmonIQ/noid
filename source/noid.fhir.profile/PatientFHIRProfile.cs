@@ -12,6 +12,8 @@ namespace NoID.FHIR.Profile
 {
     public class PatientFHIRProfile
     {
+        
+
         //TODO: add right and left feet
         public enum CaptureSiteSnoMedCode : uint
         {
@@ -55,6 +57,7 @@ namespace NoID.FHIR.Profile
         {
             _fhirAddress = fhirAddress;
             _organizationName = organizationName;
+            NewSession();
         }
 
         private readonly Uri _fhirAddress;
@@ -80,6 +83,7 @@ namespace NoID.FHIR.Profile
         private bool   _twinIndicator = false;
         private Element _multipleBirth;
         private string _patientCertificateID;
+        private string _sessionID;
 
         //TODO: store captured finger SnoMedCT code with minutias
         private FingerPrintMinutias _leftFingerPrints;
@@ -127,6 +131,7 @@ namespace NoID.FHIR.Profile
             get { return _lastName;}
             set { _lastName = value; }
         }
+
         public string LastNameHash
         {
             get { return HashWriter.Hash(_lastName, hashSalt, argonParams); }
@@ -303,7 +308,6 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_patientCertificateID, hashSalt, argonParams); }
         }
 
-        
         public FingerPrintMinutias LeftFingerPrints
         {
             get { return _leftFingerPrints; }
@@ -346,6 +350,11 @@ namespace NoID.FHIR.Profile
         public string RightAlternateFingerPrintsHash
         {
             get { return HashWriter.Hash(_rightAlternateFingerPrints.ToString(), hashSalt, argonParams); }
+        }
+
+        public void NewSession()
+        {
+            _sessionID = HashWriter.Hash(Guid.NewGuid().ToString(), hashSalt, argonParams);
         }
 
         public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
@@ -400,8 +409,12 @@ namespace NoID.FHIR.Profile
         {
             get { return HashWriter.Hash(_patientCertificateID.ToString(), hashSalt, argonParams); }
         }
+        public string SessionID
+        {
+            get { return _sessionID; }
+        }
 
-        public Patient CreateFHIRProfile()
+        public Patient CreateFHIRPatientProfile()
         {
             Patient pt;
             try
@@ -412,6 +425,8 @@ namespace NoID.FHIR.Profile
                 id.Value = PatientCertificateID; //hash of local patient certificate
                 pt.Identifier = new List<Identifier> { id };
                 // Add healthcare node certificate hash.
+                ResourceReference managingOrganization = new ResourceReference("1.2.1.3.4", OrganizationName);
+                pt.ManagingOrganization = managingOrganization;
                 pt.ManagingOrganization.Identifier = new Identifier("", PatientCertificateHash);
                 // Add patient demographics
                 pt.Language = Language;
@@ -465,104 +480,6 @@ namespace NoID.FHIR.Profile
                 {
                     pt.Contact.Add(contact);
                 }
-
-                // Add biometrics to FHIR messages
-                // Add fingerprint minutia points to FHIR message
-                Media leftFingerprintMedia = null;
-                Media rightFingerprintMedia = null;
-                Media leftAlternateFingerPrints = null;
-                Media rightAlternateFingerPrints = null;
-                Extension extMinutiaPositionX;
-                Extension extMinutiaPositionY;
-                Extension extMinutiaDirection;
-                Extension extMinutiaType;
-
-                foreach (var Minutia in LeftFingerPrints.Minutiae)
-                {
-                    if (leftFingerprintMedia is null) {
-                        leftFingerprintMedia = new Media();
-                    }
-                    
-                    extMinutiaPositionX = new Extension();
-                    extMinutiaPositionX.Value.SetIntegerExtension("PositionX", (int)Minutia.PositionX);
-                    extMinutiaPositionY = new Extension();
-                    extMinutiaPositionY.Value.SetIntegerExtension("PositionY", (int)Minutia.PositionY);
-                    extMinutiaDirection = new Extension();
-                    extMinutiaDirection.Value.SetIntegerExtension("Direction", (int)Minutia.Direction);
-                    extMinutiaType = new Extension();
-
-                    extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
-                    leftFingerprintMedia.Extension.Add(extMinutiaPositionX);
-                    leftFingerprintMedia.Extension.Add(extMinutiaPositionY);
-                    leftFingerprintMedia.Extension.Add(extMinutiaDirection);
-                    leftFingerprintMedia.Extension.Add(extMinutiaType);
-                }
-
-                foreach (var Minutia in RightFingerPrints.Minutiae)
-                {
-                    if (rightFingerprintMedia is null)
-                    {
-                        rightFingerprintMedia = new Media();
-                    }
-
-                    extMinutiaPositionX = new Extension();
-                    extMinutiaPositionX.Value.SetIntegerExtension("PositionX", (int)Minutia.PositionX);
-                    extMinutiaPositionY = new Extension();
-                    extMinutiaPositionY.Value.SetIntegerExtension("PositionY", (int)Minutia.PositionY);
-                    extMinutiaDirection = new Extension();
-                    extMinutiaDirection.Value.SetIntegerExtension("Direction", (int)Minutia.Direction);
-                    extMinutiaType = new Extension();
-                    extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
-
-                    rightFingerprintMedia.Extension.Add(extMinutiaPositionX);
-                    rightFingerprintMedia.Extension.Add(extMinutiaPositionY);
-                    rightFingerprintMedia.Extension.Add(extMinutiaDirection);
-                    rightFingerprintMedia.Extension.Add(extMinutiaType);
-                }
-
-                foreach (var Minutia in LeftAlternateFingerPrints.Minutiae)
-                {
-                    if (leftAlternateFingerPrints is null)
-                    {
-                        leftAlternateFingerPrints = new Media();
-                    }
-
-                    extMinutiaPositionX = new Extension();
-                    extMinutiaPositionX.Value.SetIntegerExtension("PositionX", (int)Minutia.PositionX);
-                    extMinutiaPositionY = new Extension();
-                    extMinutiaPositionY.Value.SetIntegerExtension("PositionY", (int)Minutia.PositionY);
-                    extMinutiaDirection = new Extension();
-                    extMinutiaDirection.Value.SetIntegerExtension("Direction", (int)Minutia.Direction);
-                    extMinutiaType = new Extension();
-                    extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
-
-                    leftAlternateFingerPrints.Extension.Add(extMinutiaPositionX);
-                    leftAlternateFingerPrints.Extension.Add(extMinutiaPositionY);
-                    leftAlternateFingerPrints.Extension.Add(extMinutiaDirection);
-                    leftAlternateFingerPrints.Extension.Add(extMinutiaType);
-                }
-
-                foreach (var Minutia in RightAlternateFingerPrints.Minutiae)
-                {
-                    if (rightAlternateFingerPrints is null)
-                    {
-                        rightAlternateFingerPrints = new Media();
-                    }
-
-                    extMinutiaPositionX = new Extension();
-                    extMinutiaPositionX.Value.SetIntegerExtension("PositionX", (int)Minutia.PositionX);
-                    extMinutiaPositionY = new Extension();
-                    extMinutiaPositionY.Value.SetIntegerExtension("PositionY", (int)Minutia.PositionY);
-                    extMinutiaDirection = new Extension();
-                    extMinutiaDirection.Value.SetIntegerExtension("Direction", (int)Minutia.Direction);
-                    extMinutiaType = new Extension();
-                    extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
-
-                    rightAlternateFingerPrints.Extension.Add(extMinutiaPositionX);
-                    rightAlternateFingerPrints.Extension.Add(extMinutiaPositionY);
-                    rightAlternateFingerPrints.Extension.Add(extMinutiaDirection);
-                    rightAlternateFingerPrints.Extension.Add(extMinutiaType);
-                }
             }
             catch (Exception ex)
             {
@@ -572,33 +489,98 @@ namespace NoID.FHIR.Profile
             return pt;
         }
 
-        public bool SendFHIRProfile()
+        public bool SendFHIRPatientProfile(Patient pt = null)
         {
             try
             {
-                Uri endpoint = FHIRAddress;
-                FhirClient client = new FhirClient(endpoint);
-                Patient pt = CreateFHIRProfile();
-                var newpatient = client.Create(pt);
+                FhirClient client = new FhirClient(FHIRAddress);
+                if (pt is null)
+                {
+                    pt = CreateFHIRPatientProfile();
+                }
+                Patient newpatient = client.Create(pt);
             }
             catch (Exception ex)
             {
-                _exception = new Exception("PatientProfile.SendFHIRProfile() failed to send to FHIR server: " + ex.Message);
+                _exception = new Exception("PatientProfile.SendFHIRPatientProfile() failed to send to FHIR server: " + ex.Message);
                 return false;
             }
             return true;
         }
 
+        public bool SendFHIRMediaProfile(Media media)
+        {
+            try
+            {
+                FhirClient client = new FhirClient(FHIRAddress);
+                client.Create(media);
+            }
+            catch (Exception ex)
+            {
+                _exception = new Exception("PatientProfile.SendFHIRMediaProfile() failed to send to FHIR server: " + ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints)
+        {
+            Media FingerPrintMedia = null; 
+            try
+            {
+                if (!(fingerPrints is null))
+                {
+                    FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
+                    //TODO: Add capture body location
+                    FingerPrintMedia.Identifier = new List<Identifier>();
+                    Identifier idSession;
+                    Identifier idPatientCertificate;
+                    if (SessionID.Length > 0)
+                    {
+                        idSession = new Identifier("SessionID", SessionID);
+                        FingerPrintMedia.Identifier.Add(idSession);
+                    }
+                    if (PatientCertificateID.Length > 0)
+                    {
+                        idPatientCertificate = new Identifier("PatientCertificateID", PatientCertificateID);
+                        FingerPrintMedia.Identifier.Add(idPatientCertificate);
+                    }
+
+                    foreach (var Minutia in fingerPrints.Minutiae)
+                    {
+                        if (FingerPrintMedia is null)
+                        {
+                            FingerPrintMedia = new Media();
+                        }
+
+                        Extension extFingerPrintMedia = Utilities.FingerPrintMediaExtension(
+                            Minutia.PositionX.ToString(),
+                            Minutia.PositionY.ToString(),
+                            Minutia.Direction.ToString(),
+                            Minutia.Type.ToString()
+                        );
+                        
+                        FingerPrintMedia.AddExtension("Biometrics", extFingerPrintMedia);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+            return FingerPrintMedia;
+        }
+        
         public bool TestEnrollmentSave()
         {
             Uri endpoint = FHIRAddress;
             FhirClient client = new FhirClient(endpoint);
-            Patient newPatient = CreateFHIRProfile();
+            Patient newPatient = CreateFHIRPatientProfile();
             if (!(newPatient is null))
             {
                 try
                 {
-                    client.Create(CreateFHIRProfile());
+                    client.Create(newPatient);
                 }
                 catch (Exception ex)
                 {

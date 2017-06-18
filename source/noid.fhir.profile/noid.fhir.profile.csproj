@@ -64,6 +64,7 @@
     <Compile Include="FingerPrintMinutias.cs" />
     <Compile Include="PatientFHIRProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

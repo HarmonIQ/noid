@@ -68,9 +68,8 @@ namespace NoID.Browser
                 PatientFHIRProfile.LateralitySnoMedCode laterality = PatientFHIRProfile.LateralitySnoMedCode.Left;
                 PatientFHIRProfile.CaptureSiteSnoMedCode captureSiteSnoMedCode = PatientFHIRProfile.CaptureSiteSnoMedCode.IndexFinger;
 
-                noidFHIRProfile = new PatientFHIRProfile(organizationName, healthcareNodeFHIRAddress);
-                string newID = Guid.NewGuid().ToString();
-                
+                noidFHIRProfile.PatientCertificateID = Guid.NewGuid().ToString();
+
                 Afis.ExtractFingerprint(newFingerPrint);
                 Template tmpNew = newFingerPrint.GetTemplate();
                 Afis.ExtractFingerprint(previousFingerPrint);
@@ -78,15 +77,14 @@ namespace NoID.Browser
                 FingerPrintMinutias fingerprintMinutia;
                 if (tmpNew.Minutiae.Length >= tmpPrevious.Minutiae.Length)
                 {
-                     fingerprintMinutia = new FingerPrintMinutias(newID, tmpNew, laterality, captureSiteSnoMedCode);
+                     fingerprintMinutia = new FingerPrintMinutias(noidFHIRProfile.PatientCertificateID, tmpNew, laterality, captureSiteSnoMedCode);
                 }
                 else
                 {
-                    fingerprintMinutia = new FingerPrintMinutias(newID, tmpPrevious, laterality, captureSiteSnoMedCode);
+                    fingerprintMinutia = new FingerPrintMinutias(noidFHIRProfile.PatientCertificateID, tmpPrevious, laterality, captureSiteSnoMedCode);
                 }
                 
-                noidFHIRProfile.PatientCertificateID = newID;
-                Media media = noidFHIRProfile.CreateFHIRMediaProfile(fingerprintMinutia);
+                Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia);
                 noidFHIRProfile.SendFHIRMediaProfile(media);
             }
             previousCapture = currentCapture;
