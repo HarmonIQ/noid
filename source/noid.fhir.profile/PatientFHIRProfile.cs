@@ -7,11 +7,33 @@ using System.Collections.Generic;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
 using NoID.Cryptographic.Hash;
+using System.IO;
+using ProtoBuf;
 
 namespace NoID.FHIR.Profile
 {
-    public class PatientFHIRProfile
+
+    /// <summary cref="PatientFHIRProfileSerialize">  
+    /// Lightweight NoID Patient FHIR profile
+    /// </summary>  
+    [ProtoContract]
+    public abstract class PatientFHIRProfileSerialize
     {
+        public byte[] Serialize()
+        {
+            byte[] result;
+            using (var stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, this);
+                result = stream.ToArray();
+            }
+            return result;
+        }
+    }
+
+    [ProtoContract]
+    public class PatientFHIRProfile : PatientFHIRProfileSerialize
+    { 
         //TODO: add right and left feet
         public enum CaptureSiteSnoMedCode : uint
         {
@@ -55,6 +77,7 @@ namespace NoID.FHIR.Profile
         {
             _fhirAddress = fhirAddress;
             _organizationName = organizationName;
+            NewSession();
         }
 
         private readonly Uri _fhirAddress;
@@ -80,28 +103,49 @@ namespace NoID.FHIR.Profile
         private bool   _twinIndicator = false;
         private Element _multipleBirth;
         private string _patientCertificateID;
+        private string _sessionID;
 
-        //TODO: store captured finger SnoMedCT code with minutias
         private FingerPrintMinutias _leftFingerPrints;
         private FingerPrintMinutias _rightFingerPrints;
         private FingerPrintMinutias _leftAlternateFingerPrints;
         private FingerPrintMinutias _rightAlternateFingerPrints;
+
+        public Exception Exception
+        {
+            get { return _exception; }
+        }
 
         public Uri FHIRAddress
         {
             get { return _fhirAddress; }
         }
 
+        public string PatientCertificateID
+        {
+            get { return _patientCertificateID; }
+            set { _patientCertificateID = value; }
+        }
+
+        public string PatientCertificateIDHash
+        {
+            get { return HashWriter.Hash(_patientCertificateID, hashSalt, argonParams); }
+        }
+
+        [ProtoMember(1)]
+        public string SessionID
+        {
+            get { return _sessionID; }
+            private set { _organizationName = value; }
+        }
+
+        [ProtoMember(2)]
         public string OrganizationName
         {
             get { return _organizationName; }
             set { _organizationName = value; }
         }
-        public Exception Exception
-        {
-            get { return _exception; }
-        }
-
+        
+        
         public string Language
         {
             get { return _language; }
@@ -112,6 +156,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_language, hashSalt, argonParams); }
         }
 
+        [ProtoMember(3)]
         public string FirstName
         {
             get { return _firstName; }
@@ -122,44 +167,54 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_firstName, hashSalt, argonParams); }
         }
 
+        [ProtoMember(4)]
         public string LastName
         {
             get { return _lastName;}
             set { _lastName = value; }
         }
+
         public string LastNameHash
         {
             get { return HashWriter.Hash(_lastName, hashSalt, argonParams); }
         }
 
+        [ProtoMember(5)]
         public string MiddleName
         {
             get { return _middleName; }
             set { _middleName = value; }
         }
+
         public string MiddleNameHash
         {
             get { return HashWriter.Hash(_middleName, hashSalt, argonParams); }
         }
+
         public AdministrativeGender Gender
         {
             get { return _gender; }
             set { _gender = value; }
         }
+
         public string GenderHash
         {
             get { return HashWriter.Hash(_gender.ToString(), hashSalt, argonParams); }
         }
+
+        [ProtoMember(6)]
         public string BirthDay
         {
             get { return _birthDay; }
             set { _birthDay = value; }
         }
+
         public string BirthDayHash
         {
             get { return HashWriter.Hash(_birthDay, hashSalt, argonParams); }
         }
 
+        [ProtoMember(7)]
         public string StreetAddress
         {
             get { return _streetAddress; }
@@ -171,6 +226,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_streetAddress, hashSalt, argonParams); }
         }
 
+        [ProtoMember(8)]
         public string StreetAddress2
         {
             get { return _streetAddress2; }
@@ -182,6 +238,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_streetAddress2, hashSalt, argonParams); }
         }
 
+        [ProtoMember(9)]
         public string City
         {
             get { return _city; }
@@ -193,6 +250,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_city, hashSalt, argonParams); }
         }
 
+        [ProtoMember(10)]
         public string State
         {
             get { return _state; }
@@ -204,6 +262,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_state, hashSalt, argonParams); }
         }
 
+        [ProtoMember(11)]
         public string PostalCode
         {
             get { return _postalCode; }
@@ -215,6 +274,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_postalCode, hashSalt, argonParams); }
         }
 
+        [ProtoMember(12)]
         public string Country
         {
             get { return _country; }
@@ -226,6 +286,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_country, hashSalt, argonParams); }
         }
 
+        [ProtoMember(13)]
         public string PhoneHome
         {
             get { return _phoneHome; }
@@ -237,6 +298,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_phoneHome, hashSalt, argonParams); }
         }
 
+        [ProtoMember(14)]
         public string PhoneCell
         {
             get { return _phoneCell; }
@@ -248,6 +310,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_phoneCell, hashSalt, argonParams); }
         }
 
+        [ProtoMember(15)]
         public string PhoneWork
         {
             get { return _phoneWork; }
@@ -259,6 +322,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_phoneWork, hashSalt, argonParams); }
         }
 
+        [ProtoMember(16)]
         public string EmailAddress
         {
             get { return _emailAddress; }
@@ -270,6 +334,7 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_emailAddress, hashSalt, argonParams); }
         }
 
+        [ProtoMember(17)]
         public bool TwinIndicator
         {
             get { return _twinIndicator; }
@@ -292,18 +357,6 @@ namespace NoID.FHIR.Profile
             get { return HashWriter.Hash(_multipleBirth.ToString(), hashSalt, argonParams); }
         }
 
-        public string PatientCertificateID
-        {
-            get { return _patientCertificateID; }
-            set { _patientCertificateID = value; }
-        }
-
-        public string PatientCertificateIDHash
-        {
-            get { return HashWriter.Hash(_patientCertificateID, hashSalt, argonParams); }
-        }
-
-        
         public FingerPrintMinutias LeftFingerPrints
         {
             get { return _leftFingerPrints; }
@@ -346,6 +399,11 @@ namespace NoID.FHIR.Profile
         public string RightAlternateFingerPrintsHash
         {
             get { return HashWriter.Hash(_rightAlternateFingerPrints.ToString(), hashSalt, argonParams); }
+        }
+
+        public void NewSession()
+        {
+            _sessionID = HashWriter.Hash(Guid.NewGuid().ToString(), hashSalt, argonParams);
         }
 
         public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
@@ -396,12 +454,7 @@ namespace NoID.FHIR.Profile
             return true;
         }
 
-        public string PatientCertificateHash
-        {
-            get { return HashWriter.Hash(_patientCertificateID.ToString(), hashSalt, argonParams); }
-        }
-
-        public Patient CreateFHIRProfile()
+        public Patient CreateFHIRPatientProfile()
         {
             Patient pt;
             try
@@ -412,7 +465,9 @@ namespace NoID.FHIR.Profile
                 id.Value = PatientCertificateID; //hash of local patient certificate
                 pt.Identifier = new List<Identifier> { id };
                 // Add healthcare node certificate hash.
-                pt.ManagingOrganization.Identifier = new Identifier("", PatientCertificateHash);
+                ResourceReference managingOrganization = new ResourceReference(Utilities.NoID_OID, OrganizationName);
+                pt.ManagingOrganization = managingOrganization;
+                pt.ManagingOrganization.Identifier = new Identifier("", PatientCertificateIDHash);
                 // Add patient demographics
                 pt.Language = Language;
                 pt.BirthDate = BirthDay;
@@ -465,104 +520,6 @@ namespace NoID.FHIR.Profile
                 {
                     pt.Contact.Add(contact);
                 }
-
-                // Add biometrics to FHIR messages
-                // Add fingerprint minutia points to FHIR message
-                Media leftFingerprintMedia = null;
-                Media rightFingerprintMedia = null;
-                Media leftAlternateFingerPrints = null;
-                Media rightAlternateFingerPrints = null;
-                Extension extMinutiaPositionX;
-                Extension extMinutiaPositionY;
-                Extension extMinutiaDirection;
-                Extension extMinutiaType;
-
-                foreach (var Minutia in LeftFingerPrints.Minutiae)
-                {
-                    if (leftFingerprintMedia is null) {
-                        leftFingerprintMedia = new Media();
-                    }
-                    
-                    extMinutiaPositionX = new Extension();
-                    extMinutiaPositionX.Value.SetIntegerExtension("PositionX", (int)Minutia.PositionX);
-                    extMinutiaPositionY = new Extension();
-                    extMinutiaPositionY.Value.SetIntegerExtension("PositionY", (int)Minutia.PositionY);
-                    extMinutiaDirection = new Extension();
-                    extMinutiaDirection.Value.SetIntegerExtension("Direction", (int)Minutia.Direction);
-                    extMinutiaType = new Extension();
-
-                    extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
-                    leftFingerprintMedia.Extension.Add(extMinutiaPositionX);
-                    leftFingerprintMedia.Extension.Add(extMinutiaPositionY);
-                    leftFingerprintMedia.Extension.Add(extMinutiaDirection);
-                    leftFingerprintMedia.Extension.Add(extMinutiaType);
-                }
-
-                foreach (var Minutia in RightFingerPrints.Minutiae)
-                {
-                    if (rightFingerprintMedia is null)
-                    {
-                        rightFingerprintMedia = new Media();
-                    }
-
-                    extMinutiaPositionX = new Extension();
-                    extMinutiaPositionX.Value.SetIntegerExtension("PositionX", (int)Minutia.PositionX);
-                    extMinutiaPositionY = new Extension();
-                    extMinutiaPositionY.Value.SetIntegerExtension("PositionY", (int)Minutia.PositionY);
-                    extMinutiaDirection = new Extension();
-                    extMinutiaDirection.Value.SetIntegerExtension("Direction", (int)Minutia.Direction);
-                    extMinutiaType = new Extension();
-                    extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
-
-                    rightFingerprintMedia.Extension.Add(extMinutiaPositionX);
-                    rightFingerprintMedia.Extension.Add(extMinutiaPositionY);
-                    rightFingerprintMedia.Extension.Add(extMinutiaDirection);
-                    rightFingerprintMedia.Extension.Add(extMinutiaType);
-                }
-
-                foreach (var Minutia in LeftAlternateFingerPrints.Minutiae)
-                {
-                    if (leftAlternateFingerPrints is null)
-                    {
-                        leftAlternateFingerPrints = new Media();
-                    }
-
-                    extMinutiaPositionX = new Extension();
-                    extMinutiaPositionX.Value.SetIntegerExtension("PositionX", (int)Minutia.PositionX);
-                    extMinutiaPositionY = new Extension();
-                    extMinutiaPositionY.Value.SetIntegerExtension("PositionY", (int)Minutia.PositionY);
-                    extMinutiaDirection = new Extension();
-                    extMinutiaDirection.Value.SetIntegerExtension("Direction", (int)Minutia.Direction);
-                    extMinutiaType = new Extension();
-                    extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
-
-                    leftAlternateFingerPrints.Extension.Add(extMinutiaPositionX);
-                    leftAlternateFingerPrints.Extension.Add(extMinutiaPositionY);
-                    leftAlternateFingerPrints.Extension.Add(extMinutiaDirection);
-                    leftAlternateFingerPrints.Extension.Add(extMinutiaType);
-                }
-
-                foreach (var Minutia in RightAlternateFingerPrints.Minutiae)
-                {
-                    if (rightAlternateFingerPrints is null)
-                    {
-                        rightAlternateFingerPrints = new Media();
-                    }
-
-                    extMinutiaPositionX = new Extension();
-                    extMinutiaPositionX.Value.SetIntegerExtension("PositionX", (int)Minutia.PositionX);
-                    extMinutiaPositionY = new Extension();
-                    extMinutiaPositionY.Value.SetIntegerExtension("PositionY", (int)Minutia.PositionY);
-                    extMinutiaDirection = new Extension();
-                    extMinutiaDirection.Value.SetIntegerExtension("Direction", (int)Minutia.Direction);
-                    extMinutiaType = new Extension();
-                    extMinutiaType.Value.SetIntegerExtension("Type", (int)Minutia.Type);
-
-                    rightAlternateFingerPrints.Extension.Add(extMinutiaPositionX);
-                    rightAlternateFingerPrints.Extension.Add(extMinutiaPositionY);
-                    rightAlternateFingerPrints.Extension.Add(extMinutiaDirection);
-                    rightAlternateFingerPrints.Extension.Add(extMinutiaType);
-                }
             }
             catch (Exception ex)
             {
@@ -572,33 +529,113 @@ namespace NoID.FHIR.Profile
             return pt;
         }
 
-        public bool SendFHIRProfile()
+        public bool SendFHIRPatientProfile(Patient pt = null)
         {
             try
             {
-                Uri endpoint = FHIRAddress;
-                FhirClient client = new FhirClient(endpoint);
-                Patient pt = CreateFHIRProfile();
-                var newpatient = client.Create(pt);
+                FhirClient client = new FhirClient(FHIRAddress);
+                if (pt is null)
+                {
+                    pt = CreateFHIRPatientProfile();
+                }
+                Patient newpatient = client.Create(pt);
             }
             catch (Exception ex)
             {
-                _exception = new Exception("PatientProfile.SendFHIRProfile() failed to send to FHIR server: " + ex.Message);
+                _exception = new Exception("PatientProfile.SendFHIRPatientProfile() failed to send to FHIR server: " + ex.Message);
                 return false;
             }
             return true;
         }
 
+        public bool SendFHIRMediaProfile(Media media)
+        {
+            try
+            {
+                FhirClient client = new FhirClient(FHIRAddress);
+                client.Create(media);
+            }
+            catch (Exception ex)
+            {
+                _exception = new Exception("PatientProfile.SendFHIRMediaProfile() failed to send to FHIR server: " + ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        private CodeableConcept GetBodySite(CaptureSiteSnoMedCode captureSite, LateralitySnoMedCode laterality)
+        {
+            int captureSiteCode = (int)captureSite;
+            int lateralityCode = (int)laterality;
+            CodeableConcept bodyCaptureSite = new CodeableConcept("SNOMED", captureSiteCode.ToString(), Utilities.CaptureSiteToString(captureSite));
+            Extension extLaterality = new Extension(lateralityCode.ToString(), new FhirString(Utilities.LateralityToString(laterality)));
+            bodyCaptureSite.AddExtension("Laterality", extLaterality);
+            return bodyCaptureSite;
+        }
+
+        public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints)
+        {
+            Media FingerPrintMedia = null;
+            try
+            {
+                if (!(fingerPrints is null))
+                {
+                    FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
+                    FingerPrintMedia.AddExtension("Biometic Capture", Utilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode));
+                    FingerPrintMedia.Identifier = new List<Identifier>();
+                    Identifier idSession;
+                    Identifier idPatientCertificate;
+                    if (SessionID.Length > 0)
+                    {
+                        idSession = new Identifier();
+                        idSession.System = "http://www.mynoid.com/fhir/SessionID";
+                        idSession.Value = SessionID;
+                        FingerPrintMedia.Identifier.Add(idSession);
+                    }
+                    if (PatientCertificateID.Length > 0)
+                    {
+                        idPatientCertificate = new Identifier();
+                        idPatientCertificate.System = "http://www.mynoid.com/fhir/PatientCertificateID";
+                        idPatientCertificate.Value = PatientCertificateID;
+                        FingerPrintMedia.Identifier.Add(idPatientCertificate);
+                    }
+
+                    foreach (var Minutia in fingerPrints.Minutiae)
+                    {
+                        if (FingerPrintMedia is null)
+                        {
+                            FingerPrintMedia = new Media();
+                        }
+
+                        Extension extFingerPrintMedia = Utilities.FingerPrintMediaExtension(
+                            Minutia.PositionX.ToString(),
+                            Minutia.PositionY.ToString(),
+                            Minutia.Direction.ToString(),
+                            Minutia.Type.ToString()
+                        );
+                        
+                        FingerPrintMedia.AddExtension("Biometrics", extFingerPrintMedia);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+            return FingerPrintMedia;
+        }
+        
         public bool TestEnrollmentSave()
         {
             Uri endpoint = FHIRAddress;
             FhirClient client = new FhirClient(endpoint);
-            Patient newPatient = CreateFHIRProfile();
+            Patient newPatient = CreateFHIRPatientProfile();
+            
             if (!(newPatient is null))
             {
                 try
                 {
-                    client.Create(CreateFHIRProfile());
+                    client.Create(newPatient);
                 }
                 catch (Exception ex)
                 {
@@ -608,5 +645,16 @@ namespace NoID.FHIR.Profile
             }
             return true;
         }
+
+        public static PatientFHIRProfile Deserialize(byte[] message)
+        {
+            PatientFHIRProfile result;
+            using (var stream = new MemoryStream(message))
+            {
+                result = Serializer.Deserialize<PatientFHIRProfile>(stream);
+            }
+            return result;
+        }
+
     }
 }

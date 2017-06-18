@@ -77,12 +77,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DPUruNet, Version=1.0.0.1, Culture=neutral, PublicKeyToken=7f32ef930fec5e5f" />
+    <Reference Include="Hl7.Fhir.STU3.Core, Version=0.93.4.0, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hl7.Fhir.STU3.0.93.4\lib\net45\Hl7.Fhir.STU3.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Hl7.Fhir.Support, Version=0.4.2.0, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hl7.Fhir.Support.0.4.2\lib\net45\Hl7.Fhir.Support.dll</HintPath>
+    </Reference>
+    <Reference Include="Hl7.FhirPath, Version=0.4.2.0, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Hl7.FhirPath.0.4.2\lib\net45\Hl7.FhirPath.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>4.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
@@ -90,6 +100,7 @@
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Presentation" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -105,6 +116,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>htmlpages.resx</DependentUpon>
     </Compile>
+    <Compile Include="loginform.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="loginform.Designer.cs">
+      <DependentUpon>loginform.cs</DependentUpon>
+    </Compile>
     <Compile Include="program.cs">
     </Compile>
     <Compile Include="properties\assemblyinfo.cs" />
@@ -113,6 +130,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="browserform.resx">
@@ -123,6 +141,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>htmlpages.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="loginform.resx">
+      <DependentUpon>loginform.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="properties\resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -135,17 +156,10 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="app.manifest" />
-    <None Include="fonts\fontawesome-webfont.eot" />
-    <None Include="fonts\fontawesome-webfont.ttf" />
-    <None Include="fonts\fontawesome-webfont.woff" />
-    <None Include="fonts\fontawesome-webfont.woff2" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="resources\nav_left_green.png" />
-    <None Include="fonts\glyphicons-halflings-regular.eot" />
-    <None Include="fonts\glyphicons-halflings-regular.ttf" />
-    <None Include="fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\nav_plain_green.png" />
@@ -158,18 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="curve_points.ico" />
-    <Content Include="identity.html" />
-    <Content Include="enrollment.html" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\fontawesome-webfont.svg" />
-    <Content Include="scripts\bootstrap.min.js" />
-    <Content Include="scripts\jquery-1.11.1.min.js" />
-    <Content Include="scripts\noid_enrollment.js" />
-    <Content Include="style\bootstrap.min.css" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="style\font-awesome.min.css" />
-    <Content Include="style\noid_identity.css" />
-    <Content Include="style\noid_enrollment.css" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -199,6 +202,14 @@
     <ProjectReference Include="..\noid.fhir.profile\noid.fhir.profile.csproj">
       <Project>{8af257d1-3bd7-4709-b5ba-b42bd07a45fb}</Project>
       <Name>noid.fhir.profile</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\noid.network.security\noid.network.security.csproj">
+      <Project>{43b016f6-0494-4645-be2a-e04bb0e0721d}</Project>
+      <Name>noid.network.security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\noid.security\noid.security.csproj">
+      <Project>{c3b41330-4dd4-4872-95a5-f562e50b244f}</Project>
+      <Name>noid.security</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
