@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "biometrics.devices", "sourc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "biometric.match.database.engine", "source\biometric.match.database.engine\biometric.match.database.engine.csproj", "{02AA541D-3A2F-4A6A-B85C-86E2066D9CF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "noid.https.listener", "source\noid.https.listener\noid.https.listener.csproj", "{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,18 @@ Global
 		{02AA541D-3A2F-4A6A-B85C-86E2066D9CF6}.Release|x64.Build.0 = Release|Any CPU
 		{02AA541D-3A2F-4A6A-B85C-86E2066D9CF6}.Release|x86.ActiveCfg = Release|Any CPU
 		{02AA541D-3A2F-4A6A-B85C-86E2066D9CF6}.Release|x86.Build.0 = Release|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Debug|x64.Build.0 = Debug|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Debug|x86.Build.0 = Debug|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Release|x64.ActiveCfg = Release|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Release|x64.Build.0 = Release|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Release|x86.ActiveCfg = Release|Any CPU
+		{77923C82-56AF-4FEA-8B4A-67ED2E2B318B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

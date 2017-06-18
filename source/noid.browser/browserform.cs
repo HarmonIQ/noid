@@ -12,8 +12,8 @@ using NoID.FHIR.Profile;
 using NoID.Biometrics.Managers;
 using DPUruNet;
 using SourceAFIS.Simple;
-using SourceAFIS.General;
 using SourceAFIS.Templates;
+using Hl7.Fhir.Model;
 
 namespace NoID.Browser
 {
@@ -26,14 +26,15 @@ namespace NoID.Browser
         private DigitalPersona biometricDevice;
         private PatientFHIRProfile noidFHIRProfile;
         private string organizationName = System.Configuration.ConfigurationManager.AppSettings["OrganizationName"].ToString();
-        private Person currentCapture;
-        private Person previousCapture;
+        private SourceAFIS.Simple.Person currentCapture;
+        private SourceAFIS.Simple.Person previousCapture;
         private Fingerprint newFingerPrint;
         private Fingerprint previousFingerPrint;
         private bool match = false;
         private float score = 0;
-        private readonly Uri healthcareNodeFHIRAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString());
-        private readonly string healthcareNodeWebAddress = System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString();
+        private Uri healthcareNodeFHIRAddress;
+        private string healthcareNodeWebAddress;
+        private string healthcareNodeChainVerifyAddress;
 
         //TODO: Abstract CaptureResult so it will work with any fingerprint scanner.
         private void OnCaptured(CaptureResult captureResult)
@@ -42,7 +43,7 @@ namespace NoID.Browser
             DisplayOutput("Captured finger image....");
 #endif
             match = false;
-            currentCapture = new Person();
+            currentCapture = new SourceAFIS.Simple.Person();
             // Check capture quality and throw an error if bad.
             if (!biometricDevice.CheckCaptureResult(captureResult)) return;
 
@@ -84,7 +85,9 @@ namespace NoID.Browser
                     fingerprintMinutia = new FingerPrintMinutias(newID, tmpPrevious, laterality, captureSiteSnoMedCode);
                 }
                 
-                noidFHIRProfile.AddFingerPrint(fingerprintMinutia);
+                noidFHIRProfile.PatientCertificateID = newID;
+                Media media = noidFHIRProfile.CreateFHIRMediaProfile(fingerprintMinutia);
+                noidFHIRProfile.SendFHIRMediaProfile(media);
             }
             previousCapture = currentCapture;
             previousFingerPrint = newFingerPrint;
@@ -93,10 +96,14 @@ namespace NoID.Browser
         public BrowserForm()
         {
             InitializeComponent();
-            //TODO: Organization name, NoID-TestA, should be configured during authorization and selected after that.
-            noidFHIRProfile = new PatientFHIRProfile("NoID-TestA", healthcareNodeFHIRAddress);
+
+            healthcareNodeFHIRAddress = new Uri(Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+            healthcareNodeWebAddress = Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
+            healthcareNodeChainVerifyAddress = Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
+
+            noidFHIRProfile = new PatientFHIRProfile(organizationName, healthcareNodeFHIRAddress);
             Afis.Threshold = MATCH_THRESHOLD;
-            
+
             Text = "NoID Browser";
             WindowState = FormWindowState.Maximized;
             
