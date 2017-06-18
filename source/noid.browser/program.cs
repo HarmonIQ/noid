@@ -14,10 +14,12 @@ namespace NoID.Browser
 {
     public class Program
     {
+        private static readonly string _serviceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+
         [STAThread]
         public static void Main()
         {
-            if (PasswordManager.GetPassword("FHIRWebServer").Length > 0)
+            if (PasswordManager.GetPassword(_serviceName + "_Status") == "Successful")
             {
                 //For Windows 7 and above, best to include relevant app.manifest entries as well
                 Cef.EnableHighDPISupport();

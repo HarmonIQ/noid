@@ -83,12 +83,6 @@
       <DependentUpon>ReceiveFHIR.ashx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\noid.network.security\noid.network.security.csproj">
-      <Project>{43b016f6-0494-4645-be2a-e04bb0e0721d}</Project>
-      <Name>noid.network.security</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

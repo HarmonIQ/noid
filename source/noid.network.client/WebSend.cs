@@ -4,13 +4,13 @@
 
 using System;
 using System.Net;
-using NoID.Network.Security;
 using System.IO;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Utility;
 using Hl7.Fhir.Serialization;
 using NoID.FHIR.Profile;
+using NoID.Security;
 
 namespace NoID.Network.Client
 {

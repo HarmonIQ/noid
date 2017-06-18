@@ -83,9 +83,9 @@
       <Project>{d15a8917-30f2-4dd2-abcb-81e04d126b31}</Project>
       <Name>noid.network.client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\noid.network.security\noid.network.security.csproj">
-      <Project>{43b016f6-0494-4645-be2a-e04bb0e0721d}</Project>
-      <Name>noid.network.security</Name>
+    <ProjectReference Include="..\noid.security\noid.security.csproj">
+      <Project>{c3b41330-4dd4-4872-95a5-f562e50b244f}</Project>
+      <Name>noid.security</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

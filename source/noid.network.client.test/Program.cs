@@ -3,10 +3,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
-using NoID.Network.Security;
-using Hl7.Fhir.Model;
 using System.Collections.Generic;
+using Hl7.Fhir.Model;
 using NoID.FHIR.Profile;
+using NoID.Security;
 
 namespace NoID.Network.Client.Test
 {
