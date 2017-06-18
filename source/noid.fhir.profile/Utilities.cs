@@ -1,5 +1,6 @@
 ﻿// Copyright © 2016-2017 NoID Developers. All rights reserved.
 // Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using Hl7.Fhir.Model;
 using System;
@@ -9,11 +10,12 @@ namespace NoID.FHIR.Profile
 {
     public static class Utilities
     {
-        public static readonly string FingerPrint_OID   = "3.15.750.1.113883.6.35";
-        public static readonly string PositionX_OID     = "3.15.750.1.113883.6.36";
-        public static readonly string PositionY_OID     = "3.15.750.1.113883.6.37";
-        public static readonly string Direction_OID     = "3.15.750.1.113883.6.38";
-        public static readonly string Type_OID          = "3.15.750.1.113883.6.39";
+        public static readonly string NoID_OID          = "3.15.750.1.113883.6.35";
+        public static readonly string FingerPrint_OID   = "3.15.750.1.113883.6.36";
+        public static readonly string PositionX_OID     = "3.15.750.1.113883.6.37";
+        public static readonly string PositionY_OID     = "3.15.750.1.113883.6.38";
+        public static readonly string Direction_OID     = "3.15.750.1.113883.6.39";
+        public static readonly string Type_OID          = "3.15.750.1.113883.6.40";
 
         public static Extension FingerPrintMediaExtension(string PositionX, string PositionY, string Direction, string Type)
         {
