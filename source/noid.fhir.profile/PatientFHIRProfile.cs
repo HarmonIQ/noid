@@ -535,7 +535,7 @@ namespace NoID.FHIR.Profile
 
         public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints)
         {
-            Media FingerPrintMedia = null; 
+            Media FingerPrintMedia = null;
             try
             {
                 if (!(fingerPrints is null))
@@ -547,12 +547,16 @@ namespace NoID.FHIR.Profile
                     Identifier idPatientCertificate;
                     if (SessionID.Length > 0)
                     {
-                        idSession = new Identifier("SessionID", SessionID);
+                        idSession = new Identifier();
+                        idSession.System = "http://www.mynoid.com/fhir/SessionID";
+                        idSession.Value = SessionID;
                         FingerPrintMedia.Identifier.Add(idSession);
                     }
                     if (PatientCertificateID.Length > 0)
                     {
-                        idPatientCertificate = new Identifier("PatientCertificateID", PatientCertificateID);
+                        idPatientCertificate = new Identifier();
+                        idPatientCertificate.System = "http://www.mynoid.com/fhir/PatientCertificateID";
+                        idPatientCertificate.Value = PatientCertificateID;
                         FingerPrintMedia.Identifier.Add(idPatientCertificate);
                     }
 
