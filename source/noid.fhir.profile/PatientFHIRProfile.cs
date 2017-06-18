@@ -523,6 +523,16 @@ namespace NoID.FHIR.Profile
             return true;
         }
 
+        private CodeableConcept GetBodySite(CaptureSiteSnoMedCode captureSite, LateralitySnoMedCode laterality)
+        {
+            int captureSiteCode = (int)captureSite;
+            int lateralityCode = (int)laterality;
+            CodeableConcept bodyCaptureSite = new CodeableConcept("SNOMED", captureSiteCode.ToString(), Utilities.CaptureSiteToString(captureSite));
+            Extension extLaterality = new Extension(lateralityCode.ToString(), new FhirString(Utilities.LateralityToString(laterality)));
+            bodyCaptureSite.AddExtension("Laterality", extLaterality);
+            return bodyCaptureSite;
+        }
+
         public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints)
         {
             Media FingerPrintMedia = null; 
@@ -531,7 +541,7 @@ namespace NoID.FHIR.Profile
                 if (!(fingerPrints is null))
                 {
                     FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
-                    //TODO: Add capture body location
+                    FingerPrintMedia.AddExtension("Biometic Capture", Utilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode));
                     FingerPrintMedia.Identifier = new List<Identifier>();
                     Identifier idSession;
                     Identifier idPatientCertificate;

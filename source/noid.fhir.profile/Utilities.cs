@@ -3,6 +3,7 @@
 
 using Hl7.Fhir.Model;
 using System;
+using static NoID.FHIR.Profile.PatientFHIRProfile;
 
 namespace NoID.FHIR.Profile
 {
@@ -37,6 +38,43 @@ namespace NoID.FHIR.Profile
             Extension extMinutiaDirection = extMinutiaPoint.AddExtension("Direction", new FhirString(Direction));
             Extension extMinutiaType = extMinutiaPoint.AddExtension("Type", new FhirString(Type));
             return extMinutiaPoint;
+        }
+        public static Extension CaptureSiteExtension(CaptureSiteSnoMedCode captureSite, LateralitySnoMedCode laterality)
+        {
+            /*
+                Example JSON FHIR Message
+                CaptureSite
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "Coding System",                  "valueString": SNOMED       },    
+                        {      "url": "Capture Site Description",       "valueString": IndexFinger  },    
+                        {      "url": "Laterality Code",                "valueString": 419161000    },    
+                        {      "url": "Laterality Description",         "valueString": Left         }  
+                    ]
+                }
+            */
+            //TODO: Use bodysite instead of an extension but bodysite currently not working with Spark FHIR.
+            int captureSiteCode = (int)captureSite;
+            int lateralityCode = (int)laterality;
+
+            Extension extCaptureSite = new Extension("Capture Site", new FhirString(captureSiteCode.ToString()));
+            Extension extCodingSystem = extCaptureSite.AddExtension("Coding System", new FhirString("SNOMED"));
+            Extension extCaptureSiteDescription = extCaptureSite.AddExtension("Capture Site Description", new FhirString(CaptureSiteToString(captureSite)));
+            Extension extLateralityCode = extCaptureSite.AddExtension("Laterality Code", new FhirString(lateralityCode.ToString()));
+            Extension extLateralityDescription = extCaptureSite.AddExtension("Laterality Description", new FhirString(LateralityToString(laterality)));
+            return extCaptureSite;
+        }
+
+        public static string LateralityToString(LateralitySnoMedCode laterality)
+        {
+            return Enum.GetName(typeof(LateralitySnoMedCode), laterality);
+        }
+
+        public static string CaptureSiteToString(CaptureSiteSnoMedCode captureSite)
+        {
+            return Enum.GetName(typeof(CaptureSiteSnoMedCode), captureSite);
         }
     }
 }
