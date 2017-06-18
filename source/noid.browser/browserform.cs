@@ -36,7 +36,7 @@ namespace NoID.Browser
         private string healthcareNodeWebAddress;
         private string healthcareNodeChainVerifyAddress;
         private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-        private readonly string NoIDServicePassword = System.Configuration.ConfigurationManager.AppSettings["NoIDServicePassword"].ToString();
+        private string NoIDServicePassword;
 
         //TODO: Abstract CaptureResult so it will work with any fingerprint scanner.
         private void OnCaptured(CaptureResult captureResult)
@@ -44,6 +44,7 @@ namespace NoID.Browser
 #if NAVIGATE
             DisplayOutput("Captured finger image....");
 #endif
+            NoIDServicePassword = NoID.Security.PasswordManager.GetPassword(NoIDServiceName);
             match = false;
             currentCapture = new SourceAFIS.Simple.Person();
             // Check capture quality and throw an error if bad.

@@ -18,7 +18,7 @@ namespace NoID.Network.Client.Test
 
         static void Main(string[] args)
         {
-            //SendJSON();
+            SendJSON();
             SendProtoBuffer();
             Console.ReadLine();
         }
