@@ -897,6 +897,32 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="showNewExistingModal()">Select</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+         <div id="newReturnPatientModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Select If You Are A New Or Returning NoID Patient</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mar_ned">
+                            <div class="col-md-4 col-xs-3">
+                                <p align="right"><stong>Please select your enrollment status:</stong></p>
+                            </div>
+                            <div class="col-md-8 col-xs-9">
+                                <select name="visa_status" id="newReturn_status" class="dropselectsec1">
+                                    <option title="To my knowledge, I have never enrolled in a NoID enabled system" value="I am a new patient">I am a new patient</option>
+                                    <option title="I am currently enrolled in a NoID enabled system" value="I am a returning patient">I am a returning patient</option>
+                                    <option title="I do not know if I am currently enrolled in a NoID enabled system" value="I do not know">I do not know</option>   
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal">Select</button>
                     </div>
                 </div><!-- /.modal-content -->
