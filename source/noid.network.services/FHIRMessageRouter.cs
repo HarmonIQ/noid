@@ -7,6 +7,8 @@ using System.Web;
 using System.IO;
 using Hl7.Fhir.Model;
 using NoID.FHIR.Profile;
+using Hl7.Fhir.Rest;
+using System.Web.Configuration;
 
 namespace NoID.Network.Services
 {
@@ -23,6 +25,7 @@ namespace NoID.Network.Services
         private Base _baseFHIR = null;
         private Patient _patient = null;
         private Media _media = null;
+        private Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
 
         public FHIRMessageRouter(HttpContext context)
         {
@@ -34,9 +37,10 @@ namespace NoID.Network.Services
                 {
                     case "patient":
                         _patient = (Patient)newResource;
-                        //TODO save FHIR message in Spark
-                        //TODO expire older messages for this patient
-                        _responseText = "I got a patient.";
+                        if (!(SendPatientToSparkServer()))
+                            return;
+
+                        _responseText = "I received a patient and saved the message in Spark";
                         break;
                     case "media":
                         //TODO save FHIR message in Spark
@@ -55,10 +59,35 @@ namespace NoID.Network.Services
             }
         }
 
+        public bool SendPatientToSparkServer()
+        {
+            FhirClient client = new FhirClient(_sparkEndpoint);
+
+            if (!(Patient == null))
+            {
+                try
+                {
+                    client.Create(Patient);
+                }
+                catch (Exception ex)
+                {
+                    _responseText = ex.Message;
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public PatientFHIRProfile PatientFHIRProfile
         {
             get { return _patientFHIRProfile; }
             private set { _patientFHIRProfile = value; }
+        }
+
+        public Uri SparkEndpoint
+        {
+            get { return _sparkEndpoint; }
+            private set { _sparkEndpoint = value; }
         }
 
         public Patient Patient
