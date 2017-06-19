@@ -7,19 +7,21 @@ using Hl7.Fhir.Model;
 using NoID.Network.Client;
 using NoID.Security;
 
-namespace NoID.Browser
+namespace NoID.Network.Transport
 {
-    public class DataTransport
+    public class HttpsClient
     {
-
+        //TODO: only allow https
         private Exception _exception;
+        private string _responseText;
 
         public bool SendFHIRPatientProfile(Uri endpoint, Authentication auth, Patient patient = null)
         {
             try
             {
+                _responseText = "";
                 WebSend clientWebSend = new WebSend(endpoint, auth, patient);
-                string httpResponse = clientWebSend.PostHttpWebRequest();
+                _responseText = clientWebSend.PostHttpWebRequest();
             }
             catch (Exception ex)
             {
@@ -33,8 +35,9 @@ namespace NoID.Browser
         {
             try
             {
+                _responseText = "";
                 WebSend clientWebSend = new WebSend(endpoint, auth, media);
-                string httpResponse = clientWebSend.PostHttpWebRequest();
+                _responseText = clientWebSend.PostHttpWebRequest();
             }
             catch (Exception ex)
             {
@@ -42,6 +45,11 @@ namespace NoID.Browser
                 return false;
             }
             return true;
+        }
+
+        public string ResponseText
+        {
+            get { return _responseText; }
         }
     }
 }

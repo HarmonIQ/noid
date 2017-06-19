@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using NoID.FHIR.Profile;
 using NoID.Security;
+using NoID.Network.Transport;
 
 namespace NoID.Network.Client.Test
 {
@@ -28,8 +29,9 @@ namespace NoID.Network.Client.Test
             Patient payload = CreateTestFHIRPatientProfile();
             Authentication auth = new Authentication(TestUserName, TestPassword);
             Uri endpoint = new Uri(TestEndPoint);
-            WebSend ws = new WebSend(endpoint, auth, payload);
-            Console.WriteLine(ws.PostHttpWebRequest());
+            HttpsClient client = new HttpsClient();
+            client.SendFHIRPatientProfile(endpoint, auth, payload);
+            Console.WriteLine(client.ResponseText);
         }
 
         private static void SendProtoBuffer()

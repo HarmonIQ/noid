@@ -14,9 +14,10 @@ using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
 using NoID.Browser.Controls;
 using NoID.Utilities;
+using NoID.Security;
 using NoID.FHIR.Profile;
 using NoID.Biometrics.Managers;
-using NoID.Security;
+using NoID.Network.Transport;
 
 namespace NoID.Browser
 {
@@ -91,7 +92,7 @@ namespace NoID.Browser
                 }
                 
                 Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia);
-                DataTransport dataTransport = new DataTransport();
+                HttpsClient dataTransport = new HttpsClient();
                 Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
                 dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
             }

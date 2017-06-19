@@ -4,18 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C6C8CA9B-721F-4B0D-8E42-637BC0AC3DFF}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>NoID.Network.Client.Test</RootNamespace>
-    <AssemblyName>NoID.Network.Client.Test</AssemblyName>
+    <ProjectGuid>{493CFF19-4364-4E36-9D75-ADC607D10C9A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NoID.Network.Transport</RootNamespace>
+    <AssemblyName>NoID.Network.Transport</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -25,7 +24,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -50,7 +48,6 @@
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
@@ -63,18 +60,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="DataTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\noid.demographic.hasher\noid.demographic.hasher.csproj">
-      <Project>{beef4d63-efc2-4134-976c-98ed93188e43}</Project>
-      <Name>noid.demographic.hasher</Name>
-    </ProjectReference>
     <ProjectReference Include="..\noid.fhir.profile\noid.fhir.profile.csproj">
       <Project>{8af257d1-3bd7-4709-b5ba-b42bd07a45fb}</Project>
       <Name>noid.fhir.profile</Name>
@@ -82,10 +74,6 @@
     <ProjectReference Include="..\noid.network.client\noid.network.client.csproj">
       <Project>{d15a8917-30f2-4dd2-abcb-81e04d126b31}</Project>
       <Name>noid.network.client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\noid.network.transport\noid.network.transport.csproj">
-      <Project>{493cff19-4364-4e36-9d75-adc607d10c9a}</Project>
-      <Name>noid.network.transport</Name>
     </ProjectReference>
     <ProjectReference Include="..\noid.security\noid.security.csproj">
       <Project>{c3b41330-4dd4-4872-95a5-f562e50b244f}</Project>
