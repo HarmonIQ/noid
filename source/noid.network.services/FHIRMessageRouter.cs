@@ -4,16 +4,9 @@
 
 using System;
 using System.Web;
-using System.Net.Http;
 using System.IO;
-using System.ComponentModel;
 using Hl7.Fhir.Model;
-using Hl7.Fhir.Rest;
-using Hl7.Fhir.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NoID.FHIR.Profile;
-
 
 namespace NoID.Network.Services
 {
@@ -36,19 +29,16 @@ namespace NoID.Network.Services
             try
             {
                 StreamReader bodyStream = new StreamReader(context.Request.InputStream);
-                bodyStream.BaseStream.Seek(0, SeekOrigin.Begin);
-                string jsonString = bodyStream.ReadToEnd();
-                FhirJsonParser fhirJsonParser = new FhirJsonParser();
-                Resource rs = fhirJsonParser.Parse<Resource>(jsonString);
+                Resource newResource = FHIRMessageConverter.StreamToFHIR(bodyStream);
 
-                switch (rs.TypeName.ToLower())
+                switch (newResource.TypeName.ToLower())
                 {
                     case "patient":
-                        _patient = (Patient)rs;
+                        _patient = (Patient)newResource;
                         _responseText = "I got a patient.";
                         break;
                     case "media":
-                        _media = (Media)rs;
+                        _media = (Media)newResource;
                         _responseText = "I got a fingerprint.";
                         break;
                     default:
