@@ -28,16 +28,19 @@ namespace NoID.Network.Services
         {
             try
             {
-                StreamReader bodyStream = new StreamReader(context.Request.InputStream);
-                Resource newResource = FHIRMessageConverter.StreamToFHIR(bodyStream);
+                Resource newResource = FHIRMessageConverter.StreamToFHIR(new StreamReader(context.Request.InputStream));
 
                 switch (newResource.TypeName.ToLower())
                 {
                     case "patient":
                         _patient = (Patient)newResource;
+                        //TODO save FHIR message in Spark
+                        //TODO expire older messages for this patient
                         _responseText = "I got a patient.";
                         break;
                     case "media":
+                        //TODO save FHIR message in Spark
+                        //TODO send to biometric match engine.
                         _media = (Media)newResource;
                         _responseText = "I got a fingerprint.";
                         break;
