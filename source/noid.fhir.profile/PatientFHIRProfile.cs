@@ -3,12 +3,13 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.IO;
 using System.Collections.Generic;
+using ProtoBuf;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
+using NoID.Utilities;
 using NoID.Cryptographic.Hash;
-using System.IO;
-using ProtoBuf;
 
 namespace NoID.FHIR.Profile
 {
@@ -34,23 +35,6 @@ namespace NoID.FHIR.Profile
     [ProtoContract]
     public class PatientFHIRProfile : PatientFHIRProfileSerialize
     { 
-        //TODO: add right and left feet
-        public enum CaptureSiteSnoMedCode : uint
-        {
-            IndexFinger = 48856004, // SnoMedCT Description: Skin structure of palmar surface of index finger
-            MiddleFinger = 65271000, // SnoMedCT Description: Skin structure of palmar surface of middle finger
-            RingFinger = 28404007, // SnoMedCT Description: Skin structure of palmar surface of ring finger
-            LittleFinger = 43825009, // SnoMedCT Description: Skin structure of palmar surface of little finger
-            Thumb = 72331001 // SnoMedCT Description: Skin structure of palmar surface of thumb
-        }
-
-        public enum LateralitySnoMedCode : uint
-        {
-            Left = 419161000, // SnoMedCT Description: Unilateral left
-            Right = 419165000, //  SnoMedCT Description: Unilateral right
-            Bilateral = 51440002 // SnoMedCT Description: Bilateral
-        }
-
         // Argon2 Hash parameters. 
         // Currently a protocol level setting for now but could be a setting defined per healthcare and/or match hub.
         // TODO: increase the difficulty of the hash parameters after the prototype.
@@ -63,12 +47,12 @@ namespace NoID.FHIR.Profile
         //TODO: load and use saltList from matching hubs
         private string hashSalt = "C560325F";
 
-        private string FingerTipSnoMedCTCode(CaptureSiteSnoMedCode fingerTip)
+        private string FingerTipSnoMedCTCode(FHIRUtilities.CaptureSiteSnoMedCode fingerTip)
         {
             return fingerTip.ToString();
         }
 
-        private string SnoMedCTLaterality(LateralitySnoMedCode laterality)
+        private string SnoMedCTLaterality(FHIRUtilities.LateralitySnoMedCode laterality)
         {
             return laterality.ToString();
         }
@@ -410,33 +394,33 @@ namespace NoID.FHIR.Profile
         {
             try   
             {
-                LateralitySnoMedCode lateralitySnoMedCode = patientFingerprintMinutia.LateralitySnoMedCode;
-                CaptureSiteSnoMedCode captureSiteSnoMedCode = patientFingerprintMinutia.CaptureSiteSnoMedCode;
+                FHIRUtilities.LateralitySnoMedCode lateralitySnoMedCode = patientFingerprintMinutia.LateralitySnoMedCode;
+                FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = patientFingerprintMinutia.CaptureSiteSnoMedCode;
 
                 switch (captureSiteSnoMedCode)
                 {
-                    case CaptureSiteSnoMedCode.IndexFinger:
+                    case FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger:
                         {
-                            if (lateralitySnoMedCode == LateralitySnoMedCode.Left)
+                            if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Left)
                             {
                                 _leftFingerPrints = patientFingerprintMinutia;
                             }
-                            else if (lateralitySnoMedCode == LateralitySnoMedCode.Right)
+                            else if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Right)
                             {
                                 _rightFingerPrints = patientFingerprintMinutia;
                             }
                             break;
                         }
-                    case CaptureSiteSnoMedCode.MiddleFinger:
-                    case CaptureSiteSnoMedCode.RingFinger:
-                    case CaptureSiteSnoMedCode.LittleFinger:
-                    case CaptureSiteSnoMedCode.Thumb:
+                    case FHIRUtilities.CaptureSiteSnoMedCode.MiddleFinger:
+                    case FHIRUtilities.CaptureSiteSnoMedCode.RingFinger:
+                    case FHIRUtilities.CaptureSiteSnoMedCode.LittleFinger:
+                    case FHIRUtilities.CaptureSiteSnoMedCode.Thumb:
                         {
-                            if (lateralitySnoMedCode == LateralitySnoMedCode.Left)
+                            if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Left)
                             {
                                 _leftAlternateFingerPrints = patientFingerprintMinutia;
                             }
-                            else if (lateralitySnoMedCode == LateralitySnoMedCode.Right)
+                            else if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Right)
                             {
                                 _rightAlternateFingerPrints = patientFingerprintMinutia;
                             }
@@ -465,7 +449,7 @@ namespace NoID.FHIR.Profile
                 id.Value = PatientCertificateID; //hash of local patient certificate
                 pt.Identifier = new List<Identifier> { id };
                 // Add healthcare node certificate hash.
-                ResourceReference managingOrganization = new ResourceReference(Utilities.NoID_OID, OrganizationName);
+                ResourceReference managingOrganization = new ResourceReference(FHIRUtilities.NoID_OID, OrganizationName);
                 pt.ManagingOrganization = managingOrganization;
                 pt.ManagingOrganization.Identifier = new Identifier("", PatientCertificateIDHash);
                 // Add patient demographics
@@ -529,46 +513,12 @@ namespace NoID.FHIR.Profile
             return pt;
         }
 
-        public bool SendFHIRPatientProfile(Patient pt = null)
-        {
-            try
-            {
-                FhirClient client = new FhirClient(FHIRAddress);
-                if (pt is null)
-                {
-                    pt = CreateFHIRPatientProfile();
-                }
-                Patient newpatient = client.Create(pt);
-            }
-            catch (Exception ex)
-            {
-                _exception = new Exception("PatientProfile.SendFHIRPatientProfile() failed to send to FHIR server: " + ex.Message);
-                return false;
-            }
-            return true;
-        }
-
-        public bool SendFHIRMediaProfile(Media media)
-        {
-            try
-            {
-                FhirClient client = new FhirClient(FHIRAddress);
-                client.Create(media);
-            }
-            catch (Exception ex)
-            {
-                _exception = new Exception("PatientProfile.SendFHIRMediaProfile() failed to send to FHIR server: " + ex.Message);
-                return false;
-            }
-            return true;
-        }
-
-        private CodeableConcept GetBodySite(CaptureSiteSnoMedCode captureSite, LateralitySnoMedCode laterality)
+        private CodeableConcept GetBodySite(FHIRUtilities.CaptureSiteSnoMedCode captureSite, FHIRUtilities.LateralitySnoMedCode laterality)
         {
             int captureSiteCode = (int)captureSite;
             int lateralityCode = (int)laterality;
-            CodeableConcept bodyCaptureSite = new CodeableConcept("SNOMED", captureSiteCode.ToString(), Utilities.CaptureSiteToString(captureSite));
-            Extension extLaterality = new Extension(lateralityCode.ToString(), new FhirString(Utilities.LateralityToString(laterality)));
+            CodeableConcept bodyCaptureSite = new CodeableConcept("SNOMED", captureSiteCode.ToString(), FHIRUtilities.CaptureSiteToString(captureSite));
+            Extension extLaterality = new Extension(lateralityCode.ToString(), new FhirString(FHIRUtilities.LateralityToString(laterality)));
             bodyCaptureSite.AddExtension("Laterality", extLaterality);
             return bodyCaptureSite;
         }
@@ -581,7 +531,7 @@ namespace NoID.FHIR.Profile
                 if (!(fingerPrints is null))
                 {
                     FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
-                    FingerPrintMedia.AddExtension("Biometic Capture", Utilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode));
+                    FingerPrintMedia.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode));
                     FingerPrintMedia.Identifier = new List<Identifier>();
                     Identifier idSession;
                     Identifier idPatientCertificate;
@@ -607,7 +557,7 @@ namespace NoID.FHIR.Profile
                             FingerPrintMedia = new Media();
                         }
 
-                        Extension extFingerPrintMedia = Utilities.FingerPrintMediaExtension(
+                        Extension extFingerPrintMedia = FHIRUtilities.FingerPrintMediaExtension(
                             Minutia.PositionX.ToString(),
                             Minutia.PositionY.ToString(),
                             Minutia.Direction.ToString(),

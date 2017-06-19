@@ -7,7 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 using ProtoBuf;
 using SourceAFIS.Templates;
-using NoID.FHIR.Profile;
+using NoID.Utilities;
 
 namespace NoID.FHIR.Profile
 {
@@ -39,15 +39,15 @@ namespace NoID.FHIR.Profile
         public string PatientCertificateID { get; private set; }
 
         [ProtoMember(2)]
-        public PatientFHIRProfile.LateralitySnoMedCode LateralitySnoMedCode { get; private set; }
+        public FHIRUtilities.LateralitySnoMedCode LateralitySnoMedCode { get; private set; }
 
         [ProtoMember(3)]
-        public PatientFHIRProfile.CaptureSiteSnoMedCode CaptureSiteSnoMedCode { get; private set; }
+        public FHIRUtilities.CaptureSiteSnoMedCode CaptureSiteSnoMedCode { get; private set; }
 
         [ProtoMember(4)]
         public List<FingerPrintMinutia> Minutiae { get; private set; }
 
-        public FingerPrintMinutias(string patientCertificateID, Template template, PatientFHIRProfile.LateralitySnoMedCode laterality, PatientFHIRProfile.CaptureSiteSnoMedCode captureSiteSnoMedCode)
+        public FingerPrintMinutias(string patientCertificateID, Template template, FHIRUtilities.LateralitySnoMedCode laterality, FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode)
         {
             PatientCertificateID = patientCertificateID;
             LateralitySnoMedCode = laterality;

@@ -111,6 +111,7 @@
       <DependentUpon>browserform.cs</DependentUpon>
     </Compile>
     <Compile Include="controls\controlextensions.cs" />
+    <Compile Include="DataTransport.cs" />
     <Compile Include="htmlpages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -130,7 +131,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="browserform.resx">
@@ -210,6 +210,10 @@
     <ProjectReference Include="..\noid.security\noid.security.csproj">
       <Project>{c3b41330-4dd4-4872-95a5-f562e50b244f}</Project>
       <Name>noid.security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\noid.utilities\noid.utilities.csproj">
+      <Project>{c0c23c18-5406-4415-8def-3d11eb6a5fce}</Project>
+      <Name>noid.utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

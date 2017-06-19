@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Hl7.Fhir.Model;
 using NoID.Security;
 using NoID.Network.Client;
+using NoID.Utilities;
 
 namespace NoID.Browser
 {
@@ -30,9 +31,9 @@ namespace NoID.Browser
             string username = textBoxUserName.Text;
             string pwd = PasswordManager.GetPassword(textBoxUserName.Text);
             Authentication auth = new Authentication(username, pwd);
-            Uri endpoint = new Uri(Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+            Uri endpoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
 
-            Patient newPatient = Utilities.CreateTestFHIRPatientProfile();
+            Patient newPatient = FHIRUtilities.CreateTestFHIRPatientProfile();
             WebSend ws = new WebSend(endpoint, auth, newPatient);
 
             try

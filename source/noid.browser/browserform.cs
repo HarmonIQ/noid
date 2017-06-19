@@ -3,17 +3,20 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 // Copyright © 2010-2017 The CefSharp Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+
 using System;
 using System.Windows.Forms;
-using NoID.Browser.Controls;
 using CefSharp.WinForms;
 using CefSharp;
-using NoID.FHIR.Profile;
-using NoID.Biometrics.Managers;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
+using NoID.Browser.Controls;
+using NoID.Utilities;
+using NoID.FHIR.Profile;
+using NoID.Biometrics.Managers;
+using NoID.Security;
 
 namespace NoID.Browser
 {
@@ -68,8 +71,8 @@ namespace NoID.Browser
 #endif
             if (score >= MATCH_THRESHOLD)
             {
-                PatientFHIRProfile.LateralitySnoMedCode laterality = PatientFHIRProfile.LateralitySnoMedCode.Left;
-                PatientFHIRProfile.CaptureSiteSnoMedCode captureSiteSnoMedCode = PatientFHIRProfile.CaptureSiteSnoMedCode.IndexFinger;
+                FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+                FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
 
                 noidFHIRProfile.PatientCertificateID = Guid.NewGuid().ToString();
 
@@ -88,7 +91,9 @@ namespace NoID.Browser
                 }
                 
                 Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia);
-                noidFHIRProfile.SendFHIRMediaProfile(media);
+                DataTransport dataTransport = new DataTransport();
+                Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+                dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
             }
             previousCapture = currentCapture;
             previousFingerPrint = newFingerPrint;
@@ -98,9 +103,9 @@ namespace NoID.Browser
         {
             InitializeComponent();
 
-            healthcareNodeFHIRAddress = new Uri(Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
-            healthcareNodeWebAddress = Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
-            healthcareNodeChainVerifyAddress = Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
+            healthcareNodeFHIRAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+            healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
+            healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
 
             noidFHIRProfile = new PatientFHIRProfile(organizationName, healthcareNodeFHIRAddress);
             Afis.Threshold = MATCH_THRESHOLD;

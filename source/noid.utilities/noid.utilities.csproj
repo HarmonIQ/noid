@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8AF257D1-3BD7-4709-B5BA-B42BD07A45FB}</ProjectGuid>
+    <ProjectGuid>{C0C23C18-5406-4415-8DEF-3D11EB6A5FCE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NoID.FHIR.Profile</RootNamespace>
-    <AssemblyName>NoID.FHIR.Profile</AssemblyName>
+    <RootNamespace>NoID.Utilities</RootNamespace>
+    <AssemblyName>NoID.Utilities</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,9 +42,6 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.2.1.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\protobuf-net.2.2.1\lib\net40\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -59,28 +55,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FingerPrintMinutia.cs" />
-    <Compile Include="FingerprintMinutiaConvertor.cs" />
-    <Compile Include="FingerPrintMinutias.cs" />
-    <Compile Include="PatientFHIRProfile.cs" />
+    <Compile Include="FHIRUtilities.cs" />
+    <Compile Include="SecurityUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringUtilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\noid.security\noid.security.csproj">
+      <Project>{c3b41330-4dd4-4872-95a5-f562e50b244f}</Project>
+      <Name>noid.security</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\biometrics.fingerprint.match.lib\biometrics.fingerprint.match.lib.csproj">
-      <Project>{0f1d6fcb-f813-4e2f-9d6c-de4bd7866233}</Project>
-      <Name>biometrics.fingerprint.match.lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\noid.demographic.hasher\noid.demographic.hasher.csproj">
-      <Project>{beef4d63-efc2-4134-976c-98ed93188e43}</Project>
-      <Name>noid.demographic.hasher</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\noid.utilities\noid.utilities.csproj">
-      <Project>{c0c23c18-5406-4415-8def-3d11eb6a5fce}</Project>
-      <Name>noid.utilities</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
