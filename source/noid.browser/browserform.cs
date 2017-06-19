@@ -3,17 +3,19 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 // Copyright © 2010-2017 The CefSharp Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+
 using System;
 using System.Windows.Forms;
-using NoID.Browser.Controls;
+using System.Collections.Generic;
 using CefSharp.WinForms;
 using CefSharp;
-using NoID.FHIR.Profile;
-using NoID.Biometrics.Managers;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
+using NoID.FHIR.Profile;
+using NoID.Biometrics.Managers;
+using NoID.Browser.Controls;
 
 namespace NoID.Browser
 {
@@ -168,7 +170,7 @@ namespace NoID.Browser
             browser.TitleChanged += OnBrowserTitleChanged;
 
             browser.ConsoleMessage += OnBrowserConsoleMessage;
-            browser.LoadingStateChanged += OnLoadingStateChanged;
+            browser.LoadingStateChanged += OnLoadingWithNavigation;
             browser.AddressChanged += OnBrowserAddressChanged;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
@@ -176,6 +178,8 @@ namespace NoID.Browser
             string initialDisplayText = String.Format(approle.ToString());
             DisplayOutput(initialDisplayText);
 #endif
+            // Handles JavaScripts Events
+            browser.LoadingStateChanged += OnJavaScript; 
         }
 #if NAVIGATE
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
@@ -193,7 +197,7 @@ namespace NoID.Browser
             DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
         }
 
-        private void OnLoadingStateChanged(object sender, LoadingStateChangedEventArgs args)
+        private void OnLoadingWithNavigation(object sender, LoadingStateChangedEventArgs args)
         {
             SetCanGoBack(args.CanGoBack);
             SetCanGoForward(args.CanGoForward);
@@ -291,5 +295,34 @@ namespace NoID.Browser
             }
         }
 #endif
+        private void OnJavaScript(object sender, LoadingStateChangedEventArgs args)
+        {
+            //Wait for the Page to finish loading
+            if (args.IsLoading == false)
+            {
+                const string script = @"(function()
+    					{
+	    					var linksArray = new Array();
+	    					for (var i = 0; i < document.links.length; i++)
+	    					{
+	    						linksArray[i] = [String(document.links[i].innerHTML),
+	    								String(document.links[i].innerText),
+	    								String(document.links[i].href)];
+	    					}
+	    					return linksArray;
+    					})();";
+
+                browser.EvaluateScriptAsync(script).ContinueWith(x =>
+                {
+                    var response = x.Result;
+
+                    if (response.Success && response.Result != null)
+                    {
+                        var list = (List<object>)response.Result;
+                        //Do something here (To interact with the UI you must call BeginInvoke)
+                    }
+                });
+            }
+        }
     }
 }
