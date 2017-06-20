@@ -3,17 +3,19 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 // Copyright © 2010-2017 The CefSharp Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
+
 using System;
 using System.Windows.Forms;
-using NoID.Browser.Controls;
+using System.Collections.Generic;
 using CefSharp.WinForms;
 using CefSharp;
-using NoID.FHIR.Profile;
-using NoID.Biometrics.Managers;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
+using NoID.FHIR.Profile;
+using NoID.Biometrics.Managers;
+using NoID.Browser.Controls;
 
 namespace NoID.Browser
 {
@@ -148,10 +150,14 @@ namespace NoID.Browser
                     break;
             }
 
-            browser = new ChromiumWebBrowser(endPath)
-            {
-                Dock = DockStyle.Fill
-            };
+            
+            browser = new ChromiumWebBrowser(endPath){ Dock = DockStyle.Fill };
+            // Handles JavaScripts Events
+            //BoundObject obj = new BoundObject(browser);
+            NoIDBridge bridge = new NoIDBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+            //browser.RegisterJsObject("BoundObject", obj);
+            browser.RegisterJsObject("NoIDBridge", bridge);
+            //browser.FrameLoadEnd += obj.OnFrameLoadEnd;
 
             biometricDevice = new DigitalPersona();
             if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
@@ -168,14 +174,14 @@ namespace NoID.Browser
             browser.TitleChanged += OnBrowserTitleChanged;
 
             browser.ConsoleMessage += OnBrowserConsoleMessage;
-            browser.LoadingStateChanged += OnLoadingStateChanged;
+            //browser.LoadingStateChanged += OnLoadingWithNavigation;
             browser.AddressChanged += OnBrowserAddressChanged;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
             //var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}, Environment: {3}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion, bitness);
             string initialDisplayText = String.Format(approle.ToString());
             DisplayOutput(initialDisplayText);
-#endif
+#endif 
         }
 #if NAVIGATE
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
@@ -193,7 +199,7 @@ namespace NoID.Browser
             DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
         }
 
-        private void OnLoadingStateChanged(object sender, LoadingStateChangedEventArgs args)
+        private void OnLoadingWithNavigation(object sender, LoadingStateChangedEventArgs args)
         {
             SetCanGoBack(args.CanGoBack);
             SetCanGoForward(args.CanGoForward);

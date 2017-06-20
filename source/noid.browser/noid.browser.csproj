@@ -116,12 +116,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>htmlpages.resx</DependentUpon>
     </Compile>
+    <Compile Include="JavaScriptEvent.cs" />
     <Compile Include="loginform.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="loginform.Designer.cs">
       <DependentUpon>loginform.cs</DependentUpon>
     </Compile>
+    <Compile Include="NoIDBridge.cs" />
     <Compile Include="program.cs">
     </Compile>
     <Compile Include="properties\assemblyinfo.cs" />
