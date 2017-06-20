@@ -154,10 +154,10 @@ namespace NoID.Browser
                     break;
             }
 
-            browser = new ChromiumWebBrowser(endPath)
-            {
-                Dock = DockStyle.Fill
-            };
+            browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
+            // Handles JavaScripts Events
+            NoIDBridge bridge = new NoIDBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+            browser.RegisterJsObject("NoIDBridge", bridge);
 
             biometricDevice = new DigitalPersona();
             if (!biometricDevice.StartCaptureAsync(this.OnCaptured))

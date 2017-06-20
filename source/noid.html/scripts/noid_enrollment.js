@@ -1,4 +1,4 @@
-﻿function showComplete(whichStep) {
+function showComplete(whichStep) {
     switch (whichStep) {
         case 'left':
             document.getElementById('checkLeft').setAttribute('class', 'fa fa-check-square-o fa-5x fa-fw pull-right complete');
@@ -31,6 +31,11 @@ function wait(whichStep, result) {
             }, 5000);
             break;
     };
+};
+function showNewExistingModal() {    
+ setTimeout(function () {
+    $('#newReturnPatientModal').modal('show');
+  }, 750);    
 };
 function showExceptions() {
     document.getElementById('exceptions').setAttribute('class', 'tab-pane active');

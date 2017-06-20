@@ -62,50 +62,50 @@
                                     </span>
                                 </a>
                             </li>
-                            <li role="presentation" class="disabled">
+                            <!--<li role="presentation" class="disabled">
                                 <a href="#step6" data-toggle="tab" aria-controls="step6" role="tab" title="Scan Your IDs">
                                     <span class="round-tab">
                                         <i class="fa fa-id-card-o" aria-hidden="true"></i>
                                     </span>
                                 </a>
-                            </li>
+                            </li>-->
                             <li role="presentation" class="disabled">
-                                <a href="#step7" data-toggle="tab" aria-controls="step7" role="tab" title="Your Demographics">
+                                <a href="#step6" data-toggle="tab" aria-controls="step6" role="tab" title="Your Demographics">
                                     <span class="round-tab">
                                         <i class="fa fa-users" aria-hidden="true"></i>
                                     </span>
                                 </a>
                             </li>
                             <li role="presentation" class="disabled">
-                                <a href="#step8" data-toggle="tab" aria-controls="step8" role="tab" title="Contact Information">
+                                <a href="#step7" data-toggle="tab" aria-controls="step7" role="tab" title="Contact Information">
                                     <span class="round-tab">
                                         <i class="fa fa-home" aria-hidden="true"></i>
                                     </span>
                                 </a>
                             </li>
                             <li role="presentation" class="disabled">
-                                <a href="#step9" data-toggle="tab" aria-controls="step9" role="tab" title="Additional Information">
+                                <a href="#step8" data-toggle="tab" aria-controls="step8" role="tab" title="Additional Information">
                                     <span class="round-tab">
                                         <i class="fa fa-puzzle-piece" aria-hidden="true"></i>
                                     </span>
                                 </a>
                             </li>
                             <li role="presentation" class="disabled">
-                                <a href="#step10" data-toggle="tab" aria-controls="step10" role="tab" title="Hub Selection">
+                                <a href="#step9" data-toggle="tab" aria-controls="step9" role="tab" title="Hub Selection">
                                     <span class="round-tab">
                                         <i class="fa fa-cubes" aria-hidden="true"></i>
                                     </span>
                                 </a>
                             </li>
                             <li role="presentation" class="disabled">
-                                <a href="#step11" data-toggle="tab" aria-controls="step11" role="tab" title="Your Portal Setup">
+                                <a href="#step10" data-toggle="tab" aria-controls="step10" role="tab" title="Your Portal Setup">
                                     <span class="round-tab">
                                         <i class="glyphicon glyphicon-user" aria-hidden="true"></i>
                                     </span>
                                 </a>
                             </li>
                             <li role="presentation" class="disabled">
-                                <a href="#step12" data-toggle="tab" aria-controls="step12" role="tab" title="Review Information">
+                                <a href="#step11" data-toggle="tab" aria-controls="step11" role="tab" title="Review Information">
                                     <span class="round-tab">
                                         <i class="fa fa-undo fa-rotate-270" aria-hidden="true"></i>
                                     </span>
@@ -318,7 +318,7 @@
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
-                            <div class="tab-pane" role="tabpanel" id="step6">
+                            <!--<div class="tab-pane" role="tabpanel" id="step6">
                                 <div class="step6">
                                     <div class="row">
                                         <div class="jumbotron">
@@ -348,9 +348,9 @@
                                 <ul class="list-inline pull-right pull-right2">
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
-                            </div>
-                            <div class="tab-pane" role="tabpanel" id="step7">
-                                <div class="step7">
+                            </div>-->
+                            <div class="tab-pane" role="tabpanel" id="step6">
+                                <div class="step6">
                                     <div class="row">
                                         <div class="jumbotron">
                                             <h1>Enter Demographics</h1>
@@ -587,8 +587,8 @@
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
-                            <div class="tab-pane" role="tabpanel" id="step8">
-                                <div class="step8">
+                            <div class="tab-pane" role="tabpanel" id="step7">
+                                <div class="step7">
                                     <div class="row">
                                         <div class="jumbotron">
                                             <h1>Contact Information</h1>
@@ -635,11 +635,11 @@
                                     <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="savePatient()"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
-                            <div class="tab-pane" role="tabpanel" id="step9">
-                                <div class="step9">
+                            <div class="tab-pane" role="tabpanel" id="step8">
+                                <div class="step8">
                                     <div class="row">
                                         <div class="jumbotron">
                                             <h1>Additional Information</h1>
@@ -684,8 +684,8 @@
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
-                            <div class="tab-pane" role="tabpanel" id="step10">
-                                <div class="step10">
+                            <div class="tab-pane" role="tabpanel" id="step9">
+                                <div class="step9">
                                     <div class="row">
                                         <div class="jumbotron">
                                             <h1>Hub Selection</h1>
@@ -716,8 +716,8 @@
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
-                            <div class="tab-pane" role="tabpanel" id="step11">
-                                <div class="step11">
+                            <div class="tab-pane"role="tabpanel" id="step10">
+                                <div class="step10">
                                     <div class="row">
                                         <div class="jumbotron">
                                             <h1>Portal Password Setup</h1>
@@ -747,8 +747,8 @@
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
-                            <div class="tab-pane" role="tabpanel" id="step12">
-                                <div class="step12">
+                            <div class="tab-pane" role="tabpanel" id="step11">
+                                <div class="step11">
                                     <div class="row">
                                         <div class="jumbotron">
                                             <h1>Review Information</h1>
@@ -887,11 +887,37 @@
                                 <p align="right"><stong>Please select a language:</stong></p>
                             </div>
                             <div class="col-md-8 col-xs-9">
-                                <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                <select name="selectedLanguage" id="selectedLanguage" class="dropselectsec1">
                                     <option value="English">English</option>
-                                    <option value="Español">Español</option>
-                                    <option value="François">François</option>
-                                    <option value="Deutsch">Deutsch</option>
+                                    <option disabled title="Spanish Translation Not Supported for Prototype" value="Español">Español</option>
+                                    <option disabled title="French Translation Not Supported for Prototype" value="François">François</option>
+                                    <option disabled title="German Translation Not Supported for Prototype" value="Deutsch">Deutsch</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="showNewExistingModal()">Select</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+         <div id="newReturnPatientModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Select If You Are A New Or Returning NoID Patient</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mar_ned">
+                            <div class="col-md-4 col-xs-3">
+                                <p align="right"><stong>Please select your enrollment status:</stong></p>
+                            </div>
+                            <div class="col-md-8 col-xs-9">
+                                <select name="visa_status" id="newReturn_status" class="dropselectsec1">
+                                    <option title="To my knowledge, I have never enrolled in a NoID enabled system" value="I am a new patient">I am a new patient</option>
+                                    <option title="I am currently enrolled in a NoID enabled system" value="I am a returning patient">I am a returning patient</option>
+                                    <option title="I do not know if I am currently enrolled in a NoID enabled system" value="I do not know">I do not know</option>   
                                 </select>
                             </div>
                         </div>
@@ -938,6 +964,21 @@
         }
         function prevTab(elem) {
             $(elem).prev().find('a[data-toggle="tab"]').click();
+        }
+
+        function savePatient() {
+
+            NoIDBridge.postDemographics('english', 'super', 'd', 'women', 'f', '1988', '03', '07', '123 Main Street', 'Apt 1', 'New Orleans', 'LA', '70112', 'super.women@yahoo.com', '5045551111');
+            if (NoIDBridge.ErrorDescription == '')
+            {
+                //no error continue with new page
+                alert("postDemographics no error");
+            }
+            else
+            {
+                //error, show user message
+                alert("postDemographics Error" + NoIDBridge.ErrorDescription);
+            }
         }
 
 

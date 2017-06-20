@@ -129,15 +129,22 @@ namespace NoID.Biometrics.Managers
 
         public bool StartCaptureAsync(Reader.CaptureCallback OnCaptured)
         {
-            // Activate capture handler
-            _reader.On_Captured += new Reader.CaptureCallback(OnCaptured);
+            if (!(_reader == null))
+            {
+                // Activate capture handler
+                _reader.On_Captured += new Reader.CaptureCallback(OnCaptured);
 
-            // Call capture
-            if (!CaptureFingerAsync())
+                // Call capture
+                if (!CaptureFingerAsync())
+                {
+                    return false;
+                }
+                return true;
+            }
+            else
             {
                 return false;
             }
-            return true;
         }
 
         public bool CheckCaptureResult(CaptureResult captureResult)
