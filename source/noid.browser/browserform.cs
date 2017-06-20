@@ -154,7 +154,9 @@ namespace NoID.Browser
             browser = new ChromiumWebBrowser(endPath){ Dock = DockStyle.Fill };
             // Handles JavaScripts Events
             BoundObject obj = new BoundObject(browser);
+            NoIDBridge bridge = new NoIDBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
             browser.RegisterJsObject("BoundObject", obj);
+            browser.RegisterJsObject("NoIDBridge", bridge);
             browser.FrameLoadEnd += obj.OnFrameLoadEnd;
 
             biometricDevice = new DigitalPersona();

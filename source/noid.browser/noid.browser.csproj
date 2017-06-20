@@ -123,6 +123,7 @@
     <Compile Include="loginform.Designer.cs">
       <DependentUpon>loginform.cs</DependentUpon>
     </Compile>
+    <Compile Include="NoIDBridge.cs" />
     <Compile Include="program.cs">
     </Compile>
     <Compile Include="properties\assemblyinfo.cs" />

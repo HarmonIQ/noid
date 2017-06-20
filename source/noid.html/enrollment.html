@@ -635,7 +635,7 @@
                                     <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="savePatient()"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
                             <div class="tab-pane" role="tabpanel" id="step8">
@@ -964,6 +964,11 @@
         }
         function prevTab(elem) {
             $(elem).prev().find('a[data-toggle="tab"]').click();
+        }
+
+        function savePatient() {
+
+            NoIDBridge.postDemographics('english', 'super', 'd', 'women', 'f', '1988', '03', '07', '123 Main Street', 'Apt 1', 'New Orleans', 'LA', '70112', 'super.women@yahoo.com', '5045551111');
         }
 
 
