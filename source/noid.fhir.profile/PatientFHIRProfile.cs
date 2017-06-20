@@ -128,8 +128,23 @@ namespace NoID.FHIR.Profile
             get { return _organizationName; }
             set { _organizationName = value; }
         }
-        
-        
+
+        public string DomainName
+        {
+            get
+            {
+                return _fhirAddress.Host.Substring(_fhirAddress.Host.LastIndexOf('.', _fhirAddress.Host.LastIndexOf('.') - 1) + 1);
+            }
+        }
+
+        public string ServerName
+        {
+            get
+            {
+                return _fhirAddress.GetLeftPart(UriPartial.Authority).ToString();
+            }
+        }
+
         public string Language
         {
             get { return _language; }
@@ -444,21 +459,36 @@ namespace NoID.FHIR.Profile
             try
             {
                 pt = new Patient();
+
                 // Add patient certificate hash.
-                Identifier id = new Identifier();
-                id.System = "http://www.mynoid.com/fhir/PatientCertificateID";
-                id.Value = PatientCertificateID;
-                pt.Identifier.Add(id);
-                ResourceReference managingOrganization = new ResourceReference(FHIRUtilities.NoID_OID, OrganizationName);
+                Identifier idSession;
+                Identifier idPatientCertificate;
+                if (SessionID.Length > 0)
+                {
+                    idSession = new Identifier();
+                    idSession.System = ServerName + "/fhir/SessionID";
+                    idSession.Value = SessionID;
+                    pt.Identifier.Add(idSession);
+                }
+                if (PatientCertificateID.Length > 0)
+                {
+                    idPatientCertificate = new Identifier();
+                    idPatientCertificate.System = ServerName + "/fhir/PatientCertificateID";
+                    idPatientCertificate.Value = PatientCertificateID;
+                    pt.Identifier.Add(idPatientCertificate);
+                }
+
+                ResourceReference managingOrganization = new ResourceReference(OrganizationName, DomainName);
                 pt.ManagingOrganization = managingOrganization;
-                pt.Identifier = new List<Identifier> { id };
+
                 // Add patient demographics
                 pt.Language = Language;
                 pt.BirthDate = BirthDay;
-                //TODO populate Gender correctly
-                pt.Gender = AdministrativeGender.Female;
-                //TODO populate MultipleBirth correctly
-                pt.MultipleBirth = new FhirString("No");
+                pt.Gender = Gender;
+                if (!(MultipleBirth == null))
+                {
+                    pt.MultipleBirth = MultipleBirth;
+                }
                 // Add patient name
                 HumanName ptName = new HumanName();
                 ptName.Given = new string[] { FirstName, MiddleName };
@@ -534,20 +564,22 @@ namespace NoID.FHIR.Profile
                 {
                     FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
                     FingerPrintMedia.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode));
+                    FingerPrintMedia.AddExtension("Healthcare Node", FHIRUtilities.OrganizationExtension(OrganizationName, DomainName, ServerName));
                     FingerPrintMedia.Identifier = new List<Identifier>();
+
                     Identifier idSession;
                     Identifier idPatientCertificate;
                     if (SessionID.Length > 0)
                     {
                         idSession = new Identifier();
-                        idSession.System = "http://www.mynoid.com/fhir/SessionID";
+                        idSession.System = ServerName + "/fhir/SessionID";
                         idSession.Value = SessionID;
                         FingerPrintMedia.Identifier.Add(idSession);
                     }
                     if (PatientCertificateID.Length > 0)
                     {
                         idPatientCertificate = new Identifier();
-                        idPatientCertificate.System = "http://www.mynoid.com/fhir/PatientCertificateID";
+                        idPatientCertificate.System = ServerName + "/fhir/PatientCertificateID";
                         idPatientCertificate.Value = PatientCertificateID;
                         FingerPrintMedia.Identifier.Add(idPatientCertificate);
                     }

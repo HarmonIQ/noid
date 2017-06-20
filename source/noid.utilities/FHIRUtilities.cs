@@ -163,6 +163,27 @@ namespace NoID.Utilities
             return extCaptureSite;
         }
 
+        public static Extension OrganizationExtension(string organizationName, string domainName, string fhirServerName)
+        {
+            /*
+                Example JSON FHIR Message
+                Organization 
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "Domain",                         "valueString": noidtest.net              },    
+                        {      "url": "FHIR Server",                    "valueString": https://hn1.noidtest.net  }
+                    ]
+                }
+            */
+
+            Extension ext = new Extension("Organization", new FhirString(organizationName));
+            Extension extCodingSystem = ext.AddExtension("Domain", new FhirString(domainName));
+            Extension extCaptureSiteDescription = ext.AddExtension("FHIR Server", new FhirString(fhirServerName));
+            return ext;
+        }
+
         public static string LateralityToString(LateralitySnoMedCode laterality)
         {
             return Enum.GetName(typeof(LateralitySnoMedCode), laterality);
