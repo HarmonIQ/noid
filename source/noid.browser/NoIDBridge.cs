@@ -3,7 +3,11 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using Hl7.Fhir.Model;
 using NoID.FHIR.Profile;
+using NoID.Security;
+using NoID.Utilities;
+using NoID.Network.Transport;
 
 namespace NoID.Browser
 {
@@ -66,15 +70,21 @@ namespace NoID.Browser
                 patientFHIRProfile.PostalCode = postalCode;
                 patientFHIRProfile.EmailAddress = emailAddress;
                 patientFHIRProfile.PhoneCell = phoneCell;
-                /*
-                Authentication auth = new Authentication(TestUserName, TestPassword);
-                Uri endpoint = new Uri(TestEndPoint);
-                WebSend ws = new WebSend(endpoint, auth, payload);
-                */
+                // Send FHIR message
+                Authentication auth = SecurityUtilities.GetAuthentication(_serviceName);
+                HttpsClient client = new HttpsClient();
+                Patient pt = patientFHIRProfile.CreateFHIRPatientProfile();
+                if (client.SendFHIRPatientProfile(_endPoint, auth, pt) == false)
+                {
+                    // Error occured set error description
+                    ErrorDescription = client.ResponseText;
+                    return false;
+                }
             }
             catch (Exception ex)
             {
                 ErrorDescription = ex.Message;
+                return false;
             }
             return true;
         }

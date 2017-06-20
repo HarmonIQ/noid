@@ -446,17 +446,19 @@ namespace NoID.FHIR.Profile
                 pt = new Patient();
                 // Add patient certificate hash.
                 Identifier id = new Identifier();
-                id.Value = PatientCertificateID; //hash of local patient certificate
-                pt.Identifier = new List<Identifier> { id };
-                // Add healthcare node certificate hash.
+                id.System = "http://www.mynoid.com/fhir/PatientCertificateID";
+                id.Value = PatientCertificateID;
+                pt.Identifier.Add(id);
                 ResourceReference managingOrganization = new ResourceReference(FHIRUtilities.NoID_OID, OrganizationName);
                 pt.ManagingOrganization = managingOrganization;
-                pt.ManagingOrganization.Identifier = new Identifier("", PatientCertificateIDHash);
+                pt.Identifier = new List<Identifier> { id };
                 // Add patient demographics
                 pt.Language = Language;
                 pt.BirthDate = BirthDay;
-                pt.Gender = Gender;
-                pt.MultipleBirth = MultipleBirth;
+                //TODO populate Gender correctly
+                pt.Gender = AdministrativeGender.Female;
+                //TODO populate MultipleBirth correctly
+                pt.MultipleBirth = new FhirString("No");
                 // Add patient name
                 HumanName ptName = new HumanName();
                 ptName.Given = new string[] { FirstName, MiddleName };
