@@ -13,6 +13,7 @@ namespace NoID.Browser
         string _organizationName;
         Uri _endPoint;
         string _serviceName;
+        string _errorDescription;
 
         public NoIDBridge(string organizationName, Uri endPoint, string serviceName)
         {
@@ -41,42 +42,48 @@ namespace NoID.Browser
                 string phoneCell
             )
         {
-            PatientFHIRProfile patientFHIRProfile = new PatientFHIRProfile(_organizationName, _endPoint);
-            patientFHIRProfile.Language = language;
-            patientFHIRProfile.LastName = lastName;
-            patientFHIRProfile.FirstName = firstName;
-            patientFHIRProfile.MiddleName = middleName;
-            Hl7.Fhir.Model.AdministrativeGender genderType = Hl7.Fhir.Model.AdministrativeGender.Unknown;
-            if (gender == "f")
+            try
             {
-                genderType = Hl7.Fhir.Model.AdministrativeGender.Female;
+                PatientFHIRProfile patientFHIRProfile = new PatientFHIRProfile(_organizationName, _endPoint);
+                patientFHIRProfile.Language = language;
+                patientFHIRProfile.LastName = lastName;
+                patientFHIRProfile.FirstName = firstName;
+                patientFHIRProfile.MiddleName = middleName;
+                Hl7.Fhir.Model.AdministrativeGender genderType = Hl7.Fhir.Model.AdministrativeGender.Unknown;
+                if (gender == "f")
+                {
+                    genderType = Hl7.Fhir.Model.AdministrativeGender.Female;
+                }
+                else if (gender == "m")
+                {
+                    genderType = Hl7.Fhir.Model.AdministrativeGender.Male;
+                }
+                patientFHIRProfile.Gender = genderType;
+                patientFHIRProfile.BirthDay = birthYear + "-" + birthMonth + "-" + birthDay;
+                patientFHIRProfile.StreetAddress = streetAddress;
+                patientFHIRProfile.StreetAddress2 = streetAddress2;
+                patientFHIRProfile.City = city;
+                patientFHIRProfile.State = state;
+                patientFHIRProfile.PostalCode = postalCode;
+                patientFHIRProfile.EmailAddress = emailAddress;
+                patientFHIRProfile.PhoneCell = phoneCell;
+                /*
+                Authentication auth = new Authentication(TestUserName, TestPassword);
+                Uri endpoint = new Uri(TestEndPoint);
+                WebSend ws = new WebSend(endpoint, auth, payload);
+                */
             }
-            else if (gender == "m")
+            catch (Exception ex)
             {
-                genderType = Hl7.Fhir.Model.AdministrativeGender.Male;
+                ErrorDescription = ex.Message;
             }
-            patientFHIRProfile.Gender = genderType;
-            patientFHIRProfile.BirthDay = birthYear + "-" + birthMonth + "-" + birthDay;
-            patientFHIRProfile.StreetAddress = streetAddress;
-            patientFHIRProfile.StreetAddress2 = streetAddress2;
-            patientFHIRProfile.City = city;
-            patientFHIRProfile.State = state;
-            patientFHIRProfile.PostalCode = postalCode;
-            patientFHIRProfile.EmailAddress = emailAddress;
-            patientFHIRProfile.PhoneCell = phoneCell;
-            /*
-            Authentication auth = new Authentication(TestUserName, TestPassword);
-            Uri endpoint = new Uri(TestEndPoint);
-            WebSend ws = new WebSend(endpoint, auth, payload);
-            */
-
             return true;
         }
 
-
-            
-
-
-
+        public string ErrorDescription
+        {
+            get { return _errorDescription; }
+            private set { _errorDescription = value; }
+        }
     }
 }
