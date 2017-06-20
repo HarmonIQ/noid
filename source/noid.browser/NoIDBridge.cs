@@ -1,10 +1,9 @@
-﻿using NoID.FHIR.Profile;
-using NoID.Network.Security;
+﻿// Copyright © 2016-2017 NoID Developers. All rights reserved.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NoID.FHIR.Profile;
 
 namespace NoID.Browser
 {
