@@ -5,7 +5,7 @@
 using System;
 using System.Text;
 
-namespace NoID.Network.Security
+namespace NoID.Security
 {
     public class Authentication
     {

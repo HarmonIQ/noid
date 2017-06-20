@@ -3,19 +3,20 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
-using NoID.Network.Security;
-using Hl7.Fhir.Model;
 using System.Collections.Generic;
+using Hl7.Fhir.Model;
 using NoID.FHIR.Profile;
+using NoID.Security;
+using NoID.Utilities;
+using NoID.Network.Transport;
 
 namespace NoID.Network.Client.Test
 {
     class Program
     {
-        private static readonly string TestUserName = System.Configuration.ConfigurationManager.AppSettings["TestUserName"].ToString();
-        private static readonly string TestPassword = System.Configuration.ConfigurationManager.AppSettings["TestPassword"].ToString();
-        private static readonly string TestEndPoint = System.Configuration.ConfigurationManager.AppSettings["TestEndPoint"].ToString();
-
+        private static readonly string FHIREndPoint = System.Configuration.ConfigurationManager.AppSettings["FHIREndPoint"].ToString();
+        private static readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        
         static void Main(string[] args)
         {
             SendJSON();
@@ -25,25 +26,26 @@ namespace NoID.Network.Client.Test
 
         private static void SendJSON()
         {
-            Patient payload = CreateTestFHIRPatientProfile();
-            Authentication auth = new Authentication(TestUserName, TestPassword);
-            Uri endpoint = new Uri(TestEndPoint);
-            WebSend ws = new WebSend(endpoint, auth, payload);
-            Console.WriteLine(ws.PostHttpWebRequest());
+            Patient payload = FHIRUtilities.CreateTestFHIRPatientProfile();
+            Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            Uri endpoint = new Uri(FHIREndPoint);
+            HttpsClient client = new HttpsClient();
+            client.SendFHIRPatientProfile(endpoint, auth, payload);
+            Console.WriteLine(client.ResponseText);
         }
 
         private static void SendProtoBuffer()
         {
             PatientFHIRProfile payload = CreatePatientFHIRProfile();
-            Authentication auth = new Authentication(TestUserName, TestPassword);
-            Uri endpoint = new Uri(TestEndPoint);
+            Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            Uri endpoint = new Uri(FHIREndPoint);
             WebSend ws = new WebSend(endpoint, auth, payload);
             Console.WriteLine(ws.PostHttpWebRequest());
         }
 
         private static PatientFHIRProfile CreatePatientFHIRProfile()
         {
-            PatientFHIRProfile pt = new PatientFHIRProfile("Test Org", new Uri(TestEndPoint));
+            PatientFHIRProfile pt = new PatientFHIRProfile("Test Org", new Uri(FHIREndPoint));
             pt.LastName = "Williams";
             pt.FirstName = "Brianna";
             pt.MiddleName = "E.";
@@ -57,46 +59,6 @@ namespace NoID.Network.Client.Test
             pt.PostalCode = "70112-2110";
             pt.PhoneCell = "15045551212";
             pt.PhoneHome = "12125551212";
-            return pt;
-        }
-
-        private static Patient CreateTestFHIRPatientProfile()
-        {
-            Patient pt = new Patient();
-            Identifier idSession;
-            Identifier idPatientCertificate;
-
-            idSession = new Identifier();
-            idSession.System = "http://www.mynoid.com/fhir/SessionID";
-            idSession.Value = "S12348";
-            pt.Identifier.Add(idSession);
-
-            idPatientCertificate = new Identifier();
-            idPatientCertificate.System = "http://www.mynoid.com/fhir/PatientCertificateID";
-            idPatientCertificate.Value = "PT67891";
-            pt.Identifier.Add(idPatientCertificate);
-
-            ResourceReference managingOrganization = new ResourceReference("238.3.322.21.2", "Test NoID");
-            pt.ManagingOrganization = managingOrganization;
-
-            pt.Language = "English";
-            pt.BirthDate = "20060703";
-            pt.Gender = AdministrativeGender.Female;
-            pt.MultipleBirth = new FhirString("No");
-            // Add patient name
-            HumanName ptName = new HumanName();
-            ptName.Given = new string[] { "Mary", "J" };
-            ptName.Family = "Bling";
-            pt.Name = new List<HumanName> { ptName };
-            // Add patient address
-            Address address = new Address();
-            address.Line = new string[] { "300 Exit St", "Unit 5" };
-            address.City = "New Orleans";
-            address.State = "LA";
-            address.Country = "USA";
-            address.PostalCode = "70112-1202";
-            pt.Address.Add(address);
-
             return pt;
         }
     }

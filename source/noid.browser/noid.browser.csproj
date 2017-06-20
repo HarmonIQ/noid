@@ -86,6 +86,9 @@
     <Reference Include="Hl7.FhirPath, Version=0.4.2.0, Culture=neutral, PublicKeyToken=d706911480550fc3, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Hl7.FhirPath.0.4.2\lib\net45\Hl7.FhirPath.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -132,7 +135,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="browserform.resx">
@@ -205,27 +207,26 @@
       <Project>{8af257d1-3bd7-4709-b5ba-b42bd07a45fb}</Project>
       <Name>noid.fhir.profile</Name>
     </ProjectReference>
-    <ProjectReference Include="..\noid.network.security\noid.network.security.csproj">
-      <Project>{43b016f6-0494-4645-be2a-e04bb0e0721d}</Project>
-      <Name>noid.network.security</Name>
+    <ProjectReference Include="..\noid.network.client\noid.network.client.csproj">
+      <Project>{d15a8917-30f2-4dd2-abcb-81e04d126b31}</Project>
+      <Name>noid.network.client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\noid.network.transport\noid.network.transport.csproj">
+      <Project>{493cff19-4364-4e36-9d75-adc607d10c9a}</Project>
+      <Name>noid.network.transport</Name>
     </ProjectReference>
     <ProjectReference Include="..\noid.security\noid.security.csproj">
       <Project>{c3b41330-4dd4-4872-95a5-f562e50b244f}</Project>
       <Name>noid.security</Name>
     </ProjectReference>
+    <ProjectReference Include="..\noid.utilities\noid.utilities.csproj">
+      <Project>{c0c23c18-5406-4415-8def-3d11eb6a5fce}</Project>
+      <Name>noid.utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir  $(TargetDir)html\
-copy $(ProjectDir)*.html $(TargetDir)html\
-mkdir  $(TargetDir)html\style\
-copy $(ProjectDir)style\*.css $(TargetDir)html\style\
-mkdir  $(TargetDir)html\scripts\
-copy $(ProjectDir)scripts\*.js $(TargetDir)html\scripts\
-mkdir  $(TargetDir)html\fonts\
-copy $(ProjectDir)fonts\*.* $(TargetDir)html\fonts\
-mkdir  $(TargetDir)html\resources\
-copy $(ProjectDir)resources\*.* $(TargetDir)html\resources\</PostBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>rmdir $(TargetDir)html\  /s /q</PreBuildEvent>

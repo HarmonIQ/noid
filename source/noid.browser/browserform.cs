@@ -6,16 +6,18 @@
 
 using System;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using CefSharp.WinForms;
 using CefSharp;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
+using NoID.Browser.Controls;
+using NoID.Utilities;
+using NoID.Security;
 using NoID.FHIR.Profile;
 using NoID.Biometrics.Managers;
-using NoID.Browser.Controls;
+using NoID.Network.Transport;
 
 namespace NoID.Browser
 {
@@ -70,8 +72,8 @@ namespace NoID.Browser
 #endif
             if (score >= MATCH_THRESHOLD)
             {
-                PatientFHIRProfile.LateralitySnoMedCode laterality = PatientFHIRProfile.LateralitySnoMedCode.Left;
-                PatientFHIRProfile.CaptureSiteSnoMedCode captureSiteSnoMedCode = PatientFHIRProfile.CaptureSiteSnoMedCode.IndexFinger;
+                FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+                FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
 
                 noidFHIRProfile.PatientCertificateID = Guid.NewGuid().ToString();
 
@@ -90,7 +92,9 @@ namespace NoID.Browser
                 }
                 
                 Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia);
-                noidFHIRProfile.SendFHIRMediaProfile(media);
+                HttpsClient dataTransport = new HttpsClient();
+                Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+                dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
             }
             previousCapture = currentCapture;
             previousFingerPrint = newFingerPrint;
@@ -100,9 +104,9 @@ namespace NoID.Browser
         {
             InitializeComponent();
 
-            healthcareNodeFHIRAddress = new Uri(Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
-            healthcareNodeWebAddress = Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
-            healthcareNodeChainVerifyAddress = Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
+            healthcareNodeFHIRAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+            healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
+            healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
 
             noidFHIRProfile = new PatientFHIRProfile(organizationName, healthcareNodeFHIRAddress);
             Afis.Threshold = MATCH_THRESHOLD;
@@ -150,14 +154,10 @@ namespace NoID.Browser
                     break;
             }
 
-            
-            browser = new ChromiumWebBrowser(endPath){ Dock = DockStyle.Fill };
+            browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
             // Handles JavaScripts Events
-            //BoundObject obj = new BoundObject(browser);
             NoIDBridge bridge = new NoIDBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
-            //browser.RegisterJsObject("BoundObject", obj);
             browser.RegisterJsObject("NoIDBridge", bridge);
-            //browser.FrameLoadEnd += obj.OnFrameLoadEnd;
 
             biometricDevice = new DigitalPersona();
             if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
@@ -174,14 +174,14 @@ namespace NoID.Browser
             browser.TitleChanged += OnBrowserTitleChanged;
 
             browser.ConsoleMessage += OnBrowserConsoleMessage;
-            //browser.LoadingStateChanged += OnLoadingWithNavigation;
+            browser.LoadingStateChanged += OnLoadingStateChanged;
             browser.AddressChanged += OnBrowserAddressChanged;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
             //var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}, Environment: {3}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion, bitness);
             string initialDisplayText = String.Format(approle.ToString());
             DisplayOutput(initialDisplayText);
-#endif 
+#endif
         }
 #if NAVIGATE
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
@@ -199,7 +199,7 @@ namespace NoID.Browser
             DisplayOutput(string.Format("Line: {0}, Source: {1}, Message: {2}", args.Line, args.Source, args.Message));
         }
 
-        private void OnLoadingWithNavigation(object sender, LoadingStateChangedEventArgs args)
+        private void OnLoadingStateChanged(object sender, LoadingStateChangedEventArgs args)
         {
             SetCanGoBack(args.CanGoBack);
             SetCanGoForward(args.CanGoForward);

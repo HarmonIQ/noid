@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("noid.network.security")]
+[assembly: AssemblyTitle("noid.network.transport")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("noid.network.security")]
+[assembly: AssemblyProduct("noid.network.transport")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("43b016f6-0494-4645-be2a-e04bb0e0721d")]
+[assembly: Guid("493cff19-4364-4e36-9d75-adc607d10c9a")]
 
 // Version information for an assembly consists of the following four values:
 //

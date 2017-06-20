@@ -169,6 +169,12 @@
     <Compile Include="utils\Rectangle.cs" />
     <Compile Include="utils\ReversedList.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\noid.utilities\noid.utilities.csproj">
+      <Project>{c0c23c18-5406-4415-8def-3d11eb6a5fce}</Project>
+      <Name>noid.utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

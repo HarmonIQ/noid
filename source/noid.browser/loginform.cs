@@ -4,10 +4,10 @@
 
 using System;
 using System.Windows.Forms;
-using NoID.Security;
-using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
-using System.Text;
+using NoID.Security;
+using NoID.Network.Client;
+using NoID.Utilities;
 
 namespace NoID.Browser
 {
@@ -17,6 +17,7 @@ namespace NoID.Browser
         public LoginForm()
         {
             InitializeComponent();
+            textBoxUserName.Text = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -29,19 +30,21 @@ namespace NoID.Browser
         {
             string username = textBoxUserName.Text;
             string pwd = PasswordManager.GetPassword(textBoxUserName.Text);
-            string svcCredentials = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(username + ":" + pwd));
-            Uri endpoint = new Uri(Utilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
-            FhirClient client = new FhirClient(endpoint);
-            client.LastRequest.Headers.Add("Authorization", "Basic " + svcCredentials);
-            Patient newPatient = Utilities.CreateTestFHIRPatientProfile();
+            Authentication auth = new Authentication(username, pwd);
+            Uri endpoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+
+            Patient newPatient = FHIRUtilities.CreateTestFHIRPatientProfile();
+            WebSend ws = new WebSend(endpoint, auth, newPatient);
 
             try
             {
-                client.Create(newPatient);
+                ws.PostHttpWebRequest();
+                PasswordManager.SavePassword("Successful", username + "_Status");
                 labelStatus.Text = "Status: Authentication Successful";
             }
             catch (Exception ex)
             {
+                PasswordManager.SavePassword("Failed", username + "_Status");
                 labelStatus.Text = "Status: Authentication Failed " + ex.Message;
             }
         }

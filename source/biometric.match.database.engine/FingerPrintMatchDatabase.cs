@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using SourceAFIS.Templates;
 using SourceAFIS.Extraction;
 using NoID.FHIR.Profile;
+using NoID.Utilities;
 
 namespace NoID.Match.Engine.FingerPrint
 {
@@ -68,7 +69,7 @@ namespace NoID.Match.Engine.FingerPrint
                                 {
                                     Afis.ExtractFingerprint(fingerprint);
                                     fingerprintList.Add(fingerprint.GetTemplate());
-                                    FingerPrintMinutias dbFingerprintMinutia = new FingerPrintMinutias(nextID.ToString(), fingerprint.GetTemplate(), PatientFHIRProfile.LateralitySnoMedCode.Left, PatientFHIRProfile.CaptureSiteSnoMedCode.IndexFinger);
+                                    FingerPrintMinutias dbFingerprintMinutia = new FingerPrintMinutias(nextID.ToString(), fingerprint.GetTemplate(), FHIRUtilities.LateralitySnoMedCode.Left, FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger);
                                     dbFingerprintMinutiaList.Add(dbFingerprintMinutia);
                                     nextID = nextID + 1;
                                 }

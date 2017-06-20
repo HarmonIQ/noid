@@ -4,19 +4,18 @@
 
 using System;
 using System.Net;
-using NoID.Network.Security;
 using System.IO;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Utility;
 using Hl7.Fhir.Serialization;
 using NoID.FHIR.Profile;
+using NoID.Security;
 
 namespace NoID.Network.Client
 {
     public class WebSend
     {
-        private Exception _exception;
         private Uri _enpoint;
         private Authentication _auth;
         private Resource _payloadJSON;
@@ -45,7 +44,6 @@ namespace NoID.Network.Client
 
         public string PostHttpWebRequest()
         {
-            
             string html = string.Empty;
             try
             {
@@ -73,8 +71,7 @@ namespace NoID.Network.Client
             }
             catch (Exception ex)
             {
-                _exception = ex;
-                return "";
+                throw ex;
             }
             return html;
         }
@@ -105,11 +102,6 @@ namespace NoID.Network.Client
             var bin = (byte[])payload;
             body = payload;
             request.ContentType = "Binary";
-        }
-
-        public Exception Exception
-        {
-            get { return _exception; }
         }
     }
 }
