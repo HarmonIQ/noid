@@ -150,10 +150,12 @@ namespace NoID.Browser
                     break;
             }
 
-            browser = new ChromiumWebBrowser(endPath)
-            {
-                Dock = DockStyle.Fill
-            };
+            
+            browser = new ChromiumWebBrowser(endPath){ Dock = DockStyle.Fill };
+            // Handles JavaScripts Events
+            BoundObject obj = new BoundObject(browser);
+            browser.RegisterJsObject("BoundObject", obj);
+            browser.FrameLoadEnd += obj.OnFrameLoadEnd;
 
             biometricDevice = new DigitalPersona();
             if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
@@ -170,16 +172,14 @@ namespace NoID.Browser
             browser.TitleChanged += OnBrowserTitleChanged;
 
             browser.ConsoleMessage += OnBrowserConsoleMessage;
-            browser.LoadingStateChanged += OnLoadingWithNavigation;
+            //browser.LoadingStateChanged += OnLoadingWithNavigation;
             browser.AddressChanged += OnBrowserAddressChanged;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
             //var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}, Environment: {3}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion, bitness);
             string initialDisplayText = String.Format(approle.ToString());
             DisplayOutput(initialDisplayText);
-#endif
-            // Handles JavaScripts Events
-            browser.LoadingStateChanged += OnJavaScript; 
+#endif 
         }
 #if NAVIGATE
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
@@ -295,34 +295,5 @@ namespace NoID.Browser
             }
         }
 #endif
-        private void OnJavaScript(object sender, LoadingStateChangedEventArgs args)
-        {
-            //Wait for the Page to finish loading
-            if (args.IsLoading == false)
-            {
-                const string script = @"(function()
-    					{
-	    					var linksArray = new Array();
-	    					for (var i = 0; i < document.links.length; i++)
-	    					{
-	    						linksArray[i] = [String(document.links[i].innerHTML),
-	    								String(document.links[i].innerText),
-	    								String(document.links[i].href)];
-	    					}
-	    					return linksArray;
-    					})();";
-
-                browser.EvaluateScriptAsync(script).ContinueWith(x =>
-                {
-                    var response = x.Result;
-
-                    if (response.Success && response.Result != null)
-                    {
-                        var list = (List<object>)response.Result;
-                        //Do something here (To interact with the UI you must call BeginInvoke)
-                    }
-                });
-            }
-        }
     }
 }

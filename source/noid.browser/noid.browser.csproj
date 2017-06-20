@@ -116,6 +116,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>htmlpages.resx</DependentUpon>
     </Compile>
+    <Compile Include="JavaScriptEvent.cs" />
     <Compile Include="loginform.cs">
       <SubType>Form</SubType>
     </Compile>
