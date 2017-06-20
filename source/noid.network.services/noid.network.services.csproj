@@ -96,7 +96,6 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FHIRMessageConverter.cs" />
     <Compile Include="FHIRMessageRouter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiveFHIR.ashx.cs">
@@ -107,6 +106,10 @@
     <ProjectReference Include="..\noid.fhir.profile\noid.fhir.profile.csproj">
       <Project>{8af257d1-3bd7-4709-b5ba-b42bd07a45fb}</Project>
       <Name>noid.fhir.profile</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\noid.utilities\noid.utilities.csproj">
+      <Project>{c0c23c18-5406-4415-8def-3d11eb6a5fce}</Project>
+      <Name>noid.utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

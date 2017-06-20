@@ -3,8 +3,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Serialization;
 
 namespace NoID.Utilities
 {
@@ -17,6 +19,9 @@ namespace NoID.Utilities
         public static readonly string PositionY_OID = "3.15.750.1.113883.6.38";
         public static readonly string Direction_OID = "3.15.750.1.113883.6.39";
         public static readonly string Type_OID = "3.15.750.1.113883.6.40";
+
+        private static readonly string FHIRDateExpression = "yyyy-MM-dd";
+        private static readonly string FHIRDateTimeExpression = "yyyy-MM-dd HH:mm:ss'-Z";
 
         //TODO: add right and left feet
         public enum CaptureSiteSnoMedCode : uint
@@ -33,6 +38,36 @@ namespace NoID.Utilities
             Left = 419161000, // SnoMedCT Description: Unilateral left
             Right = 419165000, //  SnoMedCT Description: Unilateral right
             Bilateral = 51440002 // SnoMedCT Description: Bilateral
+        }
+
+        public static Resource StreamToFHIR(StreamReader streamReader)
+        {
+            try
+            {
+                string jsonString = streamReader.ReadToEnd();
+                FhirJsonParser fhirJsonParser = new FhirJsonParser();
+                return fhirJsonParser.Parse<Resource>(jsonString);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static string FHIRToString(Resource _fhir)
+        {
+            string jsonString;
+            try
+            {
+                //byte[] body = FhirSerializer.SerializeToJsonBytes(_fhir, summary: Hl7.Fhir.Rest.SummaryType.False);
+                //jsonString = StringUtilities.ByteArrayToString(body);
+                jsonString = _fhir.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return jsonString;
         }
 
         public static Patient CreateTestFHIRPatientProfile()
@@ -55,7 +90,7 @@ namespace NoID.Utilities
             pt.ManagingOrganization = managingOrganization;
 
             pt.Language = "English";
-            pt.BirthDate = "20060703";
+            pt.BirthDate = "2006-07-03";
             pt.Gender = AdministrativeGender.Female;
             pt.MultipleBirth = new FhirString("No");
             // Add patient name
@@ -136,6 +171,49 @@ namespace NoID.Utilities
         public static string CaptureSiteToString(CaptureSiteSnoMedCode captureSite)
         {
             return Enum.GetName(typeof(CaptureSiteSnoMedCode), captureSite);
+        }
+
+        public static string DateToFHIRString(DateTime _date)
+        {
+            string dateString;
+            try
+            {
+                dateString = _date.ToString(FHIRDateExpression);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dateString;
+        }
+
+        public static string DateTimeToFHIRString(DateTime _date)
+        {
+            string dateString;
+            try
+            {
+                dateString = _date.ToString(FHIRDateTimeExpression);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dateString;
+        }
+
+        public static string NowToFHIRString()
+        {
+            // Uses the current UTC date and time.
+            string dateString;
+            try
+            {
+                dateString = DateTime.UtcNow.ToString(FHIRDateTimeExpression);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dateString;
         }
     }
 }

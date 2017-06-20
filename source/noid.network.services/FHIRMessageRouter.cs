@@ -5,10 +5,11 @@
 using System;
 using System.Web;
 using System.IO;
-using Hl7.Fhir.Model;
-using NoID.FHIR.Profile;
-using Hl7.Fhir.Rest;
 using System.Web.Configuration;
+using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
+using NoID.FHIR.Profile;
+using NoID.Utilities;
 
 namespace NoID.Network.Services
 {
@@ -22,34 +23,37 @@ namespace NoID.Network.Services
     {
         private PatientFHIRProfile _patientFHIRProfile;
         private string _responseText;
-        private Base _baseFHIR = null;
         private Patient _patient = null;
-        private Media _media = null;
+        private Media _biometics = null;
         private Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
+        private Exception _exception;
 
         public FHIRMessageRouter(HttpContext context)
         {
             try
             {
-                Resource newResource = FHIRMessageConverter.StreamToFHIR(new StreamReader(context.Request.InputStream));
+                Resource newResource = FHIRUtilities.StreamToFHIR(new StreamReader(context.Request.InputStream));
 
                 switch (newResource.TypeName.ToLower())
                 {
                     case "patient":
                         _patient = (Patient)newResource;
+                        //TODO check for existing patient and expire old messages for the patient.
                         if (!(SendPatientToSparkServer()))
-                            return;
-
-                        _responseText = "I received a patient and saved the message in Spark";
+                        {
+                            _responseText = "Error sending Patient FHIR message to the Spark FHIR endpoint. " + ExceptionString;
+                        }
                         break;
                     case "media":
-                        //TODO save FHIR message in Spark
-                        //TODO send to biometric match engine.
-                        _media = (Media)newResource;
-                        _responseText = "I got a fingerprint.";
+                        _biometics = (Media)newResource;
+                        // TODO send to biometric match engine. If found, add patient reference to FHIR message.
+                        if (!(SendBiometicsToSparkServer()))
+                        {
+                            _responseText = "Error sending Biometric Media FHIR message to the Spark FHIR endpoint. " + ExceptionString;
+                        }
                         break;
                     default:
-                        _responseText = FHIRType + " not supported.";
+                        _responseText = newResource.TypeName.ToLower() + " not supported.";
                         break;
                 }
             }
@@ -67,11 +71,34 @@ namespace NoID.Network.Services
             {
                 try
                 {
-                    client.Create(Patient);
+                    Resource response = client.Create(Patient);
+                    _responseText = FHIRUtilities.FHIRToString(response);
                 }
                 catch (Exception ex)
                 {
                     _responseText = ex.Message;
+                    _exception = ex;
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool SendBiometicsToSparkServer()
+        {
+            FhirClient client = new FhirClient(_sparkEndpoint);
+
+            if (!(Patient == null))
+            {
+                try
+                {
+                    Resource response = client.Create(Biometics);
+                    _responseText = FHIRUtilities.FHIRToString(response);
+                }
+                catch (Exception ex)
+                {
+                    _responseText = ex.Message;
+                    _exception = ex;
                     return false;
                 }
             }
@@ -96,38 +123,30 @@ namespace NoID.Network.Services
             private set { _patient = value; }
         }
 
-        public Media Media
+        public Media Biometics
         {
-            get { return _media; }
-            private set { _media = value; }
-        }
-
-        public Base BaseFHIR
-        {
-            get { return _baseFHIR; }
-            private set { _baseFHIR = value; }
-        }
-
-        public string FHIRType
-        {
-            get
-            {
-                string fhirType;
-                if (!(_baseFHIR == null))
-                {
-                    fhirType = _baseFHIR.TypeName;
-                }
-                else
-                {
-                    fhirType = "Nothing";
-                }
-                return fhirType;
-            }
+            get { return _biometics; }
+            private set { _biometics = value; }
         }
 
         public string ResponseText
         {
             get { return _responseText; }
+        }
+
+        public string ExceptionString
+        {
+            get
+            {
+                if (!(_exception == null))
+                {
+                    return _exception.Message;
+                }
+                else
+                {
+                    return "";
+                }
+            }
         }
     }
 }

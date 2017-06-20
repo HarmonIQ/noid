@@ -44,5 +44,19 @@ namespace NoID.Utilities
             }
             return newString;
         }
+
+        public static string ByteArrayToString(byte[] byteArray)
+        {
+            string returnValue;
+            try
+            {
+                returnValue = System.Text.Encoding.Default.GetString(byteArray);
+            }
+            catch
+            {
+                returnValue = "";
+            }
+            return returnValue;
+        }
     }
 }
