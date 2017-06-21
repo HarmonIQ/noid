@@ -3,21 +3,29 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using SourceAFIS.Simple;
+using ProtoBuf;
 using SourceAFIS.Templates;
 using SourceAFIS.Extraction;
 using SourceAFIS.Matching;
 
 namespace NoID.Match.Database.FingerPrint
 {
-    public class MinutiaMatch
+    [ProtoContract]
+    public class MinutiaMatch : MinutiaMatchSerialize
     {
         private readonly int _matchThreshold;
         private readonly string _databaseFilePath;
         private Extractor Extractor = new Extractor();
         private Exception _exception;
+
+        public MinutiaMatch()
+        {
+            _databaseFilePath = "";
+            _matchThreshold = 30;
+        }
 
         public MinutiaMatch(string databaseFilePath, int matchTheshold)
         {
@@ -25,9 +33,11 @@ namespace NoID.Match.Database.FingerPrint
             _matchThreshold = matchTheshold;
         }
 
-        private List<Template> FingerPrintCandidateList
+        [ProtoMember(1)]
+        public List<Template> FingerPrintCandidateList
         {
             get { return MatchDatabase.FingerPrintCandidateList; }
+            private set { MatchDatabase.FingerPrintCandidateList = value; }
         }
 
         ~MinutiaMatch(){ }
@@ -98,6 +108,87 @@ namespace NoID.Match.Database.FingerPrint
                 result = false;
             }
             return result;
+        }
+
+        public static MinutiaMatch Deserialize(byte[] message)
+        {
+            MinutiaMatch result;
+            using (var stream = new MemoryStream(message))
+            {
+                result = Serializer.Deserialize<MinutiaMatch>(stream);
+            }
+            return result;
+        }
+
+        public bool WriteToDisk(string databasePath)
+        {
+            try
+            {
+                FileStream fs = OpenFileStream(databasePath);
+                byte[] fingerData;
+                using (var ms = new MemoryStream())
+                {
+                    fingerData = Serialize();
+                }
+                fs.Write(fingerData, 0, fingerData.Length);
+                fs.Flush();
+                fs.Close();
+                fs.Dispose();
+            }
+            catch (Exception e)
+            {
+                Exception = e;
+                return false;
+            }
+            return true;
+        }
+
+        private FileStream OpenFileStream(string path)
+        {
+            FileInfo fileInfo = DeleteFile(path);
+            FileStream fs = fileInfo.OpenWrite();
+            fileInfo = null;
+            return fs;
+        }
+
+        private FileInfo DeleteFile(string path)
+        {
+            FileInfo fileInfo = new FileInfo(path);
+            if (fileInfo.Exists)
+                fileInfo.Delete();
+            return fileInfo;
+        }
+
+        public bool ReadFromDisk(string path)
+        {
+            bool result = false;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(path);
+                FileStream fs = fileInfo.OpenRead();
+                byte[] databaseBytes = ReadFully(fs);
+                MinutiaMatch deserializeMinutiaMatch = Deserialize(databaseBytes);
+                FingerPrintCandidateList = deserializeMinutiaMatch.FingerPrintCandidateList;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
+
+        static byte[] ReadFully(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
         }
 
         /*

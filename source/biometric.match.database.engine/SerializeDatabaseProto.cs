@@ -10,7 +10,22 @@ using NoID.FHIR.Profile;
 
 namespace NoID.Match.Database.FingerPrint
 {
-    public class SerializeDatabaseProto
+    [ProtoContract]
+    public abstract class MinutiaMatchSerialize
+    {
+        public byte[] Serialize()
+        {
+            byte[] result;
+            using (var stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, this);
+                result = stream.ToArray();
+            }
+            return result;
+        }
+    }
+
+    class SerializeDatabaseProto
     {
         public SerializeDatabaseProto()
         {

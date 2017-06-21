@@ -16,7 +16,7 @@ namespace NoID.Match.Database.FingerPrint
          * Should we make MATCH_THRESHOLD and MAX_CANDIDATE_CAPASITY 
          * a variable or keep it at a protocol level so all match nodes behave the same?
         */
-        private readonly static int MATCH_THRESHOLD = 50;
+        private readonly static int MATCH_THRESHOLD = 30;
         private readonly static int MAX_CANDIDATE_CAPACITY = 20000;
         private static string _databasePath;
         private MinutiaMatch _minutiaMatch;
@@ -84,6 +84,35 @@ namespace NoID.Match.Database.FingerPrint
                 results = "Minutia Match Database is null.";
             }
             return results;
+        }
+
+        public bool WriteToDisk(string databasePath)
+        {
+            bool result = false;
+            if (!(_minutiaMatch == null))
+            {
+                if (_minutiaMatch.CandidateCount > 0)
+                {
+                    result = _minutiaMatch.WriteToDisk(databasePath);
+                }
+            }
+            return result;
+        }
+
+        public bool ReadFromDisk(string databasePath)
+        {
+            bool result = false;
+            try
+            {
+                _minutiaMatch = new MinutiaMatch(_databasePath, MATCH_THRESHOLD);
+                _minutiaMatch.ReadFromDisk(databasePath);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
+            return result;
         }
     }
 }
