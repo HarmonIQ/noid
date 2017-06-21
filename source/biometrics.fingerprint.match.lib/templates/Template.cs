@@ -8,6 +8,14 @@ namespace SourceAFIS.Templates
     [Serializable]
     public sealed class Template : ICloneable
     {
+        private string _noID;
+
+        public string NoID
+        {
+            get { return _noID; }
+            set { _noID = value; }
+        }
+
         public enum MinutiaType : byte
         {
             Ending = 0,

@@ -8,9 +8,9 @@ using ProtoBuf;
 using System.IO;
 using NoID.FHIR.Profile;
 
-namespace NoID.Match.Engine
+namespace NoID.Match.Database.FingerPrint
 {
-    class SerializeDatabaseProto
+    public class SerializeDatabaseProto
     {
         public SerializeDatabaseProto()
         {

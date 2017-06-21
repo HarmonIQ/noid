@@ -30,14 +30,16 @@ namespace NoID.Utilities
             MiddleFinger = 65271000, // SnoMedCT Description: Skin structure of palmar surface of middle finger
             RingFinger = 28404007, // SnoMedCT Description: Skin structure of palmar surface of ring finger
             LittleFinger = 43825009, // SnoMedCT Description: Skin structure of palmar surface of little finger
-            Thumb = 72331001 // SnoMedCT Description: Skin structure of palmar surface of thumb
+            Thumb = 72331001, // SnoMedCT Description: Skin structure of palmar surface of thumb
+            Unknown = 0
         }
 
         public enum LateralitySnoMedCode : uint
         {
             Left = 419161000, // SnoMedCT Description: Unilateral left
             Right = 419165000, //  SnoMedCT Description: Unilateral right
-            Bilateral = 51440002 // SnoMedCT Description: Bilateral
+            Bilateral = 51440002, // SnoMedCT Description: Bilateral
+            Unknown = 0
         }
 
         public static Resource StreamToFHIR(StreamReader streamReader)
@@ -235,6 +237,51 @@ namespace NoID.Utilities
                 throw ex;
             }
             return dateString;
+        }
+
+        public static CaptureSiteSnoMedCode SnoMedCodeToCaptureSite(string snoMedCode)
+        {
+            /*
+            CaptureSite SnoMedCode Map:
+            IndexFinger = 48856004, // SnoMedCT Description: Skin structure of palmar surface of index finger
+            MiddleFinger = 65271000, // SnoMedCT Description: Skin structure of palmar surface of middle finger
+            RingFinger = 28404007, // SnoMedCT Description: Skin structure of palmar surface of ring finger
+            LittleFinger = 43825009, // SnoMedCT Description: Skin structure of palmar surface of little finger
+            Thumb = 72331001 // SnoMedCT Description: Skin structure of palmar surface of thumb
+            */
+            switch (UInt32.Parse(snoMedCode))
+            {
+                case 48856004:
+                    return CaptureSiteSnoMedCode.IndexFinger;
+                case 65271000:
+                    return CaptureSiteSnoMedCode.MiddleFinger;
+                case 28404007:
+                    return CaptureSiteSnoMedCode.RingFinger;
+                case 43825009:
+                    return CaptureSiteSnoMedCode.LittleFinger;
+                case 72331001:
+                    return CaptureSiteSnoMedCode.Thumb;
+                default:
+                    return CaptureSiteSnoMedCode.Unknown;
+            }
+        }
+
+        public static LateralitySnoMedCode SnoMedCodeToLaterality(string snoMedCode)
+        {
+            /*
+            Laterality SnoMedCode Map:
+            Left = 419161000 
+            Right = 419165000 
+            */
+            switch (UInt32.Parse(snoMedCode))
+            {
+                case 419161000:
+                    return LateralitySnoMedCode.Left;
+                case 419165000:
+                    return LateralitySnoMedCode.Right;
+                default:
+                    return LateralitySnoMedCode.Unknown;
+            }
         }
     }
 }
