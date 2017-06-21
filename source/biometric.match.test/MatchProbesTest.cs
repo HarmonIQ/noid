@@ -5,13 +5,15 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.General;
+using SourceAFIS.Templates;
 using NoID.FHIR.Profile;
 using NoID.Utilities;
-using NoID.Match.Database.FingerPrint;
 using NoID.Biometrics.Managers;
-using DPUruNet;
+using NoID.Match.Database.FingerPrint;
+using System.Configuration;
 
 namespace NoID.Match.Database.Tests
 {
@@ -19,7 +21,6 @@ namespace NoID.Match.Database.Tests
     {
         private DigitalPersona biometricDevice;
         private Exception _exception;
-
         private readonly static int MATCH_THRESHOLD = 50;
         private static AfisEngine Afis = new AfisEngine();
         List<Fingerprint> _probeList = new List<Fingerprint>();
@@ -29,9 +30,14 @@ namespace NoID.Match.Database.Tests
         public ulong nextID = 1;
         private string _dabaseFilePath;
         private List<FingerPrintMinutias> dbFingerprintMinutiaList = new List<FingerPrintMinutias>();
+        private FingerPrintMatchDatabase dbMinutia;
+        private string _databasePath = ConfigurationManager.AppSettings["DatabaseLocation"].ToString();
+        private string _lateralityCode = ConfigurationManager.AppSettings["Laterality"].ToString();
+        private string  _captureSiteCode = ConfigurationManager.AppSettings["CaptureSite"].ToString();
 
         public MatchProbesTest()
         {
+            dbMinutia = new FingerPrintMatchDatabase(_databasePath, _lateralityCode, _captureSiteCode);
             if (!(SetupScanner()))
             {
                 if ((_exception == null))
@@ -42,7 +48,6 @@ namespace NoID.Match.Database.Tests
                 {
                     throw _exception;
                 }
-                
             }
         }
 
@@ -74,7 +79,21 @@ namespace NoID.Match.Database.Tests
 
         private void OnCaptured(CaptureResult captureResult)
         {
-
+            Person currentCapture = new Person();
+            Fingerprint newFingerPrint = new Fingerprint();
+            foreach (Fid.Fiv fiv in captureResult.Data.Views)
+            {
+                newFingerPrint.AsBitmap = ImageUtilities.CreateBitmap(fiv.RawImage, fiv.Width, fiv.Height);
+            }
+            Afis.ExtractFingerprint(newFingerPrint);
+            Template tmpNew = newFingerPrint.GetTemplate();
+            string patientNoID = IdentifyFinger(tmpNew);
+            if (patientNoID.Length == 0)
+            {
+                tmpNew.NoID = "NoID" + nextID;
+                dbMinutia.AddTemplate(tmpNew);
+                nextID++;
+            }
         }
 
         public Fingerprint GetNextProbe()
@@ -114,7 +133,7 @@ namespace NoID.Match.Database.Tests
             }
         }
 
-        private void LoadTestFingerPrintImages(string imageDirectory)
+        public void LoadTestFingerPrintImages(string imageDirectory)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(imageDirectory);
             Fingerprint fingerprint = null;
@@ -133,24 +152,30 @@ namespace NoID.Match.Database.Tests
                                 if (fingerprint.Image != null)
                                 {
                                     Afis.ExtractFingerprint(fingerprint);
-                                    _probeList.Add(fingerprint);
-                                    FingerPrintMinutias dbFingerprintMinutia = new FingerPrintMinutias(nextID.ToString(), fingerprint.GetTemplate(), FHIRUtilities.LateralitySnoMedCode.Left, FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger);
-                                    dbFingerprintMinutiaList.Add(dbFingerprintMinutia);
-                                    nextID = nextID + 1;
+                                    Template template = fingerprint.GetTemplate();
+                                    template.NoID = "NoID" + nextID.ToString();
+                                    dbMinutia.AddTemplate(template);
+                                    nextID++;
+                                    if (nextID > 100)
+                                        break;
                                 }
                             }
                         }
                     }
                 }
-                _probe = fingerprint;
             }
-            SerializeDatabaseProto serialize = new SerializeDatabaseProto();
-            serialize.WriteToDisk(DabaseFilePath + @"finger.hive.0001.biodb", dbFingerprintMinutiaList);
+            //SerializeDatabaseProto serialize = new SerializeDatabaseProto();
+            //serialize.WriteToDisk(DabaseFilePath + @"finger.hive.0001.biodb", dbFingerprintMinutiaList);
         }
         public string DabaseFilePath
         {
             get { return _dabaseFilePath; }
             private set { _dabaseFilePath = value; }
+        }
+
+        public string IdentifyFinger(Template probe)
+        {
+            return dbMinutia.SearchPatients(probe);
         }
 
         private float SearchByFingerprint(Fingerprint fingerprintProbe = null)

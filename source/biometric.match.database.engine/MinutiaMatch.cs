@@ -86,6 +86,20 @@ namespace NoID.Match.Database.FingerPrint
             return NoID;
         }
 
+        public bool AddTemplate(Template template)
+        {
+            bool result = true;
+            try
+            {
+                FingerPrintCandidateList.Add(template);
+            }
+            catch
+            {
+                result = false;
+            }
+            return result;
+        }
+
         /*
         List<int> FlattenHierarchy(List<Template> templateList)
         {
@@ -113,6 +127,7 @@ namespace NoID.Match.Database.FingerPrint
         public static List<Template> FingerPrintCandidateList
         {
             get { return _fingerPrintCandidateList; }
+            set { _fingerPrintCandidateList = value; }
         }
 
         public static ushort SynTimeOutSeconds

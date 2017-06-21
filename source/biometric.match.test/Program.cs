@@ -10,27 +10,22 @@ namespace NoID.Match.Database.Tests
 {
     class Program
     {
-        
-
         static void Main(string[] args)
         {
             Console.WriteLine("Fingerprint scanner is being setup.");
             try
             {
                 MatchProbesTest test = new MatchProbesTest();
+                Console.WriteLine("Fingerprint scanner detected.");
+                test.LoadTestFingerPrintImages(@"F:\fingerprobes");
+                Console.WriteLine("Loaded 100 test fingerprints.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
-            Console.WriteLine("Fingerprint scanner detected.");
-
-
-
+            Console.WriteLine("Scan you finger to trigger a search.");
+            Console.ReadLine();
         }
-
-        
-
-        
     }
 }
