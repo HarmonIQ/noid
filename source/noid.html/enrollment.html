@@ -137,12 +137,11 @@
                                                 </small>
                                             </h3>
                                             <p></p>
-                                            <h4>PURPOSE: <small>The requested use or disclosure of my health information is for the following purposes:
+                                            <h4>PURPOSE: <small>The requested use or disclosure of my health information is for the following purposes:</small>
                                                     <p></p>
                                                     <ol>
-                                                        <li>To accurately identify me across participating healthcare systems</li>
+                                                        <li><small>To accurately identify me across participating healthcare systems</small></li>
                                                     </ol>
-                                                </small>
                                             </h4>
                                             <p></p>
                                             <h4>EXPIRATION: <small>The Authorization expires five years from the date of enrollment unless a different date is specified.</small>
@@ -153,13 +152,12 @@
                                                 take effect upon receipt or a different date is specified.</small>
                                             </h4>
                                             <p></p>
-                                            <h4>NOTICE OF RIGHT AND OTHER INFORMATION: <small>
+                                            <h4>NOTICE OF RIGHT AND OTHER INFORMATION: 
                                                     <p></p>
                                                     <ol>
-                                                        <li>I understand I do not have to enroll in NoID.  My refusal will not affect my ability to seek treatment, payment or eligibility for benefits.</li>
-                                                        <li>I understand that I have the right to receive a copy of the Authorization.</li>
+                                                        <li><small>I understand I do not have to enroll in NoID.  My refusal will not affect my ability to seek treatment, payment or eligibility for benefits.</small></li>
+                                                        <li><small>I understand that I have the right to receive a copy of the Authorization.</small></li>
                                                     </ol>
-                                                </small>
                                             </h4>
                                         </div>
                                     </div>
@@ -635,7 +633,7 @@
                                     <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="savePatient()"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
                             <div class="tab-pane" role="tabpanel" id="step8">
@@ -652,7 +650,7 @@
                                                     <p align="right"><strong>I am the result of a multiple birth pregnancy &#42;</strong></p>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6">
-                                                    <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                    <select name="ProductOfTwinBirths" id="ProductOfTwinBirths" class="dropselectsec1">
                                                         <option value="No">No</option>
                                                         <option value="YesIdenticalTwin">Yes, I have an identical twin.</option>
                                                         <option value="YesFraternalTwin">Yes, I have a fraternal twin.</option>
@@ -667,7 +665,7 @@
                                                     <p align="right"><strong>My gender has changed &#42;</strong></p>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6">
-                                                    <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                    <select name="TransGender" id="TransGender" class="dropselectsec1">
                                                         <option value="No">No</option>
                                                         <option value="Yes">Yes</option>
                                                         <option value="NA">No Answer</option>
@@ -698,7 +696,7 @@
                                                     <p align="right"><strong>Your NoID HUB</strong></p>
                                                 </div>
                                                 <div class="col-md-8 col-xs-9">
-                                                    <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                    <select name="HealthHubChoice" id="HealthHubChoice" class="dropselectsec1">
                                                         <option value="South">First Identity HUB USA South</option>
                                                         <option value="North">First Identity HUB USA North</option>
                                                         <option value="East">First Identity HUB USA East</option>
@@ -966,6 +964,20 @@
             $(elem).prev().find('a[data-toggle="tab"]').click();
         }
 
+        function savePatient() {
+
+            NoIDBridge.postDemographics('english', 'super', 'd', 'women', 'f', '1988', '03', '07', '123 Main Street', 'Apt 1', 'New Orleans', 'LA', '70112', 'super.women@yahoo.com', '5045551111');
+            if (NoIDBridge.ErrorDescription == '')
+            {
+                //no error continue with new page
+                alert("postDemographics no error");
+            }
+            else
+            {
+                //error, show user message
+                alert("postDemographics Error" + NoIDBridge.ErrorDescription);
+            }
+        }
 
         //according menu
 
