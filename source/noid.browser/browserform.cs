@@ -6,13 +6,13 @@
 
 using System;
 using System.Windows.Forms;
-using CefSharp.WinForms;
 using CefSharp;
+using CefSharp.WinForms;
+using CefSharp.WinForms.Internals;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
-using NoID.Browser.Controls;
 using NoID.Utilities;
 using NoID.Security;
 using NoID.FHIR.Profile;
@@ -24,7 +24,7 @@ namespace NoID.Browser
     public partial class BrowserForm : Form
     {
         private static AfisEngine Afis = new AfisEngine();
-        private const float MATCH_THRESHOLD = 50;
+        private const float PROBE_MATCH_THRESHOLD = 70;
         private readonly ChromiumWebBrowser browser;
         //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
         private DigitalPersona biometricDevice;
@@ -70,7 +70,7 @@ namespace NoID.Browser
 #if NAVIGATE
             DisplayOutput(matchResults);
 #endif
-            if (score >= MATCH_THRESHOLD)
+            if (score >= PROBE_MATCH_THRESHOLD)
             {
                 FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
                 FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
@@ -109,7 +109,7 @@ namespace NoID.Browser
             healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
 
             noidFHIRProfile = new PatientFHIRProfile(organizationName, healthcareNodeFHIRAddress);
-            Afis.Threshold = MATCH_THRESHOLD;
+            Afis.Threshold = PROBE_MATCH_THRESHOLD;
 
             Text = "NoID Browser";
             WindowState = FormWindowState.Maximized;
