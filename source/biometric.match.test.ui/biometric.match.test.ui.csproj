@@ -36,6 +36,9 @@
     <ApplicationIcon>curve_points.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DBreeze, Version=1.87.2017.608, Culture=neutral, PublicKeyToken=174b57f1c155f3c6, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DBreeze.1.87.0\lib\net462\DBreeze.dll</HintPath>
+    </Reference>
     <Reference Include="DPCtlUruNet, Version=1.0.0.1, Culture=neutral, PublicKeyToken=7f32ef930fec5e5f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Windows\assembly\GAC_MSIL\DPCtlUruNet\1.0.0.1__7f32ef930fec5e5f\DPCtlUruNet.dll</HintPath>
@@ -80,6 +83,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

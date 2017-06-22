@@ -4,6 +4,9 @@
 *.suo
 *.user
 *.userprefs
+*.msi
+*.tmp
+*.exe
 
 [Bb]in/
 [Oo]bj/

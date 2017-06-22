@@ -4,12 +4,13 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using ProtoBuf;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
 using NoID.Utilities;
-using NoID.Cryptographic.Hash;
 
 namespace NoID.FHIR.Profile
 {
@@ -35,18 +36,6 @@ namespace NoID.FHIR.Profile
     [ProtoContract]
     public class PatientFHIRProfile : PatientFHIRProfileSerialize
     { 
-        // Argon2 Hash parameters. 
-        // Currently a protocol level setting for now but could be a setting defined per healthcare and/or match hub.
-        // TODO: increase the difficulty of the hash parameters after the prototype.
-        const int ARGON2_TIME_COST = 1;
-        const int ARGON2_MEMORY_COST = 250;
-        const int ARGON2_PARALLEL_LANES = 4;
-
-        HashWriter.ArgonParams argonParams = new HashWriter.ArgonParams(ARGON2_TIME_COST, ARGON2_MEMORY_COST, ARGON2_PARALLEL_LANES);
-
-        //TODO: load and use saltList from matching hubs
-        private string hashSalt = "C560325F";
-
         private string FingerTipSnoMedCTCode(FHIRUtilities.CaptureSiteSnoMedCode fingerTip)
         {
             return fingerTip.ToString();
@@ -110,11 +99,6 @@ namespace NoID.FHIR.Profile
             set { _patientCertificateID = value; }
         }
 
-        public string PatientCertificateIDHash
-        {
-            get { return HashWriter.Hash(_patientCertificateID, hashSalt, argonParams); }
-        }
-
         [ProtoMember(1)]
         public string SessionID
         {
@@ -150,20 +134,12 @@ namespace NoID.FHIR.Profile
             get { return _language; }
             set { _language = value; }
         }
-        public string LanguageHash
-        {
-            get { return HashWriter.Hash(_language, hashSalt, argonParams); }
-        }
 
         [ProtoMember(3)]
         public string FirstName
         {
             get { return _firstName; }
             set { _firstName = value; }
-        }
-        public string FirstNameHash
-        {
-            get { return HashWriter.Hash(_firstName, hashSalt, argonParams); }
         }
 
         [ProtoMember(4)]
@@ -173,11 +149,6 @@ namespace NoID.FHIR.Profile
             set { _lastName = value; }
         }
 
-        public string LastNameHash
-        {
-            get { return HashWriter.Hash(_lastName, hashSalt, argonParams); }
-        }
-
         [ProtoMember(5)]
         public string MiddleName
         {
@@ -185,20 +156,10 @@ namespace NoID.FHIR.Profile
             set { _middleName = value; }
         }
 
-        public string MiddleNameHash
-        {
-            get { return HashWriter.Hash(_middleName, hashSalt, argonParams); }
-        }
-
         public AdministrativeGender Gender
         {
             get { return _gender; }
             set { _gender = value; }
-        }
-
-        public string GenderHash
-        {
-            get { return HashWriter.Hash(_gender.ToString(), hashSalt, argonParams); }
         }
 
         [ProtoMember(6)]
@@ -208,21 +169,11 @@ namespace NoID.FHIR.Profile
             set { _birthDay = value; }
         }
 
-        public string BirthDayHash
-        {
-            get { return HashWriter.Hash(_birthDay, hashSalt, argonParams); }
-        }
-
         [ProtoMember(7)]
         public string StreetAddress
         {
             get { return _streetAddress; }
             set { _streetAddress = value; }
-        }
-
-        public string StreetAddressHash
-        {
-            get { return HashWriter.Hash(_streetAddress, hashSalt, argonParams); }
         }
 
         [ProtoMember(8)]
@@ -232,21 +183,11 @@ namespace NoID.FHIR.Profile
             set { _streetAddress2 = value; }
         }
 
-        public string StreetAddress2Hash
-        {
-            get { return HashWriter.Hash(_streetAddress2, hashSalt, argonParams); }
-        }
-
         [ProtoMember(9)]
         public string City
         {
             get { return _city; }
             set { _city = value; }
-        }
-
-        public string CityHash
-        {
-            get { return HashWriter.Hash(_city, hashSalt, argonParams); }
         }
 
         [ProtoMember(10)]
@@ -256,33 +197,18 @@ namespace NoID.FHIR.Profile
             set { _state = value; }
         }
 
-        public string StateHash
-        {
-            get { return HashWriter.Hash(_state, hashSalt, argonParams); }
-        }
-
         [ProtoMember(11)]
         public string PostalCode
         {
             get { return _postalCode; }
             set { _postalCode = value; }
         }
-
-        public string PostalCodeHash
-        {
-            get { return HashWriter.Hash(_postalCode, hashSalt, argonParams); }
-        }
-
+        
         [ProtoMember(12)]
         public string Country
         {
             get { return _country; }
             set { _country = value; }
-        }
-
-        public string CountryHash
-        {
-            get { return HashWriter.Hash(_country, hashSalt, argonParams); }
         }
 
         [ProtoMember(13)]
@@ -292,57 +218,32 @@ namespace NoID.FHIR.Profile
             set { _phoneHome = value; }
         }
 
-        public string PhoneHomeHash
-        {
-            get { return HashWriter.Hash(_phoneHome, hashSalt, argonParams); }
-        }
-
         [ProtoMember(14)]
         public string PhoneCell
         {
             get { return _phoneCell; }
             set { _phoneCell = value; }
         }
-
-        public string PhoneCellHash
-        {
-            get { return HashWriter.Hash(_phoneCell, hashSalt, argonParams); }
-        }
-
+       
         [ProtoMember(15)]
         public string PhoneWork
         {
             get { return _phoneWork; }
             set { _phoneWork = value; }
         }
-
-        public string PhoneWorkHash
-        {
-            get { return HashWriter.Hash(_phoneWork, hashSalt, argonParams); }
-        }
-
+        
         [ProtoMember(16)]
         public string EmailAddress
         {
             get { return _emailAddress; }
             set { _emailAddress = value; }
         }
-
-        public string EmailAddressHash
-        {
-            get { return HashWriter.Hash(_emailAddress, hashSalt, argonParams); }
-        }
-
+        
         [ProtoMember(17)]
         public bool TwinIndicator
         {
             get { return _twinIndicator; }
             set { _twinIndicator = value; }
-        }
-
-        public string TwinIndicatorHash
-        {
-            get { return HashWriter.Hash(_twinIndicator.ToString(), hashSalt, argonParams); }
         }
 
         public Element MultipleBirth
@@ -351,20 +252,10 @@ namespace NoID.FHIR.Profile
             set { _multipleBirth = value; }
         }
 
-        public string MultipleBirthHash
-        {
-            get { return HashWriter.Hash(_multipleBirth.ToString(), hashSalt, argonParams); }
-        }
-
         public FingerPrintMinutias LeftFingerPrints
         {
             get { return _leftFingerPrints; }
             set { _leftFingerPrints = value; }
-        }
-
-        public string LeftFingerPrintHash
-        {
-            get { return HashWriter.Hash(_leftFingerPrints.ToString(), hashSalt, argonParams); }
         }
 
         public FingerPrintMinutias RightFingerPrints
@@ -372,21 +263,11 @@ namespace NoID.FHIR.Profile
             get { return _rightFingerPrints; }
             set { _rightFingerPrints = value; }
         }
-
-        public string RightFingerPrintHash
-        {
-            get { return HashWriter.Hash(_rightFingerPrints.ToString(), hashSalt, argonParams); }
-        }
-
+        
         public FingerPrintMinutias LeftAlternateFingerPrints
         {
             get { return _leftAlternateFingerPrints; }
             set { _leftAlternateFingerPrints = value; }
-        }
-
-        public string LeftAlternateFingerPrintsHash
-        {
-            get { return HashWriter.Hash(_leftAlternateFingerPrints.ToString(), hashSalt, argonParams); }
         }
 
         public FingerPrintMinutias RightAlternateFingerPrints
@@ -394,15 +275,22 @@ namespace NoID.FHIR.Profile
             get { return _rightAlternateFingerPrints; }
             set { _rightAlternateFingerPrints = value; }
         }
-
-        public string RightAlternateFingerPrintsHash
-        {
-            get { return HashWriter.Hash(_rightAlternateFingerPrints.ToString(), hashSalt, argonParams); }
-        }
-
+        
         public void NewSession()
         {
-            _sessionID = HashWriter.Hash(Guid.NewGuid().ToString(), hashSalt, argonParams);
+            _sessionID = sha256Hash(Guid.NewGuid().ToString());
+        }
+
+        private static string sha256Hash(string _value)
+        {
+            SHA256Managed crypt = new System.Security.Cryptography.SHA256Managed();
+            System.Text.StringBuilder hash = new System.Text.StringBuilder();
+            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(_value), 0, Encoding.UTF8.GetByteCount(_value));
+            foreach (byte theByte in crypto)
+            {
+                hash.Append(theByte.ToString("x2"));
+            }
+            return hash.ToString();
         }
 
         public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
@@ -639,6 +527,5 @@ namespace NoID.FHIR.Profile
             }
             return result;
         }
-
     }
 }
