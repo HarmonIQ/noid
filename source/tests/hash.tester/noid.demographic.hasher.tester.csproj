@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{112EA354-BEDE-4EA2-9F98-5A460B9E2706}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>hash.tester</RootNamespace>
-    <AssemblyName>hash.tester</AssemblyName>
+    <RootNamespace>NoID.Cryptographic.Hash.Test</RootNamespace>
+    <AssemblyName>NoID.Cryptographic.Hash.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>hash.tester.test</StartupObject>
+    <StartupObject>NoID.Cryptographic.Hash.Test.HashTest</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Liphsoft.Crypto.Argon2, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="test.cs" />
+    <Compile Include="HashTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

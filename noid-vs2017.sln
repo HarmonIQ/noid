@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "biometric.match.test", "sou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "biometric.match.test.ui", "source\biometric.match.test.ui\biometric.match.test.ui.csproj", "{7A214B7E-A826-4ADB-B14D-3E0B11B38101}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "noid.fhir.profile.hasher", "source\noid.fhir.profile.hasher\noid.fhir.profile.hasher.csproj", "{CEF4839E-4C50-41F5-9799-7B0D62A4502A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -235,6 +237,18 @@ Global
 		{7A214B7E-A826-4ADB-B14D-3E0B11B38101}.Release|x64.Build.0 = Release|Any CPU
 		{7A214B7E-A826-4ADB-B14D-3E0B11B38101}.Release|x86.ActiveCfg = Release|Any CPU
 		{7A214B7E-A826-4ADB-B14D-3E0B11B38101}.Release|x86.Build.0 = Release|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Debug|x64.Build.0 = Debug|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Debug|x86.Build.0 = Debug|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Release|x64.ActiveCfg = Release|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Release|x64.Build.0 = Release|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Release|x86.ActiveCfg = Release|Any CPU
+		{CEF4839E-4C50-41F5-9799-7B0D62A4502A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
