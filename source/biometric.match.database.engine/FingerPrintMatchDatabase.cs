@@ -3,101 +3,132 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
-using System.IO;
 using System.Configuration;
-using SourceAFIS.Simple;
-using SourceAFIS.General;
-using System.Collections.Generic;
-using SourceAFIS.Templates;
-using SourceAFIS.Extraction;
-using NoID.FHIR.Profile;
 using NoID.Utilities;
+using SourceAFIS.Templates;
 
-namespace NoID.Match.Engine.FingerPrint
+namespace NoID.Match.Database.FingerPrint
 {
-    class FingerPrintMatchDatabase
+    public class FingerPrintMatchDatabase
     {
-        static AfisEngine Afis = new AfisEngine();
-        private static int MATCH_THRESHOLD = 50;
-        private static string DATABASE_PATH = ConfigurationManager.AppSettings.Get("DatabaseLocation");
+        /*
+         * TODO:
+         * Should we make MATCH_THRESHOLD and MAX_CANDIDATE_CAPASITY 
+         * a variable or keep it at a protocol level so all match nodes behave the same?
+        */
+        private readonly static int MATCH_THRESHOLD = 30;
+        private readonly static int MAX_CANDIDATE_CAPACITY = 20000;
+        private static string _databasePath;
+        private MinutiaMatch _minutiaMatch;
+        private readonly FHIRUtilities.LateralitySnoMedCode _laterality;
+        private readonly FHIRUtilities.CaptureSiteSnoMedCode _captureSite;
 
-        private Extractor Extractor = new Extractor();
-        private Fingerprint _probe = null;
-        private Exception _exception;
-        public ulong nextID = 1;
-        private List<Template> fingerprintList = new List<Template>();
-        private List<FingerPrintMinutias> dbFingerprintMinutiaList = new List<FingerPrintMinutias>();
-
-        public FingerPrintMatchDatabase()
+        public FingerPrintMatchDatabase(string databaseLocation, string lateralityCode, string captureSiteCode)
         {
-        }
-        ~FingerPrintMatchDatabase()
-        {
-        }
-
-        public bool AddFingerPrintMinutias(FingerPrintMinutias newFingerPrintMinutias)
-        {
+            _minutiaMatch = new MinutiaMatch(_databasePath, MATCH_THRESHOLD);
             try
             {
-                dbFingerprintMinutiaList.Add(newFingerPrintMinutias);
+                _databasePath = databaseLocation;
+                _laterality = FHIRUtilities.SnoMedCodeToLaterality(lateralityCode);
+                _captureSite = FHIRUtilities.SnoMedCodeToCaptureSite(captureSiteCode);
+            }
+            catch { }
+        }
+
+        public int CandidateCount
+        {
+            get { return _minutiaMatch.CandidateCount; }
+        }
+
+        public int MatchThreshold
+        {
+            get { return MATCH_THRESHOLD; }
+        }
+
+        public int MaximumCandidateCapacity
+        {
+            get { return MAX_CANDIDATE_CAPACITY; }
+        }
+
+        public string DatabasePath
+        {
+            get { return _databasePath; }
+        }
+
+        public MinutiaMatch MinutiaMatch
+        {
+            get { return _minutiaMatch; }
+        }
+
+        public bool AddTemplate(Template template)
+        {
+            return _minutiaMatch.AddTemplate(template);
+        }
+
+        public string SearchPatients(Template probe)
+        {
+            string results;
+            if (!(_minutiaMatch == null))
+            {
+                if (_minutiaMatch.CandidateCount > 0)
+                {
+                    results = _minutiaMatch.SearchPatients(probe, false);
+                }
+                else
+                {
+                    results = "Minutia Match Database is empty.";
+                }
+            }
+            else
+            {
+                results = "Minutia Match Database is null.";
+            }
+            return results;
+        }
+
+        public bool WriteToDisk(string databasePath)
+        {
+            bool result = false;
+            if (!(_minutiaMatch == null))
+            {
+                if (_minutiaMatch.CandidateCount > 0)
+                {
+                    result = _minutiaMatch.WriteToDisk(databasePath);
+                }
+            }
+            return result;
+        }
+
+        public bool ReadFromDisk(string databasePath)
+        {
+            bool result = false;
+            try
+            {
+                _minutiaMatch = new MinutiaMatch(_databasePath, MATCH_THRESHOLD);
+                _minutiaMatch.ReadFromDisk(databasePath);
             }
             catch (Exception ex)
             {
-                _exception = ex;
-                return false;
+                throw ex;
             }
-            return true;
+            
+            return result;
         }
 
-        public void LoadTestFingerPrintImages(string imageDirectory)
+        public bool UpdateTemplate(Template newBest, string NoID)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(imageDirectory);
-            Fingerprint fingerprint = null;
-            if (dirInfo.Exists)
+            bool result = false;
+            try
             {
-                foreach (DirectoryInfo dir in dirInfo.GetDirectories())
-                {
-                    foreach (DirectoryInfo dirSub in dir.GetDirectories())
-                    {
-                        foreach (DirectoryInfo dirSub2 in dirSub.GetDirectories())
-                        {
-                            foreach (FileInfo file in dirSub2.GetFiles())
-                            {
-                                fingerprint = new Fingerprint();
-                                fingerprint.AsBitmapSource = WpfIO.Load(file.FullName);
-                                if (fingerprint.Image != null)
-                                {
-                                    Afis.ExtractFingerprint(fingerprint);
-                                    fingerprintList.Add(fingerprint.GetTemplate());
-                                    FingerPrintMinutias dbFingerprintMinutia = new FingerPrintMinutias(nextID.ToString(), fingerprint.GetTemplate(), FHIRUtilities.LateralitySnoMedCode.Left, FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger);
-                                    dbFingerprintMinutiaList.Add(dbFingerprintMinutia);
-                                    nextID = nextID + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-                _probe = fingerprint;
+                _minutiaMatch.UpdateTemplate(newBest, NoID);
+                result = true;
             }
-            SerializeDatabaseProto serialize = new SerializeDatabaseProto();
-            serialize.WriteToDisk(DATABASE_PATH + @"finger.hive.0001.biodb", dbFingerprintMinutiaList);
-        }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
-        public float SearchByFingerprint(Fingerprint fingerprintProbe = null)
-        {
-            if (fingerprintProbe == null)
-                fingerprintProbe = _probe;
-
-            Afis.ExtractFingerprint(fingerprintProbe);
-            Afis.Threshold = MATCH_THRESHOLD;
-            return Afis.IdentifyFinger(fingerprintProbe.GetTemplate(), fingerprintList);
-        }
-
-        public float SearchByFingerPrintMinutias(FingerPrintMinutias fingerPrintMinutias = null)
-        {
-            Template templateProbe = FingerprintMinutiaConvertor.ConvertFingerPrintMinutias(fingerPrintMinutias);
-            Afis.Threshold = MATCH_THRESHOLD;
-            return Afis.IdentifyFinger(templateProbe, fingerprintList);
+            return result;
         }
     }
 }
