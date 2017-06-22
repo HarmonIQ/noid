@@ -20,16 +20,17 @@
     </script>
 </head>
 <body>
-    <nav class="navbar navbar-default transparent navbar-fixed-top navbar-right">
+    <!--<nav class="navbar navbar-default transparent navbar-fixed-top navbar-right">
         <div class="container">
             <ol class=" navbar-right">
                 <a href="#"><li class="glyphicon glyphicon-question-sign"></li>  Help</a>
             </ol>
         </div>
-    </nav>
+    </nav>	-->
     <div class="container">
         <div class="row setHeight">
             <section>
+                <div><h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NoID: The Patient Identification System</h2></div>
                 <div class="wizard">
                     <div class="wizard-inner">
                         <div class="connecting-line"></div>
@@ -132,8 +133,9 @@
                                             <h3>
                                                 By clicking “Next” you Agree to the below terms and conditions of participation in the NoID patient identification system. This system will allow for healthcare organizations already engaged in your care to easily identify you across systems.
                                                 <p></p>
-                                                NoID Terms and Conditions. 
-                                                <small>You must submit two fingerprints unless physically unable in order to participate in NoID. Your fingerprint scans will never leave your healthcare organization, nor will your fingerprint data be stored centrally with any other personally identifiable information. All fingerprint data stored locally has been fully encrypted and abstracted from your personally identifiable information (name, address, etc).
+                                                NoID Terms and Conditions.
+                                                <small>
+                                                    You must submit two fingerprints unless physically unable in order to participate in NoID. Your fingerprint scans will never leave your healthcare organization, nor will your fingerprint data be stored centrally with any other personally identifiable information. All fingerprint data stored locally has been fully encrypted and abstracted from your personally identifiable information (name, address, etc).
                                                 </small>
                                             </h3>
                                             <p></p>
@@ -144,12 +146,16 @@
                                                     </ol>
                                             </h4>
                                             <p></p>
-                                            <h4>EXPIRATION: <small>The Authorization expires five years from the date of enrollment unless a different date is specified.</small>
+                                            <h4>
+                                                EXPIRATION: <small>The Authorization expires five years from the date of enrollment unless a different date is specified.</small>
                                             </h4>
                                             <p></p>
-                                            <h4>REVOCATION: <small>I understand that I may cancel this Authorization at any time, but must do so by submitting my request 
-                                                for revocation to any participating NoID healhcare organization or using my online patient portal.  My revocation will
-                                                take effect upon receipt or a different date is specified.</small>
+                                            <h4>
+                                                REVOCATION: <small>
+                                                    I understand that I may cancel this Authorization at any time, but must do so by submitting my request
+                                                    for revocation to any participating NoID healhcare organization or using my online patient portal.  My revocation will
+                                                    take effect upon receipt or a different date is specified.
+                                                </small>
                                             </h4>
                                             <p></p>
                                             <h4>NOTICE OF RIGHT AND OTHER INFORMATION: 
@@ -384,7 +390,7 @@
                                                     <div class="col-md-8 col-xs-9">
                                                         <div class="row">
                                                             <div class="col-md-4 col-xs-4 wdth">
-                                                                <select name="Month" id="Month" class="dropselectsec1">
+                                                                <select name="BirthMonth" id="BirthMonth" class="dropselectsec1">
                                                                     <option value="">Month</option>
                                                                     <option value="1">Jan</option>
                                                                     <option value="2">Feb</option>
@@ -401,7 +407,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-4 col-xs-4 wdth">
-                                                                <select name="Day" id="Day" class="dropselectsec1">
+                                                                <select name="BrithDay" id="BirthDay" class="dropselectsec1">
                                                                     <option value="">Date</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
@@ -437,7 +443,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-4 col-xs-4 wdth">
-                                                                <select name="Year" id="Year" class="dropselectsec1">
+                                                                <select name="BirthYear" id="BirthYear" class="dropselectsec1">
                                                                     <option value="">Year</option>
                                                                     <option value="2016">2016</option>
                                                                     <option value="2015">2015</option>
@@ -567,10 +573,10 @@
                                                     </div>
                                                     <div class="col-md-8 col-xs-9">
                                                         <label class="radio-inline">
-                                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> Male
+                                                            <input type="radio" name="inlineRadioOptions" id="GenderMale" value="m"> Male
                                                         </label>
                                                         <label class="radio-inline">
-                                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> Female
+                                                            <input type="radio" name="inlineRadioOptions" id="GenderFemale" value="f"> Female
                                                         </label>
                                                     </div>
                                                 </div>
@@ -596,34 +602,41 @@
                                             <hr>
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <label for="exampleInputStreetAddress">Street Address</label>
-                                                    <input type="text" class="form-control" id="exampleInputStreetAddress" placeholder="Street Address">
+                                                    <label for="StreetAddress">Street Address</label>
+                                                    <input type="text" class="form-control" id="StreetAddress" placeholder="Street Address">
+                                                </div>
+                                            </div>
+                                            <p></p>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="StreetAddress2">Street Address 2</label>
+                                                    <input type="text" class="form-control" id="StreetAddress2" placeholder="Apt, Suite, etc">
                                                 </div>
                                             </div>
                                             <p></p>
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <label for="exampleInputCity">City</label>
-                                                    <input type="text" class="form-control" id="exampleInputCity" placeholder="City">
+                                                    <label for="City">City</label>
+                                                    <input type="text" class="form-control" id="City" placeholder="City">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="exampleInputState">State</label>
-                                                    <input type="text" class="form-control" id="exampleInputState" placeholder="State">
+                                                    <label for="State">State</label>
+                                                    <input type="text" class="form-control" id="State" placeholder="State">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="exampleInputZIPCode">ZIP code</label>
-                                                    <input type="text" class="form-control" id="exampleInputZIPCode" placeholder="ZIP code">
+                                                    <label for="ZipCode">Zip code</label>
+                                                    <input type="text" class="form-control" id="ZipCode" placeholder="Zip code">
                                                 </div>
                                             </div>
                                             <p></p>
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <label for="exampleInputPhoneNumber">Phone Number</label>
-                                                    <input type="tel" class="form-control" name="exampleInputPhoneNumber" id="exampleInputPhoneNumber" placeholder="(888) 888-8888" maxlength="14" title="Enter Telephone" pattern="/\(?[\d]{3}\)?[\s-]?[\d]{3}[\s-]?[\d]{4}/">
+                                                    <label for="PhoneNumber">Phone Number</label>
+                                                    <input type="tel" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="(888) 888-8888">
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <label for="exampleInputEmail1">Email address</label>
-                                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+                                                    <label for="EmailAddress">Email address</label>
+                                                    <input type="email" class="form-control" id="EmailAddress" placeholder="Email">
                                                 </div>
                                             </div>
                                         </div>
@@ -633,7 +646,7 @@
                                     <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="savePatient()"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
                             <div class="tab-pane" role="tabpanel" id="step8">
@@ -650,7 +663,7 @@
                                                     <p align="right"><strong>I am the result of a multiple birth pregnancy &#42;</strong></p>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6">
-                                                    <select name="ProductOfTwinBirths" id="ProductOfTwinBirths" class="dropselectsec1">
+                                                    <select name="FromMultipleBirthPregnancy" id="FromMultipleBirthPregnancy" class="dropselectsec1">
                                                         <option value="No">No</option>
                                                         <option value="YesIdenticalTwin">Yes, I have an identical twin.</option>
                                                         <option value="YesFraternalTwin">Yes, I have a fraternal twin.</option>
@@ -665,7 +678,7 @@
                                                     <p align="right"><strong>My gender has changed &#42;</strong></p>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6">
-                                                    <select name="TransGender" id="TransGender" class="dropselectsec1">
+                                                    <select name="GenderChanged" id="GenderChanged" class="dropselectsec1">
                                                         <option value="No">No</option>
                                                         <option value="Yes">Yes</option>
                                                         <option value="NA">No Answer</option>
@@ -696,7 +709,7 @@
                                                     <p align="right"><strong>Your NoID HUB</strong></p>
                                                 </div>
                                                 <div class="col-md-8 col-xs-9">
-                                                    <select name="HealthHubChoice" id="HealthHubChoice" class="dropselectsec1">
+                                                    <select name="PatientHub" id="PatientHub" class="dropselectsec1">
                                                         <option value="South">First Identity HUB USA South</option>
                                                         <option value="North">First Identity HUB USA North</option>
                                                         <option value="East">First Identity HUB USA East</option>
@@ -714,25 +727,25 @@
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
-                            <div class="tab-pane"role="tabpanel" id="step10">
+                            <div class="tab-pane" role="tabpanel" id="step10">
                                 <div class="step10">
                                     <div class="row">
                                         <div class="jumbotron">
                                             <h1>Portal Password Setup</h1>
                                             <h3>
-                                                Please enter in a password so you can access an audit of your NoID activities from any web enabled device. At login, you will be asked for this password, and a sms message containing a secure code will be sent to the phone number or email address on file. 
+                                                Please enter in a password so you can access an audit of your NoID activities from any web enabled device. At login, you will be asked for this password, and a sms message containing a secure code will be sent to the phone number or email address on file.
                                             </h3>
                                             <p></p>
                                             <h4>
                                                 Please create a password to access your NoID audit portal (First Identity HUB USA South):
                                                 <p></p>
-                                                <input type="text" class="form-control" id="portalPassword" placeholder="Password" >
+                                                <input type="text" class="form-control" id="PortalPassword" placeholder="Password">
                                             </h4>
                                             <p></p>
                                             <h5>
                                                 *Min one uppercase letter, one number, 6 character length,  and optional special characters
                                             </h5>
-                                             <h5>
+                                            <h5>
                                                 *This step is not required
                                             </h5>
                                         </div>
@@ -742,7 +755,7 @@
                                     <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                    <li><button onclick="savePatient();" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
                             <div class="tab-pane" role="tabpanel" id="step11">
@@ -900,7 +913,7 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
-         <div id="newReturnPatientModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div id="newReturnPatientModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -912,10 +925,10 @@
                                 <p align="right"><strong>Please select your enrollment status:</strong></p>
                             </div>
                             <div class="col-md-8 col-xs-9">
-                                <select name="visa_status" id="newReturn_status" class="dropselectsec1">
-                                    <option title="To my knowledge, I have never enrolled in a NoID enabled system" value="I am a new patient">I am a new patient</option>
-                                    <option title="I am currently enrolled in a NoID enabled system" value="I am a returning patient">I am a returning patient</option>
-                                    <option title="I do not know if I am currently enrolled in a NoID enabled system" value="I do not know">I do not know</option>   
+                                <select name="NewOrReturnPatient" id="NewOrReturnPatient" class="dropselectsec1">
+                                    <option title="To my knowledge, I have never enrolled in a NoID enabled system" value="new">I am a new patient</option>
+                                    <option title="I am currently enrolled in a NoID enabled system" value="return">I am a returning patient</option>
+                                    <option title="I do not know if I am currently enrolled in a NoID enabled system" value="unknown">I do not know</option>
                                 </select>
                             </div>
                         </div>
@@ -965,17 +978,71 @@
         }
 
         function savePatient() {
+            //mschr1 20170621
+            var language = document.getElementById('selectedLanguage');
+            var languageSelected = language.options[language.selectedIndex].text;
+            var firstName = document.getElementById("FirstName").value;
+            var middleName = document.getElementById("MiddleName").value;
+            var lastName = document.getElementById("LastName").value;
+            var birthYear = document.getElementById('BirthYear');
+            var selectedBirthYear = birthYear.options[birthYear.selectedIndex].text;
+            var birthMonth = document.getElementById('BirthMonth');
+            var selectedBirthMonth = birthMonth.options[birthMonth.selectedIndex].text;
+            var birthDay = document.getElementById('BirthDay');
+            var selectedBirthDay = birthDay.options[birthDay.selectedIndex].text;
+            if (document.getElementById("GenderMale").checked) {
+                var gender = document.getElementById("GenderMale").value;
+            };
+            if (document.getElementById("GenderFemale").checked) {
+                var gender = document.getElementById("GenderFemale").value;
+            };
+            var streetAddress = document.getElementById("StreetAddress").value;
+            var streetAddress2 = document.getElementById("StreetAddress2").value;
+            var city = document.getElementById("City").value;
+            var state = document.getElementById("State").value;
+            var postalCode = document.getElementById("ZipCode").value;
+            var phoneCell = document.getElementById("PhoneNumber").value;
+            var emailAddress = document.getElementById("EmailAddress").value;
+            //may not need below for profile, but will need eventually
+            var newOrReturnPatient = document.getElementById('NewOrReturnPatient');
+            var selectedNewOrReturnPatient = newOrReturnPatient.options[newOrReturnPatient.selectedIndex].value;
+            var multipleBirthPregnancy = document.getElementById('FromMultipleBirthPregnancy');
+            var selectedMultipleBirthPregnancy = multipleBirthPregnancy.options[multipleBirthPregnancy.selectedIndex].value;
+            var genderChanged = document.getElementById('GenderChanged');
+            var selectedGenderChanged = genderChanged.options[genderChanged.selectedIndex].value;
+            var patientHub = document.getElementById('PatientHub');
+            var selectedPatientHub = patientHub.options[patientHub.selectedIndex].value;
+            var portalPassword = document.getElementById("PortalPassword").value;
 
-            NoIDBridge.postDemographics('english', 'super', 'd', 'women', 'f', '1988', '03', '07', '123 Main Street', 'Apt 1', 'New Orleans', 'LA', '70112', 'super.women@yahoo.com', '5045551111');
-            if (NoIDBridge.ErrorDescription == '')
-            {
+            /*alert("Language = " + languageSelected
+                + "\nFirst Name = " + firstName
+                + "\nMiddle Name = " + middleName
+                + "\nLast Name = " + lastName
+                + "\nBirth Year = " + selectedBirthYear
+                + "\nBirth Month = " + selectedBirthMonth
+                + "\nBirth Day = " + selectedBirthDay
+                + "\nGender = " + gender
+                + "\nStreetAddress = " + streetAddress
+                + "\nStreetAddress2 = " + streetAddress2
+                + "\nCity = " + city
+                + "\nState = " + state
+                + "\nPostalCode = " + postalCode
+                + "\nPhoneCell = " + phoneCell
+                + "\nEmail = " + emailAddress
+                + "\nNew or Return Patient = " + selectedNewOrReturnPatient
+                + "\nFrom Multiple Birth Pregnancy = " + selectedMultipleBirthPregnancy
+                + "\nGender Changed = " + selectedGenderChanged
+                + "\nPatient Hub = " + selectedPatientHub
+                + "\nPortal Password = " + portalPassword);*/
+
+            NoIDBridge.postDemographics(languageSelected, firstName, middleName, lastName, gender, selectedBirthYear, selectedBirthMonth, selectedBirthDay, streetAddress, streetAddress2, city, state, postalCode, emailAddress, '5045551111');
+            if (NoIDBridge.errorDescription == '') {
                 //no error continue with new page
                 alert("postDemographics no error");
             }
-            else
-            {
+            else {
                 //error, show user message
-                alert("postDemographics Error" + NoIDBridge.ErrorDescription);
+                alert("postDemographics Error " + NoIDBridge.errorDescription);
             }
         }
 
