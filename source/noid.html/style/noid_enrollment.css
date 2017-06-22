@@ -288,7 +288,18 @@ span.round-tab:hover {
 	border-bottom:1px solid #dcdcdc;
 }
 
-
+/* validation area */
+input:valid {
+  background-color: #ddffdd;
+}
+input:invalid {
+  background-color: #ffdddd;
+}
+input:required:valid {
+  border-color: #008000;
+  background-color: #ddffdd;
+}
+/* validation area  #008000;*/
 
 @media( max-width : 585px ) {
 

@@ -121,7 +121,7 @@
                         </ul>
                     </div>
 
-                    <form role="form">
+                    <form id="myform" role="form" autocomplete="off">
                         <div class="tab-content">
                             <div class="tab-pane active" role="tabpanel" id="step1">
                                 <div class="step1">
@@ -137,12 +137,11 @@
                                                 </small>
                                             </h3>
                                             <p></p>
-                                            <h4>PURPOSE: <small>The requested use or disclosure of my health information is for the following purposes:
+                                            <h4>PURPOSE: <small>The requested use or disclosure of my health information is for the following purposes:</small>
                                                     <p></p>
                                                     <ol>
-                                                        <li>To accurately identify me across participating healthcare systems</li>
+                                                        <li><small>To accurately identify me across participating healthcare systems</small></li>
                                                     </ol>
-                                                </small>
                                             </h4>
                                             <p></p>
                                             <h4>EXPIRATION: <small>The Authorization expires five years from the date of enrollment unless a different date is specified.</small>
@@ -153,13 +152,12 @@
                                                 take effect upon receipt or a different date is specified.</small>
                                             </h4>
                                             <p></p>
-                                            <h4>NOTICE OF RIGHT AND OTHER INFORMATION: <small>
+                                            <h4>NOTICE OF RIGHT AND OTHER INFORMATION: 
                                                     <p></p>
                                                     <ol>
-                                                        <li>I understand I do not have to enroll in NoID.  My refusal will not affect my ability to seek treatment, payment or eligibility for benefits.</li>
-                                                        <li>I understand that I have the right to receive a copy of the Authorization.</li>
+                                                        <li><small>I understand I do not have to enroll in NoID.  My refusal will not affect my ability to seek treatment, payment or eligibility for benefits.</small></li>
+                                                        <li><small>I understand that I have the right to receive a copy of the Authorization.</small></li>
                                                     </ol>
-                                                </small>
                                             </h4>
                                         </div>
                                     </div>
@@ -214,7 +212,7 @@
                                             <p></p>
                                             <div class="row mar_ned">
                                                 <div class="col-md-4 col-xs-3">
-                                                    <p align="right"><stong>Reason For Missing Biometric:</stong></p>
+                                                    <p align="right"><strong>Reason For Missing Biometric:</strong></p>
                                                 </div>
                                                 <div class="col-md-8 col-xs-9">
                                                     <select id="exceptionMissingReason" class="form-control">
@@ -226,7 +224,7 @@
                                             </div>
                                             <div class="row mar_ned">
                                                 <div class="col-md-4 col-xs-3">
-                                                    <p align="right"><stong>Select Secret Question 1:</stong></p>
+                                                    <p align="right"><strong>Select Secret Question 1:</strong></p>
                                                 </div>
                                                 <div class="col-md-8 col-xs-9">
                                                     <ul class="list-group">
@@ -245,7 +243,7 @@
                                             </div>
                                             <div class="row mar_ned">
                                                 <div class="col-md-4 col-xs-3">
-                                                    <p align="right"><stong>Select Secret Question 2:</stong></p>
+                                                    <p align="right"><strong>Select Secret Question 2:</strong></p>
                                                 </div>
                                                 <div class="col-md-8 col-xs-9">
                                                     <ul class="list-group">
@@ -363,30 +361,30 @@
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="FirstName">First Name &#42;</label>
-                                                            <input type="text" class="form-control" id="FirstName" placeholder="First Name">
+                                                            <input type="text" class="form-control" id="FirstName" placeholder="First Name" title="Enter your first name here" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="MiddleName">Middle Name</label>
-                                                            <input type="text" class="form-control" id="MiddleName" placeholder="Middle Name">
+                                                            <input type="text" class="form-control" id="MiddleName" placeholder="Middle Name" title="Enter your middle name here">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="form-group">
                                                             <label for="LastName">Last Name &#42;</label>
-                                                            <input type="text" class="form-control" id="LastName" placeholder="Last Name">
+                                                            <input type="text" class="form-control" id="LastName" placeholder="Last Name"  title="Enter your last name here" required >
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row mar_ned">
                                                     <div class="col-md-4 col-xs-3">
-                                                        <p align="right"><stong>Date of birth &#42;</stong></p>
+                                                        <p align="right"><strong>Date of birth &#42;</strong></p>
                                                     </div>
                                                     <div class="col-md-8 col-xs-9">
                                                         <div class="row">
                                                             <div class="col-md-4 col-xs-4 wdth">
-                                                                <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                                <select name="Month" id="Month" class="dropselectsec1">
                                                                     <option value="">Month</option>
                                                                     <option value="1">Jan</option>
                                                                     <option value="2">Feb</option>
@@ -403,7 +401,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-4 col-xs-4 wdth">
-                                                                <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                                <select name="Day" id="Day" class="dropselectsec1">
                                                                     <option value="">Date</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
@@ -439,7 +437,7 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-4 col-xs-4 wdth">
-                                                                <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                                <select name="Year" id="Year" class="dropselectsec1">
                                                                     <option value="">Year</option>
                                                                     <option value="2016">2016</option>
                                                                     <option value="2015">2015</option>
@@ -565,7 +563,7 @@
                                                 </div>
                                                 <div class="row mar_ned">
                                                     <div class="col-md-4 col-xs-3">
-                                                        <p align="right"><stong>Gender &#42;</stong></p>
+                                                        <p align="right"><strong>Gender &#42;</strong></p>
                                                     </div>
                                                     <div class="col-md-8 col-xs-9">
                                                         <label class="radio-inline">
@@ -598,30 +596,30 @@
                                             <hr>
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <label for="exampleInputEmail1">Street Address</label>
-                                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Street Address">
+                                                    <label for="exampleInputStreetAddress">Street Address</label>
+                                                    <input type="text" class="form-control" id="exampleInputStreetAddress" placeholder="Street Address">
                                                 </div>
                                             </div>
                                             <p></p>
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <label for="exampleInputEmail1">City</label>
-                                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="City">
+                                                    <label for="exampleInputCity">City</label>
+                                                    <input type="text" class="form-control" id="exampleInputCity" placeholder="City">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="exampleInputEmail1">State</label>
-                                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="State">
+                                                    <label for="exampleInputState">State</label>
+                                                    <input type="text" class="form-control" id="exampleInputState" placeholder="State">
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label for="exampleInputEmail1">Zip code</label>
-                                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Zip code">
+                                                    <label for="exampleInputZIPCode">ZIP code</label>
+                                                    <input type="text" class="form-control" id="exampleInputZIPCode" placeholder="ZIP code">
                                                 </div>
                                             </div>
                                             <p></p>
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <label for="exampleInputEmail1">Phone Number</label>
-                                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="(888) 888-8888">
+                                                    <label for="exampleInputPhoneNumber">Phone Number</label>
+                                                    <input type="tel" class="form-control" name="exampleInputPhoneNumber" id="exampleInputPhoneNumber" placeholder="(888) 888-8888" maxlength="14" title="Enter Telephone" pattern="/\(?[\d]{3}\)?[\s-]?[\d]{3}[\s-]?[\d]{4}/">
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label for="exampleInputEmail1">Email address</label>
@@ -649,10 +647,10 @@
                                             <hr>
                                             <div class="row mar_ned">
                                                 <div class="col-md-6 col-xs-6">
-                                                    <p align="right"><stong>I am the result of a multiple birth pregnancy &#42;</stong></p>
+                                                    <p align="right"><strong>I am the result of a multiple birth pregnancy &#42;</strong></p>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6">
-                                                    <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                    <select name="ProductOfTwinBirths" id="ProductOfTwinBirths" class="dropselectsec1">
                                                         <option value="No">No</option>
                                                         <option value="YesIdenticalTwin">Yes, I have an identical twin.</option>
                                                         <option value="YesFraternalTwin">Yes, I have a fraternal twin.</option>
@@ -664,10 +662,10 @@
                                             </div>
                                             <div class="row mar_ned">
                                                 <div class="col-md-6 col-xs-6">
-                                                    <p align="right"><stong>My gender has changed &#42;</stong></p>
+                                                    <p align="right"><strong>My gender has changed &#42;</strong></p>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6">
-                                                    <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                    <select name="TransGender" id="TransGender" class="dropselectsec1">
                                                         <option value="No">No</option>
                                                         <option value="Yes">Yes</option>
                                                         <option value="NA">No Answer</option>
@@ -695,10 +693,10 @@
                                             <hr>
                                             <div class="row mar_ned">
                                                 <div class="col-md-4 col-xs-3">
-                                                    <p align="right"><stong>Your NoID HUB</stong></p>
+                                                    <p align="right"><strong>Your NoID HUB</strong></p>
                                                 </div>
                                                 <div class="col-md-8 col-xs-9">
-                                                    <select name="visa_status" id="visa_status" class="dropselectsec1">
+                                                    <select name="HealthHubChoice" id="HealthHubChoice" class="dropselectsec1">
                                                         <option value="South">First Identity HUB USA South</option>
                                                         <option value="North">First Identity HUB USA North</option>
                                                         <option value="East">First Identity HUB USA East</option>
@@ -728,7 +726,7 @@
                                             <h4>
                                                 Please create a password to access your NoID audit portal (First Identity HUB USA South):
                                                 <p></p>
-                                                <input type="text" class="form-control" id="portalPassword" placeholder="Password">
+                                                <input type="text" class="form-control" id="portalPassword" placeholder="Password" >
                                             </h4>
                                             <p></p>
                                             <h5>
@@ -884,13 +882,13 @@
                     <div class="modal-body">
                         <div class="row mar_ned">
                             <div class="col-md-4 col-xs-3">
-                                <p align="right"><stong>Please select a language:</stong></p>
+                                <p align="right"><strong>Please select a language:</strong></p>
                             </div>
                             <div class="col-md-8 col-xs-9">
-                                <select name="selectedLanguage" id="selectedLanguage" class="dropselectsec1">
+                                <select name="langTranslation" id="langTranslation" class="dropselectsec1">
                                     <option value="English">English</option>
                                     <option disabled title="Spanish Translation Not Supported for Prototype" value="Español">Español</option>
-                                    <option disabled title="French Translation Not Supported for Prototype" value="François">François</option>
+                                    <option disabled title="French Translation Not Supported for Prototype" value="Français">Français</option>
                                     <option disabled title="German Translation Not Supported for Prototype" value="Deutsch">Deutsch</option>
                                 </select>
                             </div>
@@ -911,7 +909,7 @@
                     <div class="modal-body">
                         <div class="row mar_ned">
                             <div class="col-md-4 col-xs-3">
-                                <p align="right"><stong>Please select your enrollment status:</stong></p>
+                                <p align="right"><strong>Please select your enrollment status:</strong></p>
                             </div>
                             <div class="col-md-8 col-xs-9">
                                 <select name="visa_status" id="newReturn_status" class="dropselectsec1">
@@ -981,7 +979,6 @@
             }
         }
 
-
         //according menu
 
         $(document).ready(function () {
@@ -1012,6 +1009,155 @@
 
             return false;
         });
+    </script>
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+            //keydown
+            $("#exampleInputPhoneNumber").keydown(function(event){
+                if (((event.which >= 48 && event.which <= 57) || (event.which == 40 || event.which == 41) || (event.which == 189) || (event.which == 46) || (event.which == 9) || (event.which == 8) || (event.which == 32) || (event.which == 37) || (event.which == 39) && (this.value.length <= 13))) { 
+                    // 0-9,( ) - only
+                        console.log('');
+                        $("#exampleInputPhoneNumber")[0].checkValidity();
+                }
+                else {
+                            event.cancelBubble = true;
+                            return false;
+                };
+            }); 
+            //keyup
+            //focusout
+            $("#exampleInputPhoneNumber").focusout(function(){
+                this.value = $.trim(this.value);
+                $("#exampleInputPhoneNumber")[0].checkValidity();
+            }); 
+
+    });
+
+    $(document).ready(function () {
+            $("#exampleInputEmail1").keyup(function(){
+                var pattern = /([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)/
+
+                var myRegexp = new RegExp(pattern);
+                this.value = $.trim(this.value);
+
+                if (this.value.length > 5 )  {
+                    var match = myRegexp.exec(this.value);
+                    if (match != null) {
+                        console.log('');
+                    }
+                    else
+                    {
+                        console.log('');
+                    };
+                };
+            }); 
+    });
+
+    $(document).ready(function () {
+            $("#portalPassword").keyup(function(){
+                var pattern = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z]))/
+
+                var myRegexp = new RegExp(pattern);
+                this.value = $.trim(this.value);
+
+                if (this.value.length > 6 )  {
+                    var match = myRegexp.exec(this.value);
+                    if (match != null) {
+                        console.log('');
+                    }
+                    else
+                    {
+                        console.log('');
+                    };
+                };
+            }); 
+    });
+
+    $(document).ready(function () {
+            //keydown
+            $("#FirstName").keydown(function(event){
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || (event.which >= 48 && event.which <= 57) ) { 
+                    // 0-9 only
+                    event.cancelBubble = true;
+                    return false;
+                }
+                else {
+                        //var pattern = /[a-z ,.'-]+/i 
+                        var pattern = /[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð '-]+/u
+                        var myRegexp = new RegExp(pattern);
+
+                        var match = myRegexp.exec(event.key);
+                        if (match == null) {
+                            event.cancelBubble = true;
+                            return false;
+                        };
+                };
+            }); 
+            //keyup
+            //Too Late to Cancel Event
+            //focusout
+            $("#FirstName").focusout(function(){
+                this.value = $.trim(this.value);
+            }); 
+    });
+
+    $(document).ready(function () {
+            //keydown
+            $("#MiddleName").keydown(function(event){
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || (event.which >= 48 && event.which <= 57) ) { 
+                    // 0-9 only
+                    event.cancelBubble = true;
+                    return false;
+                }
+                else {
+                        //var pattern = /[a-z ,.'-]+/i 
+                        var pattern = /[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð '-]+/u
+                        var myRegexp = new RegExp(pattern);
+
+                        var match = myRegexp.exec(event.key);
+                        if (match == null) {
+                            event.cancelBubble = true;
+                            return false;
+                        };
+                };
+            }); 
+            //keyup
+            //Too Late to Cancel Event
+            //focusout
+            $("#MiddleName").focusout(function(){
+                this.value = $.trim(this.value);
+            }); 
+    });
+
+    $(document).ready(function () {
+            //keydown
+            $("#LastName").keydown(function(event){
+                if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 96 && event.keyCode <= 105) || (event.which >= 48 && event.which <= 57) ) { 
+                    // 0-9 only
+                    event.cancelBubble = true;
+                    return false;
+                }
+                else {
+                        //var pattern = /[a-z ,.'-]+/i 
+                        var pattern = /[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð '-]+/u
+                        var myRegexp = new RegExp(pattern);
+
+                        var match = myRegexp.exec(event.key);
+                        if (match == null) {
+                            event.cancelBubble = true;
+                            return false;
+                        };
+                };
+            }); 
+            //keyup
+            //Too Late to Cancel Event
+            //focusout
+            $("#LastName").focusout(function(){
+                this.value = $.trim(this.value);
+            }); 
+    });
+
     </script>
 </body>
 </html>
