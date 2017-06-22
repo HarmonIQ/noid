@@ -26,7 +26,7 @@ namespace NoID.Match.Database.Tests
         public event EventHandler DatabaseMatchFound = delegate { };
         public event EventHandler DatabaseMatchError = delegate { };
         public event EventHandler DoesNotMatch = delegate { };
-        
+        public event EventHandler PoorCaputure = delegate { };
 
         public float Score = 0;
 
@@ -42,10 +42,13 @@ namespace NoID.Match.Database.Tests
         private Person previousCapture;
         public Fingerprint currenFingerPrint;
         public Fingerprint previousFingerPrint;
+        public int Quality;
 
         private Person bestCapture;
         private string patientNoID = "";
         private bool fGoodPairFound = false;
+        public float HighScore = 0;
+
 
         public MatchProbesTest()
         {
@@ -94,9 +97,18 @@ namespace NoID.Match.Database.Tests
             // Check capture quality and throw an error if bad.
             if (!biometricDevice.CheckCaptureResult(captureResult)) return;
 
+            bool newBest = false;
             bool match = false;
             Afis.Threshold = 70;
             Score = 0;
+            
+            Constants.CaptureQuality quality = captureResult.Quality;
+            if ((int)quality != 0)
+            {
+                Quality = (int)quality;
+                PoorCaputure(quality, new EventArgs());
+                return;
+            }
 
             currentCapture = new SourceAFIS.Simple.Person();
 
@@ -125,82 +137,66 @@ namespace NoID.Match.Database.Tests
                 FingerCaptured(newFingerPrint, new EventArgs());
             }
 
-            if (match)
+            if (!(match))
             {
-                Template tmp;
-                if (!(bestCapture == null))
+                DoesNotMatch(currenFingerPrint, new EventArgs());
+            }
+            else if (match)
+            {
+                if (GoodPairFound != null)
                 {
-                    tmp = bestCapture.Fingerprints[0].GetTemplate();
-                    if (tmpCurrent.Minutiae.Length >= tmp.Minutiae.Length)
-                    {
-                        bestCapture = currentCapture;
-                        if (NewBestMatchFound != null)
-                        {
-                            NewBestMatchFound(bestCapture.Fingerprints[0], new EventArgs());
-                        }   
-                    }
+                    GoodPairFound(currenFingerPrint, new EventArgs());
                 }
-                else if (!(previousCapture == null))
-                {
-                    tmp = previousCapture.Fingerprints[0].GetTemplate();
-                    if (tmp.Minutiae.Length > tmpCurrent.Minutiae.Length)
-                    {
-                        bestCapture = previousCapture;
-                        if (NewBestMatchFound != null)
-                        {
-                            NewBestMatchFound(bestCapture.Fingerprints[0], new EventArgs());
-                        }
-                    }
-                    else
-                    {
-                        bestCapture = currentCapture;
-                        if (NewBestMatchFound != null)
-                        {
-                            NewBestMatchFound(bestCapture.Fingerprints[0], new EventArgs());
-                        }
-                    }
-                }
-
-                tmp = bestCapture.Fingerprints[0].GetTemplate();
-
-
-                string idFound = IdentifyFinger(tmp);
-                if ((fGoodPairFound == false) && (patientNoID.Length == 0) && (idFound.Length == 0))
-                {
-                    tmp.NoID = "NoID" + nextID;
-                    dbMinutia.AddTemplate(tmp);
-                    patientNoID = idFound;
-
-                    nextID++;
-                }
-                else if ((fGoodPairFound == true) && (patientNoID.Length > 0) && (idFound.Length == 0))
-                {
-                    if (DatabaseMatchError != null)
-                    {
-                        DatabaseMatchError(newFingerPrint, new EventArgs());
-                    }
-                    patientNoID = "Error, adjust threshold. It is too low.";
-                }
-                else
-                {
-                    if (DatabaseMatchFound != null)
-                    {
-                        DatabaseMatchFound(newFingerPrint, new EventArgs());
-                    }
-                }
-
                 if (fGoodPairFound == false)
-                {
                     fGoodPairFound = true;
-                    if (GoodPairFound != null)
-                    {
-                        GoodPairFound(bestCapture.Fingerprints[0], new EventArgs());
-                    }
+            }
+
+            Template tmp;
+            if (Score > HighScore)
+            {
+                HighScore = Score;
+                bestCapture = currentCapture;
+                if (NewBestMatchFound != null)
+                {
+                    newBest = true;
+                    NewBestMatchFound(bestCapture.Fingerprints[0], new EventArgs());
                 }
+            }
+            if (!(bestCapture == null))
+            {
+                tmp = bestCapture.Fingerprints[0].GetTemplate();
             }
             else
             {
-                DoesNotMatch(currenFingerPrint, new EventArgs());
+                tmp = tmpCurrent;
+            }
+                
+            string idFound = IdentifyFinger(tmp);
+            if (match && (fGoodPairFound == true) && (patientNoID.Length == 0) && (idFound.Length == 0))
+            {
+                tmp.NoID = "NoID" + nextID;
+                dbMinutia.AddTemplate(tmp);
+                patientNoID = idFound;
+                nextID++;
+            }
+            else if (match && (fGoodPairFound == true) && (patientNoID.Length > 0) && (idFound.Length == 0))
+            {
+                if (DatabaseMatchError != null)
+                {
+                    DatabaseMatchError(newFingerPrint, new EventArgs());
+                }
+                patientNoID = "Error, adjust threshold. It is too low.";
+            }
+            else
+            {
+                if (match && DatabaseMatchFound != null)
+                {
+                    DatabaseMatchFound(newFingerPrint, new EventArgs());
+                    if (newBest)
+                    {
+                        dbMinutia.UpdateTemplate(tmp, idFound);
+                    }
+                }
             }
 
             previousCapture = currentCapture;

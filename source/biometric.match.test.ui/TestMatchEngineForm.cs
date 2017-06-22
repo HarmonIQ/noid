@@ -18,6 +18,7 @@ namespace NoID.Match.Database.Tests
         private Fingerprint bestFinger;
         private Fingerprint newMatchFinger;
         private string ErrorMessage = "";
+        private float highScore = 0;
 
         public TestMatchEngineForm()
         {
@@ -31,6 +32,7 @@ namespace NoID.Match.Database.Tests
             matchProbesTest.DatabaseMatchFound += DatabaseMatchFound;
             matchProbesTest.DoesNotMatch += DoesNotMatch;
             matchProbesTest.DatabaseMatchError += DatabaseMatchError;
+            matchProbesTest.PoorCaputure += PoorCaputure;
         }
 
         void FingerCaptured(object sender, EventArgs e)
@@ -41,32 +43,18 @@ namespace NoID.Match.Database.Tests
             task.Start(scheduler);
         }
 
+        void PoorCaputure(object sender, EventArgs e)
+        {
+            Task task = new Task(() => this.SetPoorCapture());
+            task.Start(scheduler);
+        }
+
         void GoodPairFound(object sender, EventArgs e)
         {
             bestFinger = (Fingerprint)sender;
             imageMatchedFinger.Image = bestFinger.AsBitmap;
             Task task = new Task(() => this.UpdateMatchScoreLabel());
             task.Start(scheduler);
-        }
-
-        private void UpdateMatchScoreLabel()
-        {
-            labelBestScore.Text = "Match found! Score = " +  matchProbesTest.Score.ToString();
-        }
-
-        private void ClearScoreLabel()
-        {
-            labelBestScore.Text = "";
-        }
-
-        private void UpdateErrorMessage()
-        {
-            labelBestScore.Text = ErrorMessage;
-        }
-
-        private void ScoreDoesNotMatch()
-        {
-            labelBestScore.Text = "Match NOT found! Score = " + matchProbesTest.Score.ToString();
         }
 
         void DoesNotMatch(object sender, EventArgs e)
@@ -95,6 +83,37 @@ namespace NoID.Match.Database.Tests
             ErrorMessage = "Critical match error occured!";
             Task task = new Task(() => this.UpdateErrorMessage());
             task.Start(scheduler);
+        }
+
+        private void SetPoorCapture()
+        {
+            labelBestScore.Text = "Poorly captured fingerprint.  Error code = " + (int)matchProbesTest.Quality;
+        }
+
+        private void UpdateMatchScoreLabel()
+        {
+            labelBestScore.Text = "Match found! Score = " + matchProbesTest.Score.ToString();
+
+            if (matchProbesTest.Score > highScore)
+            {
+                highScore = matchProbesTest.Score;
+                labelHighScore.Text = highScore.ToString();
+            }
+        }
+
+        private void ClearScoreLabel()
+        {
+            labelBestScore.Text = "";
+        }
+
+        private void UpdateErrorMessage()
+        {
+            labelBestScore.Text = ErrorMessage;
+        }
+
+        private void ScoreDoesNotMatch()
+        {
+            labelBestScore.Text = "Match NOT found! Score = " + matchProbesTest.Score.ToString();
         }
     }
 }

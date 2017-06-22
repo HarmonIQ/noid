@@ -191,6 +191,43 @@ namespace NoID.Match.Database.FingerPrint
             }
         }
 
+        public bool UpdateTemplate(Template newBest, string NoID)
+        {
+            string _NoID = "";
+            float[] scores;
+            bool result = false;
+            try
+            {
+                lock (this)
+                {
+                    ParallelMatcher Matcher = new ParallelMatcher();
+                    ParallelMatcher.PreparedProbe probeIndex = Matcher.Prepare(newBest);
+                    scores = Matcher.Match(probeIndex, FingerPrintCandidateList);
+
+                    if (scores.Length > 0)
+                    {
+                        for (int i = 0; i < scores.Count(); i++)
+                        {
+                            if (scores[i] > _matchThreshold)
+                            {
+                                _NoID = FingerPrintCandidateList[i].NoID;
+                                if (_NoID == NoID)
+                                {
+                                    FingerPrintCandidateList[i] = newBest;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+            return result;
+        }
         /*
         List<int> FlattenHierarchy(List<Template> templateList)
         {

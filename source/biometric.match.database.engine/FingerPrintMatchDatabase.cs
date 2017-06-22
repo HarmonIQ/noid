@@ -114,5 +114,21 @@ namespace NoID.Match.Database.FingerPrint
             
             return result;
         }
+
+        public bool UpdateTemplate(Template newBest, string NoID)
+        {
+            bool result = false;
+            try
+            {
+                _minutiaMatch.UpdateTemplate(newBest, NoID);
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return result;
+        }
     }
 }
