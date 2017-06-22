@@ -463,14 +463,14 @@ namespace NoID.FHIR.Profile
                 // Add patient certificate hash.
                 Identifier idSession;
                 Identifier idPatientCertificate;
-                if (SessionID.Length > 0)
+                if (SessionID != null && SessionID.Length > 0)
                 {
                     idSession = new Identifier();
                     idSession.System = ServerName + "/fhir/SessionID";
                     idSession.Value = SessionID;
                     pt.Identifier.Add(idSession);
                 }
-                if (PatientCertificateID.Length > 0)
+                if (PatientCertificateID != null && PatientCertificateID.Length > 0)
                 {
                     idPatientCertificate = new Identifier();
                     idPatientCertificate.System = ServerName + "/fhir/PatientCertificateID";
