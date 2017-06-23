@@ -3,41 +3,43 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using ProtoBuf;
 using SourceAFIS.Templates;
 using SourceAFIS.Extraction;
 using SourceAFIS.Matching;
 
 namespace NoID.Match.Database.FingerPrint
 {
-    [ProtoContract]
-    public class MinutiaMatch : MinutiaMatchSerialize
+    public class MinutiaMatch
     {
+        private const uint DATABASE_BACKUP_INTERVAL = 600;
         private readonly int _matchThreshold;
-        private readonly string _databaseFilePath;
+        private readonly string _databaseDirectoryPath;
+        private static List<Template> _fingerPrintCandidateList = new List<Template>();
+        private DBreezeWrapper _dBreezeWrapper;
         private Extractor Extractor = new Extractor();
         private Exception _exception;
 
         public MinutiaMatch()
         {
-            _databaseFilePath = "";
+            _databaseDirectoryPath = "";
             _matchThreshold = 30;
         }
 
-        public MinutiaMatch(string databaseFilePath, int matchTheshold)
+        public MinutiaMatch(string databaseDirectoryPath, int matchTheshold)
         {
-            _databaseFilePath = databaseFilePath;
+            _databaseDirectoryPath = databaseDirectoryPath;
             _matchThreshold = matchTheshold;
-        }
-
-        [ProtoMember(1)]
-        public List<Template> FingerPrintCandidateList
-        {
-            get { return MatchDatabase.FingerPrintCandidateList; }
-            private set { MatchDatabase.FingerPrintCandidateList = value; }
+            try
+            {
+                _dBreezeWrapper = new DBreezeWrapper(_databaseDirectoryPath, DATABASE_BACKUP_INTERVAL);
+                _fingerPrintCandidateList = _dBreezeWrapper.GetMinutiaList();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         ~MinutiaMatch(){ }
@@ -48,9 +50,9 @@ namespace NoID.Match.Database.FingerPrint
             private set { _exception = value; }
         }
 
-        public string DatabaseFilePath
+        public string DatabaseDirectoryPath
         {
-            get { return _databaseFilePath; }
+            get { return _databaseDirectoryPath; }
         }
 
         public int MatchThreshold
@@ -60,7 +62,7 @@ namespace NoID.Match.Database.FingerPrint
 
         public int CandidateCount
         {
-            get { return FingerPrintCandidateList.Count; }
+            get { return _fingerPrintCandidateList.Count; }
         }
 
         public string SearchPatients(Template templateProbe, bool fAddIfNotFound)
@@ -79,7 +81,7 @@ namespace NoID.Match.Database.FingerPrint
             {
                 ParallelMatcher Matcher = new ParallelMatcher();
                 ParallelMatcher.PreparedProbe probeIndex = Matcher.Prepare(probe);
-                scores = Matcher.Match(probeIndex, FingerPrintCandidateList);
+                scores = Matcher.Match(probeIndex, _fingerPrintCandidateList);
 
                 if (scores.Length > 0)
                 {
@@ -87,7 +89,7 @@ namespace NoID.Match.Database.FingerPrint
                     {
                         if (scores[i] > _matchThreshold)
                         {
-                            NoID = FingerPrintCandidateList[i].NoID;
+                            NoID = _fingerPrintCandidateList[i].NoID;
                             break;
                         }
                     }
@@ -101,94 +103,14 @@ namespace NoID.Match.Database.FingerPrint
             bool result = true;
             try
             {
-                FingerPrintCandidateList.Add(template);
+                _fingerPrintCandidateList.Add(template);
+                _dBreezeWrapper.AddMinutia(template);
             }
             catch
             {
                 result = false;
             }
             return result;
-        }
-
-        public static MinutiaMatch Deserialize(byte[] message)
-        {
-            MinutiaMatch result;
-            using (var stream = new MemoryStream(message))
-            {
-                result = Serializer.Deserialize<MinutiaMatch>(stream);
-            }
-            return result;
-        }
-
-        public bool WriteToDisk(string databasePath)
-        {
-            try
-            {
-                FileStream fs = OpenFileStream(databasePath);
-                byte[] fingerData;
-                using (var ms = new MemoryStream())
-                {
-                    fingerData = Serialize();
-                }
-                fs.Write(fingerData, 0, fingerData.Length);
-                fs.Flush();
-                fs.Close();
-                fs.Dispose();
-            }
-            catch (Exception e)
-            {
-                Exception = e;
-                return false;
-            }
-            return true;
-        }
-
-        private FileStream OpenFileStream(string path)
-        {
-            FileInfo fileInfo = DeleteFile(path);
-            FileStream fs = fileInfo.OpenWrite();
-            fileInfo = null;
-            return fs;
-        }
-
-        private FileInfo DeleteFile(string path)
-        {
-            FileInfo fileInfo = new FileInfo(path);
-            if (fileInfo.Exists)
-                fileInfo.Delete();
-            return fileInfo;
-        }
-
-        public bool ReadFromDisk(string path)
-        {
-            bool result = false;
-            try
-            {
-                FileInfo fileInfo = new FileInfo(path);
-                FileStream fs = fileInfo.OpenRead();
-                byte[] databaseBytes = ReadFully(fs);
-                MinutiaMatch deserializeMinutiaMatch = Deserialize(databaseBytes);
-                FingerPrintCandidateList = deserializeMinutiaMatch.FingerPrintCandidateList;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return result;
-        }
-
-        static byte[] ReadFully(Stream input)
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
-                return ms.ToArray();
-            }
         }
 
         public bool UpdateTemplate(Template newBest, string NoID)
@@ -202,7 +124,7 @@ namespace NoID.Match.Database.FingerPrint
                 {
                     ParallelMatcher Matcher = new ParallelMatcher();
                     ParallelMatcher.PreparedProbe probeIndex = Matcher.Prepare(newBest);
-                    scores = Matcher.Match(probeIndex, FingerPrintCandidateList);
+                    scores = Matcher.Match(probeIndex, _fingerPrintCandidateList);
 
                     if (scores.Length > 0)
                     {
@@ -210,10 +132,10 @@ namespace NoID.Match.Database.FingerPrint
                         {
                             if (scores[i] > _matchThreshold)
                             {
-                                _NoID = FingerPrintCandidateList[i].NoID;
+                                _NoID = _fingerPrintCandidateList[i].NoID;
                                 if (_NoID == NoID)
                                 {
-                                    FingerPrintCandidateList[i] = newBest;
+                                    _fingerPrintCandidateList[i] = newBest;
                                     break;
                                 }
                             }
@@ -227,54 +149,6 @@ namespace NoID.Match.Database.FingerPrint
                 _exception = ex;
             }
             return result;
-        }
-        /*
-        List<int> FlattenHierarchy(List<Template> templateList)
-        {
-            int n = 0;
-            List<int> intList = new List<int>();
-            foreach (Template var in templateList)
-            {
-                intList.Add(n);
-                n++;
-            }
-            return intList;
-        }
-        */
-    }
-
-    internal static class MatchDatabase
-    {
-        private static List<Template> _fingerPrintCandidateList = new List<Template>();
-        private static ushort _synTimeOutSeconds = 600;
-
-        // synchronize fingerprints from the database into a new list
-        // mutex lock when updating the list object
-        // queue pending searches when locked and run the queue when unlocked.
-
-        public static List<Template> FingerPrintCandidateList
-        {
-            get { return _fingerPrintCandidateList; }
-            set { _fingerPrintCandidateList = value; }
-        }
-
-        public static ushort SynTimeOutSeconds
-        {
-            get { return _synTimeOutSeconds; }
-            set { _synTimeOutSeconds = value; }
-        }
-
-        public static List<Template> CloneFingerPrintList
-        {
-            get { return CloneListTemplate(); }
-        }
-
-        private static List<Template> CloneListTemplate()
-        {
-            // deep clone here
-            // check for mutex lock
-            // queue if locked.
-            return _fingerPrintCandidateList;
         }
     }
 }

@@ -207,13 +207,6 @@ namespace NoID.Match.Database.Tests
                     }
                 }
             }
-            dbMinutia.WriteToDisk(DabaseFilePath + @"\finger.hive.0001.biodb");
-        }
-
-        public bool LoadTestMinutiaDatabase(string minutiaDatabasePath)
-        {
-            dbMinutia = new FingerPrintMatchDatabase(_dabaseFilePath, _lateralityCode, _captureSiteCode);
-            return dbMinutia.ReadFromDisk(minutiaDatabasePath);
         }
 
         public string DabaseFilePath

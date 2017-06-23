@@ -35,7 +35,7 @@ namespace NoID.Match.Database.Tests
         private FingerPrintMatchDatabase dbMinutia;
         private Exception _exception;
         public ulong nextID = 1;
-        private string _dabaseFilePath = ""; //ConfigurationManager.AppSettings["DatabaseLocation"].ToString();
+        private string _dabaseDirectory;
         private string _lateralityCode = "";//ConfigurationManager.AppSettings["Laterality"].ToString();
         private string _captureSiteCode = "";//ConfigurationManager.AppSettings["CaptureSite"].ToString();
         private Person currentCapture;
@@ -50,9 +50,10 @@ namespace NoID.Match.Database.Tests
         public float HighScore = 0;
 
 
-        public MatchProbesTest()
+        public MatchProbesTest(string dabaseDirectory, string _lateralityCode, string _captureSiteCode)
         {
-            dbMinutia = new FingerPrintMatchDatabase(_dabaseFilePath, _lateralityCode, _captureSiteCode);
+            _dabaseDirectory = dabaseDirectory;
+            dbMinutia = new FingerPrintMatchDatabase(_dabaseDirectory, _lateralityCode, _captureSiteCode);
             if (!(SetupScanner()))
             {
                 if ((_exception == null))
@@ -170,9 +171,9 @@ namespace NoID.Match.Database.Tests
             {
                 tmp = tmpCurrent;
             }
-                
+
             string idFound = IdentifyFinger(tmp);
-            if (match && (fGoodPairFound == true) && (patientNoID.Length == 0) && (idFound.Length == 0))
+            if (match && (fGoodPairFound == true) && (patientNoID.Length == 0) && (idFound != null) && (idFound.Length == 0))
             {
                 tmp.NoID = "NoID" + nextID;
                 dbMinutia.AddTemplate(tmp);
@@ -237,19 +238,12 @@ namespace NoID.Match.Database.Tests
                     }
                 }
             }
-            dbMinutia.WriteToDisk(DabaseFilePath + @"\finger.hive.0001.biodb");
         }
 
-        public bool LoadTestMinutiaDatabase(string minutiaDatabasePath)
+        public string DabaseDirectory
         {
-            dbMinutia = new FingerPrintMatchDatabase(_dabaseFilePath, _lateralityCode, _captureSiteCode);
-            return dbMinutia.ReadFromDisk(minutiaDatabasePath);
-        }
-
-        public string DabaseFilePath
-        {
-            get { return _dabaseFilePath; }
-            private set { _dabaseFilePath = value; }
+            get { return _dabaseDirectory; }
+            private set { _dabaseDirectory = value; }
         }
 
         public string IdentifyFinger(Template probe)

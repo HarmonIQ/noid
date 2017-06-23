@@ -18,17 +18,15 @@ namespace NoID.Match.Database.FingerPrint
         */
         private readonly static int MATCH_THRESHOLD = 30;
         private readonly static int MAX_CANDIDATE_CAPACITY = 20000;
-        private static string _databasePath;
         private MinutiaMatch _minutiaMatch;
         private readonly FHIRUtilities.LateralitySnoMedCode _laterality;
         private readonly FHIRUtilities.CaptureSiteSnoMedCode _captureSite;
 
         public FingerPrintMatchDatabase(string databaseLocation, string lateralityCode, string captureSiteCode)
         {
-            _minutiaMatch = new MinutiaMatch(_databasePath, MATCH_THRESHOLD);
+            _minutiaMatch = new MinutiaMatch(databaseLocation, MATCH_THRESHOLD);
             try
             {
-                _databasePath = databaseLocation;
                 _laterality = FHIRUtilities.SnoMedCodeToLaterality(lateralityCode);
                 _captureSite = FHIRUtilities.SnoMedCodeToCaptureSite(captureSiteCode);
             }
@@ -52,7 +50,17 @@ namespace NoID.Match.Database.FingerPrint
 
         public string DatabasePath
         {
-            get { return _databasePath; }
+            get
+            {
+                if (_minutiaMatch != null)
+                {
+                    return _minutiaMatch.DatabaseDirectoryPath;
+                }
+                else
+                {
+                    return String.Empty;
+                }
+            }
         }
 
         public MinutiaMatch MinutiaMatch
@@ -84,35 +92,6 @@ namespace NoID.Match.Database.FingerPrint
                 results = "Minutia Match Database is null.";
             }
             return results;
-        }
-
-        public bool WriteToDisk(string databasePath)
-        {
-            bool result = false;
-            if (!(_minutiaMatch == null))
-            {
-                if (_minutiaMatch.CandidateCount > 0)
-                {
-                    result = _minutiaMatch.WriteToDisk(databasePath);
-                }
-            }
-            return result;
-        }
-
-        public bool ReadFromDisk(string databasePath)
-        {
-            bool result = false;
-            try
-            {
-                _minutiaMatch = new MinutiaMatch(_databasePath, MATCH_THRESHOLD);
-                _minutiaMatch.ReadFromDisk(databasePath);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            
-            return result;
         }
 
         public bool UpdateTemplate(Template newBest, string NoID)
