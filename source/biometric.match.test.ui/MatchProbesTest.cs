@@ -7,11 +7,6 @@ using System.IO;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.General;
-// Copyright © 2016-2017 NoID Developers. All rights reserved.
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
-using System.Configuration;
 using SourceAFIS.Templates;
 using NoID.Biometrics.Managers;
 using NoID.Match.Database.FingerPrint;
@@ -35,9 +30,7 @@ namespace NoID.Match.Database.Tests
         private FingerPrintMatchDatabase dbMinutia;
         private Exception _exception;
         public ulong nextID = 1;
-        private string _dabaseDirectory;
-        private string _lateralityCode = "";//ConfigurationManager.AppSettings["Laterality"].ToString();
-        private string _captureSiteCode = "";//ConfigurationManager.AppSettings["CaptureSite"].ToString();
+        
         private Person currentCapture;
         private Person previousCapture;
         public Fingerprint currenFingerPrint;
@@ -50,10 +43,9 @@ namespace NoID.Match.Database.Tests
         public float HighScore = 0;
 
 
-        public MatchProbesTest(string dabaseDirectory, string _lateralityCode, string _captureSiteCode)
+        public MatchProbesTest(string databaseDirectory, string backupDatabaseDirectory, string lateralityCode, string captureSiteCode)
         {
-            _dabaseDirectory = dabaseDirectory;
-            dbMinutia = new FingerPrintMatchDatabase(_dabaseDirectory, _lateralityCode, _captureSiteCode);
+            dbMinutia = new FingerPrintMatchDatabase(databaseDirectory, backupDatabaseDirectory, lateralityCode, captureSiteCode);
             if (!(SetupScanner()))
             {
                 if ((_exception == null))
@@ -238,12 +230,6 @@ namespace NoID.Match.Database.Tests
                     }
                 }
             }
-        }
-
-        public string DabaseDirectory
-        {
-            get { return _dabaseDirectory; }
-            private set { _dabaseDirectory = value; }
         }
 
         public string IdentifyFinger(Template probe)

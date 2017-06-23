@@ -16,21 +16,25 @@ namespace NoID.Match.Database
     internal class DBreezeWrapper
     {
         /// <summary>
-        /// A manager providing operations on wallets.
+        /// A wrapper for DBreeze used to store minutias templates
+        /// Estimated 140 GB for 20 million minutia templates with the backups.
         /// </summary>
         /// 
         private const string MINUTIAE_TABLE_NAME = "MinutiaeTable";
         private readonly string _databaseDirectory;
+        private readonly string _backupDirectoryPath;
         private static DBreezeEngine _dBreezeEngine;
         private static DBreezeConfiguration _configDBreeze;
         private static Backup _backup;
+       
         private uint _backupInterval;
         private List<Exception> _exceptionList;
         private uint _lastIndex = 0;
 
-        public DBreezeWrapper(string databaseDirectory, uint backupInterval = 60)
+        public DBreezeWrapper(string databaseDirectory, string backupDirectoryPath, uint backupInterval = 300)
         {
             _databaseDirectory = databaseDirectory;
+            _backupDirectoryPath = backupDirectoryPath;
             _backupInterval = backupInterval;
             DirectoryInfo directoryInfo = new DirectoryInfo(databaseDirectory);
 
@@ -46,7 +50,7 @@ namespace NoID.Match.Database
                 _dBreezeEngine = new DBreezeEngine(_configDBreeze);
                 _backup = _configDBreeze.Backup;
                 _backup.IncrementalBackupFileIntervalMin = _backupInterval;
-                _backup.BackupFolderName = GetBackupDirectoryName();
+                _backup.BackupFolderName = BackupDirectoryPath;
             }
             catch (Exception ex)
             {
@@ -184,6 +188,17 @@ namespace NoID.Match.Database
             return result;
         }
 
+        public string DatabaseDirectory
+        {
+            get { return _databaseDirectory; }
+        }
+
+        public string BackupDirectoryPath
+        {
+            get { return _backupDirectoryPath;  }
+        }
+
+        /*
         private string GetBackupDirectoryName()
         {
             string backupDatabaseDirectory = _databaseDirectory;
@@ -209,6 +224,7 @@ namespace NoID.Match.Database
             }
             return backupDatabaseDirectory;
         }
+        */
 
         private static string OperationSystemString
         {

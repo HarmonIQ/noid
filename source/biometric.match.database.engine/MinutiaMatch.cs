@@ -15,7 +15,6 @@ namespace NoID.Match.Database.FingerPrint
     {
         private const uint DATABASE_BACKUP_INTERVAL = 600;
         private readonly int _matchThreshold;
-        private readonly string _databaseDirectoryPath;
         private static List<Template> _fingerPrintCandidateList = new List<Template>();
         private DBreezeWrapper _dBreezeWrapper;
         private Extractor Extractor = new Extractor();
@@ -23,17 +22,15 @@ namespace NoID.Match.Database.FingerPrint
 
         public MinutiaMatch()
         {
-            _databaseDirectoryPath = "";
             _matchThreshold = 30;
         }
 
-        public MinutiaMatch(string databaseDirectoryPath, int matchTheshold)
+        public MinutiaMatch(string databaseDirectoryPath, string databaseBackupPath, int matchTheshold)
         {
-            _databaseDirectoryPath = databaseDirectoryPath;
             _matchThreshold = matchTheshold;
             try
             {
-                _dBreezeWrapper = new DBreezeWrapper(_databaseDirectoryPath, DATABASE_BACKUP_INTERVAL);
+                _dBreezeWrapper = new DBreezeWrapper(databaseDirectoryPath, databaseBackupPath, DATABASE_BACKUP_INTERVAL);
                 _fingerPrintCandidateList = _dBreezeWrapper.GetMinutiaList();
             }
             catch(Exception ex)
@@ -52,7 +49,32 @@ namespace NoID.Match.Database.FingerPrint
 
         public string DatabaseDirectoryPath
         {
-            get { return _databaseDirectoryPath; }
+            get
+            {
+                if (_dBreezeWrapper != null)
+                {
+                    return _dBreezeWrapper.DatabaseDirectory;
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
+        public string DatabaseBackupPath
+        {
+            get
+            {
+                if (_dBreezeWrapper != null)
+                {
+                    return _dBreezeWrapper.BackupDirectoryPath;
+                }
+                else
+                {
+                    return "";
+                }   
+            }
         }
 
         public int MatchThreshold

@@ -22,9 +22,9 @@ namespace NoID.Match.Database.FingerPrint
         private readonly FHIRUtilities.LateralitySnoMedCode _laterality;
         private readonly FHIRUtilities.CaptureSiteSnoMedCode _captureSite;
 
-        public FingerPrintMatchDatabase(string databaseLocation, string lateralityCode, string captureSiteCode)
+        public FingerPrintMatchDatabase(string databaseLocation, string datbaseBackupLocation, string lateralityCode, string captureSiteCode)
         {
-            _minutiaMatch = new MinutiaMatch(databaseLocation, MATCH_THRESHOLD);
+            _minutiaMatch = new MinutiaMatch(databaseLocation, datbaseBackupLocation, MATCH_THRESHOLD);
             try
             {
                 _laterality = FHIRUtilities.SnoMedCodeToLaterality(lateralityCode);

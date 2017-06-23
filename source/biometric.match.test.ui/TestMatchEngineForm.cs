@@ -12,7 +12,9 @@ namespace NoID.Match.Database.Tests
 {
     public partial class TestMatchEngineForm : Form
     {
+        private readonly bool LOAD_TEST_FINGERPRINTS = false;
         private readonly string _databaseDirectory = ConfigurationManager.AppSettings["DatabaseLocation"].ToString();
+        private readonly string _backupDatabaseDirectory = ConfigurationManager.AppSettings["BackupLocation"].ToString();
         private string _lateralityCode = ConfigurationManager.AppSettings["Laterality"].ToString();
         private string _captureSiteCode = ConfigurationManager.AppSettings["CaptureSite"].ToString();
         private MatchProbesTest _matchProbesTest;
@@ -27,9 +29,12 @@ namespace NoID.Match.Database.Tests
         {
             InitializeComponent();
             scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            _matchProbesTest = new MatchProbesTest(_databaseDirectory, _lateralityCode, _captureSiteCode);
+            _matchProbesTest = new MatchProbesTest(_databaseDirectory, _backupDatabaseDirectory, _lateralityCode, _captureSiteCode);
             // load test data into dbreeze database
-            _matchProbesTest.LoadTestFingerPrintImages(@"F:\fingerprobes", false);
+            if (LOAD_TEST_FINGERPRINTS == true)
+            {
+                _matchProbesTest.LoadTestFingerPrintImages(@"F:\fingerprobes", false);
+            }
 
             _matchProbesTest.FingerCaptured += FingerCaptured;
             _matchProbesTest.GoodPairFound += GoodPairFound;

@@ -27,6 +27,7 @@ namespace NoID.Match.Database.Tests
         private Exception _exception;
         public ulong nextID = 1;
         private string _dabaseFilePath = ConfigurationManager.AppSettings["DatabaseLocation"].ToString();
+        private string _dabaseBackupLocation = ConfigurationManager.AppSettings["DatabaseBackupLocation"].ToString();
         private string _lateralityCode = ConfigurationManager.AppSettings["Laterality"].ToString();
         private string  _captureSiteCode = ConfigurationManager.AppSettings["CaptureSite"].ToString();
         private Person currentCapture;
@@ -37,7 +38,7 @@ namespace NoID.Match.Database.Tests
 
         public MatchProbesTest()
         {
-            dbMinutia = new FingerPrintMatchDatabase(_dabaseFilePath, _lateralityCode, _captureSiteCode);
+            dbMinutia = new FingerPrintMatchDatabase(_dabaseFilePath, _dabaseBackupLocation, _lateralityCode, _captureSiteCode);
             if (!(SetupScanner()))
             {
                 if ((_exception == null))
