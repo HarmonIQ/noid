@@ -68,6 +68,7 @@
     <Compile Include="DBreezeWrapper.cs" />
     <Compile Include="MinutiaMatch.cs" />
     <Compile Include="FingerPrintMatchDatabase.cs" />
+    <Compile Include="MinutiaResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

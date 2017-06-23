@@ -12,7 +12,7 @@ namespace NoID.Match.Database.Tests
 {
     public partial class TestMatchEngineForm : Form
     {
-        private readonly bool LOAD_TEST_FINGERPRINTS = false;
+        private readonly bool LOAD_TEST_FINGERPRINTS = true;
         private readonly string _databaseDirectory = ConfigurationManager.AppSettings["DatabaseLocation"].ToString();
         private readonly string _backupDatabaseDirectory = ConfigurationManager.AppSettings["BackupLocation"].ToString();
         private string _lateralityCode = ConfigurationManager.AppSettings["Laterality"].ToString();

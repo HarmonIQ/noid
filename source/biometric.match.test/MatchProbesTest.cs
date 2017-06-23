@@ -33,7 +33,7 @@ namespace NoID.Match.Database.Tests
         private Person currentCapture;
         private Person previousCapture;
         private Person bestCapture;
-        private string patientNoID = "";
+        private MinutiaResult patientNoID;
         private bool fGoodPairFound = false;
 
         public MatchProbesTest()
@@ -138,10 +138,10 @@ namespace NoID.Match.Database.Tests
                 }
 
                 tmp = bestCapture.Fingerprints[0].GetTemplate();
-                
 
-                string idFound = IdentifyFinger(tmp);
-                if ((fGoodPairFound == false) && (patientNoID.Length == 0) && (idFound.Length == 0))
+
+                MinutiaResult idFound = IdentifyFinger(tmp);
+                if ((fGoodPairFound == false) && (patientNoID.NoID.Length == 0) && (idFound.NoID.Length == 0))
                 {
                     tmp.NoID = "NoID" + nextID;
                     dbMinutia.AddTemplate(tmp);
@@ -149,13 +149,12 @@ namespace NoID.Match.Database.Tests
 
                     nextID++;
                 }
-                else if ((fGoodPairFound == true) && (patientNoID.Length > 0) && (idFound.Length == 0))
+                else if ((fGoodPairFound == true) && (patientNoID.NoID.Length > 0) && (idFound.NoID.Length == 0))
                 {
                     if (DatabaseMatchError != null)
                     {
                         DatabaseMatchError(tmpCurrent, new EventArgs());
                     }
-                    patientNoID = "Error, adjust threshold. It is too low.";
                 }
                 else
                 {
@@ -216,7 +215,7 @@ namespace NoID.Match.Database.Tests
             private set { _dabaseFilePath = value; }
         }
 
-        public string IdentifyFinger(Template probe)
+        public MinutiaResult IdentifyFinger(Template probe)
         {
             return dbMinutia.SearchPatients(probe);
         }

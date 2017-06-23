@@ -132,7 +132,11 @@ namespace NoID.Match.Database.Tests
 
             if (!(match))
             {
+                patientNoID = "";
+                Score = 0;
+                previousCapture = currentCapture;
                 DoesNotMatch(currenFingerPrint, new EventArgs());
+                return;
             }
             else if (match)
             {
@@ -164,15 +168,31 @@ namespace NoID.Match.Database.Tests
                 tmp = tmpCurrent;
             }
 
-            string idFound = IdentifyFinger(tmp);
-            if (match && (fGoodPairFound == true) && (patientNoID.Length == 0) && (idFound != null) && (idFound.Length == 0))
+            MinutiaResult idFound = IdentifyFinger(tmp);
+            if ((idFound != null) && (idFound.NoID.Length != 0))
+            {
+                Score = idFound.Score;
+                if (DatabaseMatchFound != null)
+                {
+                    DatabaseMatchFound(newFingerPrint, new EventArgs());
+                }
+            }
+            else if (!(match) && (idFound == null || idFound.NoID.Length == 0))
+            {
+                patientNoID = "";
+                Score = 0;
+                previousCapture = currentCapture;
+                return;
+            }
+
+            if (match && (fGoodPairFound == true) && (patientNoID.Length == 0) && (idFound != null) && (idFound.NoID.Length == 0))
             {
                 tmp.NoID = "NoID" + nextID;
                 dbMinutia.AddTemplate(tmp);
-                patientNoID = idFound;
+                patientNoID = idFound.NoID;
                 nextID++;
             }
-            else if (match && (fGoodPairFound == true) && (patientNoID.Length > 0) && (idFound.Length == 0))
+            else if (match && (fGoodPairFound == true) && (patientNoID.Length > 0) && (idFound.NoID.Length == 0))
             {
                 if (DatabaseMatchError != null)
                 {
@@ -182,12 +202,11 @@ namespace NoID.Match.Database.Tests
             }
             else
             {
-                if (match && DatabaseMatchFound != null)
+                if (match)
                 {
-                    DatabaseMatchFound(newFingerPrint, new EventArgs());
                     if (newBest)
                     {
-                        dbMinutia.UpdateTemplate(tmp, idFound);
+                        dbMinutia.UpdateTemplate(tmp, idFound.NoID);
                     }
                 }
             }
@@ -219,7 +238,7 @@ namespace NoID.Match.Database.Tests
                                 {
                                     Afis.ExtractFingerprint(fingerprint);
                                     Template template = fingerprint.GetTemplate();
-                                    template.NoID = "NoID" + nextID.ToString();
+                                    template.NoID = "Test" + nextID.ToString();
                                     dbMinutia.AddTemplate(template);
                                     nextID++;
                                     if (breakAtOneHundred && nextID > 10)
@@ -232,7 +251,7 @@ namespace NoID.Match.Database.Tests
             }
         }
 
-        public string IdentifyFinger(Template probe)
+        public MinutiaResult IdentifyFinger(Template probe)
         {
             return dbMinutia.SearchPatients(probe);
         }

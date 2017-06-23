@@ -73,25 +73,17 @@ namespace NoID.Match.Database.FingerPrint
             return _minutiaMatch.AddTemplate(template);
         }
 
-        public string SearchPatients(Template probe)
+        public MinutiaResult SearchPatients(Template probe)
         {
-            string results;
+            MinutiaResult result = new MinutiaResult();
             if (!(_minutiaMatch == null))
             {
                 if (_minutiaMatch.CandidateCount > 0)
                 {
-                    results = _minutiaMatch.SearchPatients(probe, false);
-                }
-                else
-                {
-                    results = "Minutia Match Database is empty.";
+                    result = _minutiaMatch.SearchPatients(probe, false);
                 }
             }
-            else
-            {
-                results = "Minutia Match Database is null.";
-            }
-            return results;
+            return result;
         }
 
         public bool UpdateTemplate(Template newBest, string NoID)

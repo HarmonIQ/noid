@@ -87,37 +87,36 @@ namespace NoID.Match.Database.FingerPrint
             get { return _fingerPrintCandidateList.Count; }
         }
 
-        public string SearchPatients(Template templateProbe, bool fAddIfNotFound)
+        public MinutiaResult SearchPatients(Template templateProbe, bool fAddIfNotFound)
         {
             // Searches the minutias in the candidate list and if found returns the local identifier.
-            // Returns a blank string if not found.
-            string patientCertificateID = IdentifyFinger(templateProbe);
-            return patientCertificateID;
+            return IdentifyFinger(templateProbe);
         }
 
-        private string IdentifyFinger(Template probe)
+        private MinutiaResult IdentifyFinger(Template probe)
         {
-            string NoID = "";
+            MinutiaResult result = null;
             float[] scores;
             lock (this)
             {
                 ParallelMatcher Matcher = new ParallelMatcher();
                 ParallelMatcher.PreparedProbe probeIndex = Matcher.Prepare(probe);
                 scores = Matcher.Match(probeIndex, _fingerPrintCandidateList);
-
                 if (scores.Length > 0)
                 {
                     for (int i = 0; i < scores.Count(); i++)
                     {
                         if (scores[i] > _matchThreshold)
                         {
-                            NoID = _fingerPrintCandidateList[i].NoID;
+                            result = new MinutiaResult();
+                            result.Score = scores[i];
+                            result.NoID = _fingerPrintCandidateList[i].NoID;
                             break;
                         }
                     }
                 }
             }
-            return NoID;
+            return result;
         }
 
         public bool AddTemplate(Template template)
@@ -157,6 +156,7 @@ namespace NoID.Match.Database.FingerPrint
                                 _NoID = _fingerPrintCandidateList[i].NoID;
                                 if (_NoID == NoID)
                                 {
+                                    newBest.NoID = _NoID;
                                     _fingerPrintCandidateList[i] = newBest;
                                     break;
                                 }
