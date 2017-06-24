@@ -70,9 +70,9 @@ namespace NoID.Match.Database.Client
                 }
                 if (organizationExtension != null && captureSiteExtension != null && templateBuilder.Minutiae.Count > 0)
                 {
-                    templateBuilder.OriginalDpi = Int32.Parse(captureSiteExtension.Value.Extension[5].ToString());
-                    templateBuilder.OriginalHeight = Int32.Parse(captureSiteExtension.Value.Extension[6].ToString());
-                    templateBuilder.OriginalWidth = Int32.Parse(captureSiteExtension.Value.Extension[7].ToString());
+                    templateBuilder.OriginalDpi = Int32.Parse(captureSiteExtension.Value.Extension[5].Value.ToString());
+                    templateBuilder.OriginalHeight = Int32.Parse(captureSiteExtension.Value.Extension[6].Value.ToString());
+                    templateBuilder.OriginalWidth = Int32.Parse(captureSiteExtension.Value.Extension[7].Value.ToString());
                     converted = new Template(templateBuilder);
                 }
             }
