@@ -38,6 +38,7 @@
             this.labelBestFinger2 = new System.Windows.Forms.Label();
             this.imageBestFinger = new System.Windows.Forms.PictureBox();
             this.labelHighScore = new System.Windows.Forms.Label();
+            this.labelNoID = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imageCurrentFinger)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageMatchedFinger)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageBestFinger)).BeginInit();
@@ -133,11 +134,21 @@
             this.labelHighScore.TabIndex = 9;
             this.labelHighScore.Text = "Best Score";
             // 
+            // labelNoID
+            // 
+            this.labelNoID.AutoSize = true;
+            this.labelNoID.Location = new System.Drawing.Point(43, 35);
+            this.labelNoID.Name = "labelNoID";
+            this.labelNoID.Size = new System.Drawing.Size(49, 13);
+            this.labelNoID.TabIndex = 10;
+            this.labelNoID.Text = "NoID Init";
+            // 
             // TestMatchEngineForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(986, 449);
+            this.Controls.Add(this.labelNoID);
             this.Controls.Add(this.labelHighScore);
             this.Controls.Add(this.labelBestFinger2);
             this.Controls.Add(this.imageBestFinger);
@@ -170,6 +181,7 @@
         private System.Windows.Forms.Label labelBestFinger2;
         private System.Windows.Forms.PictureBox imageBestFinger;
         private System.Windows.Forms.Label labelHighScore;
+        private System.Windows.Forms.Label labelNoID;
     }
 }
 

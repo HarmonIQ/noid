@@ -83,6 +83,10 @@ namespace NoID.FHIR.Profile
         private FingerPrintMinutias _leftAlternateFingerPrints;
         private FingerPrintMinutias _rightAlternateFingerPrints;
 
+        public int OriginalDpi;
+        public int OriginalHeight;
+        public int OriginalWidth;
+
         public Exception Exception
         {
             get { return _exception; }
@@ -117,7 +121,14 @@ namespace NoID.FHIR.Profile
         {
             get
             {
-                return _fhirAddress.Host.Substring(_fhirAddress.Host.LastIndexOf('.', _fhirAddress.Host.LastIndexOf('.') - 1) + 1);
+                try
+                {
+                    return _fhirAddress.Host.Substring(_fhirAddress.Host.LastIndexOf('.', _fhirAddress.Host.LastIndexOf('.') - 1) + 1);
+                }
+                catch
+                {
+                    return "localhost";
+                }
             }
         }
 
@@ -252,6 +263,7 @@ namespace NoID.FHIR.Profile
             set { _multipleBirth = value; }
         }
 
+        /*
         public FingerPrintMinutias LeftFingerPrints
         {
             get { return _leftFingerPrints; }
@@ -275,7 +287,8 @@ namespace NoID.FHIR.Profile
             get { return _rightAlternateFingerPrints; }
             set { _rightAlternateFingerPrints = value; }
         }
-        
+        */
+
         public void NewSession()
         {
             _sessionID = sha256Hash(Guid.NewGuid().ToString());
@@ -443,33 +456,48 @@ namespace NoID.FHIR.Profile
             return bodyCaptureSite;
         }
 
-        public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints)
+        public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints, string scannerName, int originalDPI, int originalHeight, int originalWidth)
         {
             Media FingerPrintMedia = null;
             try
             {
-                if (!(fingerPrints is null))
+                if ((fingerPrints != null))
                 {
                     FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
-                    FingerPrintMedia.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode));
                     FingerPrintMedia.AddExtension("Healthcare Node", FHIRUtilities.OrganizationExtension(OrganizationName, DomainName, ServerName));
+                    FingerPrintMedia.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode, scannerName, originalDPI, originalHeight, originalWidth));
+
                     FingerPrintMedia.Identifier = new List<Identifier>();
 
                     Identifier idSession;
                     Identifier idPatientCertificate;
-                    if (SessionID.Length > 0)
+                    if ((SessionID != null))
                     {
-                        idSession = new Identifier();
-                        idSession.System = ServerName + "/fhir/SessionID";
-                        idSession.Value = SessionID;
-                        FingerPrintMedia.Identifier.Add(idSession);
+                        if (SessionID.Length > 0)
+                        {
+                            idSession = new Identifier();
+                            idSession.System = ServerName + "/fhir/SessionID";
+                            idSession.Value = SessionID;
+                            FingerPrintMedia.Identifier.Add(idSession);
+                        }
+                        else
+                        {
+                            //TODO this is a critical error.  all need a unique session id.
+                        }
                     }
-                    if (PatientCertificateID.Length > 0)
+                    else
                     {
-                        idPatientCertificate = new Identifier();
-                        idPatientCertificate.System = ServerName + "/fhir/PatientCertificateID";
-                        idPatientCertificate.Value = PatientCertificateID;
-                        FingerPrintMedia.Identifier.Add(idPatientCertificate);
+                        //TODO this is critical.  all need a unique session id.
+                    }
+                    if (PatientCertificateID != null)
+                    {
+                        if (PatientCertificateID.Length > 0)
+                        {
+                            idPatientCertificate = new Identifier();
+                            idPatientCertificate.System = ServerName + "/fhir/PatientCertificateID";
+                            idPatientCertificate.Value = PatientCertificateID;
+                            FingerPrintMedia.Identifier.Add(idPatientCertificate);
+                        }
                     }
 
                     foreach (var Minutia in fingerPrints.Minutiae)
