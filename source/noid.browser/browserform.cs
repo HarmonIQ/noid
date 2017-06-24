@@ -88,8 +88,9 @@ namespace NoID.Browser
                     FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
                     FingerPrintMinutias fingerprintMinutia = 
                         new FingerPrintMinutias("", tmpCurrent, laterality, captureSiteSnoMedCode); //need to pass session id instead of patient cert id.
+                    noidFHIRProfile.OriginalDpi = tmpCurrent.OriginalDpi;
 
-                    Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia);
+                    Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia, "DigitalPersona U.Are.U 4500", tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
                     HttpsClient dataTransport = new HttpsClient();
                     Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
                     dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);

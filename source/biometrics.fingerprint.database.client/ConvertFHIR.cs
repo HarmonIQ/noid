@@ -37,44 +37,76 @@ namespace NoID.Match.Database.Client
 
         static Template MediaFHIRToTemplate(Resource fhirMessage)
         {
-            Template converted;
+            Template converted = null;
             try
             {
                 Media biometricFHIR = (Media)fhirMessage;
-                Extension snoMedCodes = biometricFHIR.Extension[0];
-                Extension fingerPrintMinutias = biometricFHIR.Extension[1];
-                List<Extension> minutiasExtension = new List<Extension>();
-
+                Extension organizationExtension = null;
+                Extension captureSiteExtension = null;
                 uint n = 0;
-
                 TemplateBuilder templateBuilder = new TemplateBuilder();
-                TemplateBuilder.Minutia minutia = new TemplateBuilder.Minutia();
-                templateBuilder.Minutiae.Add(minutia);
                 foreach (Extension extension in biometricFHIR.Extension)
                 {
                     if (n == 0)
                     {
-                        snoMedCodes = extension;
+                        organizationExtension = extension;
                     }
                     else if (n == 1)
                     {
-                        fingerPrintMinutias = extension;
+                        captureSiteExtension = extension;
                     }
                     else
                     {
-                        minutiasExtension.Add(extension);
+                        TemplateBuilder.Minutia minutia = new TemplateBuilder.Minutia();
+                        List<Extension> ext = extension.Value.Extension;
+                        
+                        minutia.Position.X = Int32.Parse(ext[0].Value.ToString());
+                        minutia.Position.Y = Int32.Parse(ext[1].Value.ToString());
+                        minutia.Direction = Byte.Parse(ext[2].Value.ToString());
+                        minutia.Type = ConvertStringToMinutiaType(ext[3].Value.ToString());
+                        templateBuilder.Minutiae.Add(minutia);
                     }
-                    
                     n += 1;
                 }
-                
-                converted = new Template(templateBuilder);
+                if (organizationExtension != null && captureSiteExtension != null && templateBuilder.Minutiae.Count > 0)
+                {
+                    templateBuilder.OriginalDpi = Int32.Parse(captureSiteExtension.Value.Extension[5].ToString());
+                    templateBuilder.OriginalHeight = Int32.Parse(captureSiteExtension.Value.Extension[6].ToString());
+                    templateBuilder.OriginalWidth = Int32.Parse(captureSiteExtension.Value.Extension[7].ToString());
+                    converted = new Template(templateBuilder);
+                }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
             return converted;
+        }
+
+        private static TemplateBuilder.MinutiaType ConvertStringToMinutiaType(string typeCode)
+        {
+            TemplateBuilder.MinutiaType type = TemplateBuilder.MinutiaType.Other;
+            try
+            {
+                Int32 minutiaType = Int32.Parse(typeCode);
+                if (minutiaType == 0)
+                {
+                    type = TemplateBuilder.MinutiaType.Ending;
+                }
+                else if (minutiaType == 1)
+                {
+                    type = TemplateBuilder.MinutiaType.Bifurcation;
+                }
+                else if (minutiaType == 2)
+                {
+                    type = TemplateBuilder.MinutiaType.Other;
+                }
+            }
+            catch
+            {
+                throw new Exception("Invalid MinutiaType.");
+            }
+            return type;
         }
     }
 }

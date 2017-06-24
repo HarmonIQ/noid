@@ -137,7 +137,15 @@ namespace NoID.Utilities
             return extMinutiaPoint;
         }
 
-        public static Extension CaptureSiteExtension(CaptureSiteSnoMedCode captureSite, LateralitySnoMedCode laterality)
+        public static Extension CaptureSiteExtension
+            (
+            CaptureSiteSnoMedCode captureSite, 
+            LateralitySnoMedCode laterality,
+            string ScannerName,
+            int OriginalDPI,
+            int OriginalHeight,
+            int OriginalWidth
+            )
         {
             /*
                 Example JSON FHIR Message
@@ -146,10 +154,14 @@ namespace NoID.Utilities
                 {  
                     "extension": 
                     [ 
-                        {      "url": "Coding System",                  "valueString": SNOMED       },    
-                        {      "url": "Capture Site Description",       "valueString": IndexFinger  },    
-                        {      "url": "Laterality Code",                "valueString": 419161000    },    
-                        {      "url": "Laterality Description",         "valueString": Left         }  
+                        {      "url": "Coding System",                  "valueString": SNOMED           },    
+                        {      "url": "Capture Site Description",       "valueString": IndexFinger      },    
+                        {      "url": "Laterality Code",                "valueString": 419161000        },    
+                        {      "url": "Laterality Description",         "valueString": Left             },
+                        {      "url": "Scanner Name",                   "valueString": U.are.U 4500     },  
+                        {      "url": "Original DPI",                   "valueInt": 500                 },  
+                        {      "url": "Original Height",                "valueInt": 300                 },  
+                        {      "url": "Original Width",                 "valueInt": 200                 }  
                     ]
                 }
             */
@@ -158,10 +170,17 @@ namespace NoID.Utilities
             int lateralityCode = (int)laterality;
 
             Extension extCaptureSite = new Extension("Capture Site", new FhirString(captureSiteCode.ToString()));
+
             Extension extCodingSystem = extCaptureSite.AddExtension("Coding System", new FhirString("SNOMED"));
             Extension extCaptureSiteDescription = extCaptureSite.AddExtension("Capture Site Description", new FhirString(CaptureSiteToString(captureSite)));
-            Extension extLateralityCode = extCaptureSite.AddExtension("Laterality Code", new FhirString(lateralityCode.ToString()));
-            Extension extLateralityDescription = extCaptureSite.AddExtension("Laterality Description", new FhirString(LateralityToString(laterality)));
+            //
+            extCaptureSite.AddExtension("Laterality Code", new FhirString(lateralityCode.ToString()));
+            extCaptureSite.AddExtension("Laterality Description", new FhirString(LateralityToString(laterality)));
+            //
+            extCaptureSite.AddExtension("Scanner Name", new FhirString(ScannerName));
+            extCaptureSite.AddExtension("Original DPI", new FhirString(OriginalDPI.ToString()));
+            extCaptureSite.AddExtension("Original Height", new FhirString(OriginalHeight.ToString()));
+            extCaptureSite.AddExtension("Original Width", new FhirString(OriginalWidth.ToString()));
             return extCaptureSite;
         }
 
