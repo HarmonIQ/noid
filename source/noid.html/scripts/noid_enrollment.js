@@ -1,20 +1,56 @@
+function setLateralitySite(selectedElementID) {
+    switch (selectedElementID) {
+        case 'selectLeftLittle':            
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>You selected your:<br /><h3>Left Little Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectLefRing':
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>You selected your:<br /><h3>Left Ring Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectLeftMiddle':
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>You selected your:<br /><h3>Left Middle Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectLeftIndex':
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>You selected your:<br /><h3>Left Index Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            savelateralityCaptureSite("Left", "IndexFinger");
+            break;
+        case 'selectLeftThumb':
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>You selected your:<br /><h3>Left Thumb</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+            ;
+    }
+};
+function savelateralityCaptureSite(laterality, captureSite) {
+    NoIDBridge.postLateralityCaptureSite(laterality, captureSite);
+    if (NoIDBridge.errorDescription != '') {
+       //error, show user message
+        alert("postLateralityCaptureSite Error " + NoIDBridge.errorDescription);
+    }
+};
 function showComplete(whichStep) {
     switch (whichStep) {
-        case 'left':
+        case 'Left':
             document.getElementById('checkLeft').setAttribute('class', 'fa fa-check-square-o fa-5x fa-fw pull-right complete');
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Success!<br />Please click next to scan a finger<br />from your right hand</h4>";
+            document.getElementById('leftFingerNextButton').disabled = false;
             break;
-        case 'right':
+        case 'Right':
             document.getElementById('checkRight').setAttribute('class', 'fa fa-check-square-o fa-5x fa-fw pull-right complete');
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Success!<br />Please click next.</h4>";
+            document.getElementById('rightFingerNextButton').disabled = false;
             break;
     };
 };
 function showFail(whichStep) {
     switch (whichStep) {
-        case 'left':
-            document.getElementById('checkLeft2').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right incomplete');
+        case 'Left':
+            //document.getElementById('checkLeft').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right incomplete');
+            document.getElementById('checkLeft').setAttribute('class', 'fa fa-spinner fa-spin fa-5x fa-fw pull-right incomplete');
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Fingerprint scan attempt<br />was not successful.<br />Please try again</h4>";
             break;
-        case 'right':
-            document.getElementById('checkRight2').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right complete');
+        case 'Right':
+            //document.getElementById('checkRight').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right complete');
+            document.getElementById('checkRight').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right incomplete');
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Fingerprint scan attempt<br />was not successful.<br />Please try again</h4>";
             break;
     };
 };

@@ -26,6 +26,7 @@ namespace NoID.Browser
         private static AfisEngine Afis = new AfisEngine();
         private const float PROBE_MATCH_THRESHOLD = 70;
         private readonly ChromiumWebBrowser browser;
+		// mschr1 test 20170624 private readonly ChromiumWebBrowser browser2;
         //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
         private DigitalPersona biometricDevice;
         private PatientFHIRProfile noidFHIRProfile;
@@ -46,7 +47,8 @@ namespace NoID.Browser
         private void OnCaptured(CaptureResult captureResult)
         {
 #if NAVIGATE
-            DisplayOutput("Captured finger image....");
+			//TODO: Only process or enable  capture if laterality and site defined
+			DisplayOutput("Captured finger image....");
 #endif
             NoIDServicePassword = NoID.Security.PasswordManager.GetPassword(NoIDServiceName);
             match = false;
@@ -63,16 +65,24 @@ namespace NoID.Browser
             Afis.Extract(currentCapture);
             if (!(previousCapture is null))
             {
+				//this is where we may captuer a good or bad fingerprint??
                 score = Afis.Verify(currentCapture, previousCapture);
                 match = (score > Afis.Threshold);
             }
             var matchResults = String.Format("Match: {0}, Score: {1}", match, score);
+			
 #if NAVIGATE
-            DisplayOutput(matchResults);
+			DisplayOutput(matchResults);
 #endif
-            if (score >= PROBE_MATCH_THRESHOLD)
+			if (score < PROBE_MATCH_THRESHOLD)
+			{
+				//mschr1 20170622 catch no match for front end
+				browser.GetMainFrame().ExecuteJavaScriptAsync("showFail('Left');");
+			}
+			if (score >= PROBE_MATCH_THRESHOLD)
             {
-                FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+				
+				FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
                 FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
 
                 noidFHIRProfile.PatientCertificateID = Guid.NewGuid().ToString();
@@ -95,7 +105,10 @@ namespace NoID.Browser
                 HttpsClient dataTransport = new HttpsClient();
                 Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
                 dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
-            }
+
+				//mschr1 20170622 catch match for front end
+				browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + laterality.ToString() + "');");
+			}
             previousCapture = currentCapture;
             previousFingerPrint = newFingerPrint;
         }
@@ -158,7 +171,7 @@ namespace NoID.Browser
             // Handles JavaScripts Events
             NoIDBridge bridge = new NoIDBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
             browser.RegisterJsObject("NoIDBridge", bridge);
-
+			
             biometricDevice = new DigitalPersona();
             if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
             {
