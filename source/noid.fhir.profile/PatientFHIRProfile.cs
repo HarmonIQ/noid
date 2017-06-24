@@ -263,7 +263,6 @@ namespace NoID.FHIR.Profile
             set { _multipleBirth = value; }
         }
 
-        /*
         public FingerPrintMinutias LeftFingerPrints
         {
             get { return _leftFingerPrints; }
@@ -287,8 +286,7 @@ namespace NoID.FHIR.Profile
             get { return _rightAlternateFingerPrints; }
             set { _rightAlternateFingerPrints = value; }
         }
-        */
-
+        
         public void NewSession()
         {
             _sessionID = sha256Hash(Guid.NewGuid().ToString());
