@@ -3,12 +3,13 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
-using SourceAFIS.Templates;
+using System.Collections.Generic;
 using Hl7.Fhir.Model;
+using SourceAFIS.Templates;
 
-namespace NoID.Match.Database
+namespace NoID.Match.Database.Client
 {
-    static class ConvertFHIR
+    public static class ConvertFHIR
     {
         public static Template FHIRToTemplate(Resource fhirMessage)
         {
@@ -42,10 +43,31 @@ namespace NoID.Match.Database
                 Media biometricFHIR = (Media)fhirMessage;
                 Extension snoMedCodes = biometricFHIR.Extension[0];
                 Extension fingerPrintMinutias = biometricFHIR.Extension[1];
+                List<Extension> minutiasExtension = new List<Extension>();
+
+                uint n = 0;
 
                 TemplateBuilder templateBuilder = new TemplateBuilder();
                 TemplateBuilder.Minutia minutia = new TemplateBuilder.Minutia();
                 templateBuilder.Minutiae.Add(minutia);
+                foreach (Extension extension in biometricFHIR.Extension)
+                {
+                    if (n == 0)
+                    {
+                        snoMedCodes = extension;
+                    }
+                    else if (n == 1)
+                    {
+                        fingerPrintMinutias = extension;
+                    }
+                    else
+                    {
+                        minutiasExtension.Add(extension);
+                    }
+                    
+                    n += 1;
+                }
+                
                 converted = new Template(templateBuilder);
             }
             catch (Exception ex)

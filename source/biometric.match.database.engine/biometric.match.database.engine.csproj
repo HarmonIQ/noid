@@ -64,7 +64,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConvertFHIR.cs" />
     <Compile Include="DBreezeWrapper.cs" />
     <Compile Include="MinutiaMatch.cs" />
     <Compile Include="FingerPrintMatchDatabase.cs" />

@@ -18,24 +18,26 @@ using NoID.Security;
 using NoID.FHIR.Profile;
 using NoID.Biometrics.Managers;
 using NoID.Network.Transport;
+using NoID.Match.Database.Client;
+using System.Collections.Generic;
 
 namespace NoID.Browser
 {
+    /// <summary>
+    /// Main client browser wrapper class
+    /// </summary>
+
     public partial class BrowserForm : Form
     {
         private static AfisEngine Afis = new AfisEngine();
+        private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
+
         private const float PROBE_MATCH_THRESHOLD = 70;
         private readonly ChromiumWebBrowser browser;
         //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
         private DigitalPersona biometricDevice;
         private PatientFHIRProfile noidFHIRProfile;
         private string organizationName = System.Configuration.ConfigurationManager.AppSettings["OrganizationName"].ToString();
-        private SourceAFIS.Simple.Person currentCapture;
-        private SourceAFIS.Simple.Person previousCapture;
-        private Fingerprint newFingerPrint;
-        private Fingerprint previousFingerPrint;
-        private bool match = false;
-        private float score = 0;
         private Uri healthcareNodeFHIRAddress;
         private string healthcareNodeWebAddress;
         private string healthcareNodeChainVerifyAddress;
@@ -48,32 +50,79 @@ namespace NoID.Browser
 #if NAVIGATE
             DisplayOutput("Captured finger image....");
 #endif
-            NoIDServicePassword = NoID.Security.PasswordManager.GetPassword(NoIDServiceName);
-            match = false;
-            currentCapture = new SourceAFIS.Simple.Person();
-            // Check capture quality and throw an error if bad.
+            
+            // Check capture quality and throw an error if poor or incomplete capture.
             if (!biometricDevice.CheckCaptureResult(captureResult)) return;
 
-            newFingerPrint = new Fingerprint();
+
+            Constants.CaptureQuality quality = captureResult.Quality;
+            if ((int)quality != 0)
+            {
+                //call javascript to inform UI that the capture quality was too low to accept.
+#if NAVIGATE
+                DisplayOutput("Fingerprint quality was too low to accept. Quality = " + quality.ToString());
+
+#endif
+                return;
+            }
+
+            SourceAFIS.Simple.Person currentCapture = new SourceAFIS.Simple.Person();
+
+            Fingerprint newFingerPrint = new Fingerprint();
             foreach (Fid.Fiv fiv in captureResult.Data.Views)
             {
                 newFingerPrint.AsBitmap = ImageUtilities.CreateBitmap(fiv.RawImage, fiv.Width, fiv.Height);
             }
             currentCapture.Fingerprints.Add(newFingerPrint);
             Afis.Extract(currentCapture);
-            if (!(previousCapture is null))
+            Template tmpCurrent = newFingerPrint.GetTemplate();
+
+            if (_minutiaCaptureController.MatchFound == false)
             {
-                score = Afis.Verify(currentCapture, previousCapture);
-                match = (score > Afis.Threshold);
-            }
-            var matchResults = String.Format("Match: {0}, Score: {1}", match, score);
+                if (_minutiaCaptureController.AddMinutiaTemplateProbe(tmpCurrent) == true)
+                {
+                    // Good pair found.
+                    // Query web service for a match.
+                    NoIDServicePassword = NoID.Security.PasswordManager.GetPassword(NoIDServiceName);
+                    FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+                    FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+                    FingerPrintMinutias fingerprintMinutia = 
+                        new FingerPrintMinutias("", tmpCurrent, laterality, captureSiteSnoMedCode); //need to pass session id instead of patient cert id.
+
+                    Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia);
+                    HttpsClient dataTransport = new HttpsClient();
+                    Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+                    dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
 #if NAVIGATE
-            DisplayOutput(matchResults);
+                    string output = "Fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
+                    DisplayOutput(output);
 #endif
+
+                    // If match found, inform JavaScript that this is an returning patient for identity.
+
+
+
+
+                    // If not match found, inform JavaScript that this is an new patient enrollment.  reset _minutiaCaptureController for right side.
+#if NAVIGATE
+                    DisplayOutput("Fingerprint accepted. Score = " + _minutiaCaptureController.BestScore);
+                    
+#endif
+                }
+                else
+                {
+                    // Good fingerprint pairs not found yet.  inform JavaScript to promt the patient to try again.
+#if NAVIGATE
+                    DisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
+#endif
+                    return;
+                }
+            }
+
+            /*
             if (score >= PROBE_MATCH_THRESHOLD)
             {
-                FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
-                FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+                
 
                 noidFHIRProfile.PatientCertificateID = Guid.NewGuid().ToString();
 
@@ -95,9 +144,11 @@ namespace NoID.Browser
                 HttpsClient dataTransport = new HttpsClient();
                 Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
                 dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
+
             }
             previousCapture = currentCapture;
             previousFingerPrint = newFingerPrint;
+            */
         }
 
         public BrowserForm()
