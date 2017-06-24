@@ -12,7 +12,7 @@ namespace NoID.Match.Database.Tests
 {
     public partial class TestMatchEngineForm : Form
     {
-        private readonly bool LOAD_TEST_FINGERPRINTS = true;
+        private readonly bool LOAD_TEST_FINGERPRINTS = false;
         private readonly string _databaseDirectory = ConfigurationManager.AppSettings["DatabaseLocation"].ToString();
         private readonly string _backupDatabaseDirectory = ConfigurationManager.AppSettings["BackupLocation"].ToString();
         private string _lateralityCode = ConfigurationManager.AppSettings["Laterality"].ToString();
@@ -24,16 +24,24 @@ namespace NoID.Match.Database.Tests
         private Fingerprint newMatchFinger;
         private string _errorMessage = "";
         private float highScore = 0;
+        private string scannerStatus;
 
         public TestMatchEngineForm()
         {
             InitializeComponent();
             scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             _matchProbesTest = new MatchProbesTest(_databaseDirectory, _backupDatabaseDirectory, _lateralityCode, _captureSiteCode);
+            scannerStatus = _matchProbesTest.ScannerStatus;
+            if (scannerStatus.Length > 0)
+            {
+                Task task = new Task(() => this.UpdateScannerStatus());
+                task.Start(scheduler);
+            }
+            
             // load test data into dbreeze database
             if (LOAD_TEST_FINGERPRINTS == true)
             {
-                _matchProbesTest.LoadTestFingerPrintImages(@"F:\fingerprobes", false);
+                _matchProbesTest.LoadTestFingerPrintImages(@"F:\fingerprobes", true);
             }
 
             _matchProbesTest.FingerCaptured += FingerCaptured;
@@ -43,6 +51,11 @@ namespace NoID.Match.Database.Tests
             _matchProbesTest.DoesNotMatch += DoesNotMatch;
             _matchProbesTest.DatabaseMatchError += DatabaseMatchError;
             _matchProbesTest.PoorCaputure += PoorCaputure;
+        }
+
+        void UpdateScannerStatus()
+        {
+            labelScannerStatus.Text = "Scanner Status: " + scannerStatus;
         }
 
         void FingerCaptured(object sender, EventArgs e)
@@ -75,14 +88,13 @@ namespace NoID.Match.Database.Tests
 
         void NewBestMatchFound(object sender, EventArgs e)
         {
-            bestFinger = (Fingerprint)sender;
-            imageBestFinger.Image = bestFinger.AsBitmap;
+            imageMatchedFinger.Image = _matchProbesTest.bestFingerprint1.AsBitmap;
+            imageBestFinger.Image = _matchProbesTest.bestFingerprint2.AsBitmap;
         }
 
         void DatabaseMatchFound(object sender, EventArgs e)
         {
             newMatchFinger = (Fingerprint)sender;
-            imageMatchedFinger.Image = newMatchFinger.AsBitmap;
             Task task = new Task(() => this.UpdateMatchScoreLabel());
             task.Start(scheduler);
         }
@@ -91,7 +103,7 @@ namespace NoID.Match.Database.Tests
         {
             imageMatchedFinger.Image = null;
             _errorMessage = "Critical match error occured!";
-            Task task = new Task(() => this.UpdateErrorMessage());
+            Task task = new Task(() => this.CriticalErrorMessage());
             task.Start(scheduler);
         }
 
@@ -103,11 +115,12 @@ namespace NoID.Match.Database.Tests
         private void UpdateMatchScoreLabel()
         {
             labelBestScore.Text = "Match found! Score = " + _matchProbesTest.Score.ToString();
-
+            labelNoID.Text = "NoID Found: " + _matchProbesTest.NoID;
             if (_matchProbesTest.Score > highScore)
             {
                 highScore = _matchProbesTest.Score;
                 labelHighScore.Text = highScore.ToString();
+                highScore = _matchProbesTest.Score;
             }
         }
 
@@ -119,11 +132,19 @@ namespace NoID.Match.Database.Tests
         private void UpdateErrorMessage()
         {
             labelBestScore.Text = _errorMessage;
+            labelNoID.Text = "Match found but wrong patient.";
         }
 
         private void ScoreDoesNotMatch()
         {
-            labelBestScore.Text = "Match NOT found! Score = " + _matchProbesTest.Score.ToString();
+            labelBestScore.Text = "Match NOT found!";
+            labelNoID.Text = "No Match.";
+        }
+
+        private void CriticalErrorMessage()
+        {
+            labelBestScore.Text = _errorMessage;
+            labelNoID.Text = "Wrong patient: " + _matchProbesTest.NoID;
         }
     }
 }

@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using SourceAFIS.Simple;
 using SourceAFIS.Templates;
 using SourceAFIS.Extraction;
 using SourceAFIS.Matching;
@@ -14,6 +15,7 @@ namespace NoID.Match.Database.FingerPrint
     public class MinutiaMatch
     {
         private const uint DATABASE_BACKUP_INTERVAL = 600;
+        private static AfisEngine Afis = new AfisEngine();
         private readonly int _matchThreshold;
         private static List<Template> _fingerPrintCandidateList = new List<Template>();
         private DBreezeWrapper _dBreezeWrapper;
@@ -96,12 +98,9 @@ namespace NoID.Match.Database.FingerPrint
         private MinutiaResult IdentifyFinger(Template probe)
         {
             MinutiaResult result = null;
-            float[] scores;
             lock (this)
             {
-                ParallelMatcher Matcher = new ParallelMatcher();
-                ParallelMatcher.PreparedProbe probeIndex = Matcher.Prepare(probe);
-                scores = Matcher.Match(probeIndex, _fingerPrintCandidateList);
+                float[] scores = Afis.IdentifyFingers(probe, _fingerPrintCandidateList);
                 if (scores.Length > 0)
                 {
                     for (int i = 0; i < scores.Count(); i++)

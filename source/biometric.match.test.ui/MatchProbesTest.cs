@@ -4,15 +4,21 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.General;
 using SourceAFIS.Templates;
 using NoID.Biometrics.Managers;
+using NoID.Match.Database.Client;
 using NoID.Match.Database.FingerPrint;
 
 namespace NoID.Match.Database.Tests
 {
+    /// <summary>
+    /// Match Probes Test
+    /// </summary>
+
     public class MatchProbesTest
     {
         public event EventHandler FingerCaptured = delegate { };
@@ -24,24 +30,22 @@ namespace NoID.Match.Database.Tests
         public event EventHandler PoorCaputure = delegate { };
 
         public float Score = 0;
+        public string ScannerStatus = "";
 
         private static AfisEngine Afis = new AfisEngine();
+        private MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
         private DigitalPersona biometricDevice;
-        private FingerPrintMatchDatabase dbMinutia;
         private Exception _exception;
+        private FingerPrintMatchDatabase dbMinutia;
+        private List<Fingerprint> _capturedFingerprints = new List<Fingerprint>();
+        public Fingerprint bestFingerprint1;
+        public Fingerprint bestFingerprint2;
+        public string NoID = "";// = Guid.NewGuid().ToString();
         public ulong nextID = 1;
-        
         private Person currentCapture;
-        private Person previousCapture;
-        public Fingerprint currenFingerPrint;
-        public Fingerprint previousFingerPrint;
         public int Quality;
-
-        private Person bestCapture;
-        private string patientNoID = "";
-        private bool fGoodPairFound = false;
         public float HighScore = 0;
-
+        
 
         public MatchProbesTest(string databaseDirectory, string backupDatabaseDirectory, string lateralityCode, string captureSiteCode)
         {
@@ -50,13 +54,16 @@ namespace NoID.Match.Database.Tests
             {
                 if ((_exception == null))
                 {
+                    ScannerStatus = "Failed: Unknown error.";
                     throw new Exception("Unknown scanner setup error.");
                 }
                 else
                 {
+                    ScannerStatus = "Failed: " + _exception.Message;
                     throw _exception;
                 }
             }
+            ScannerStatus = "OK";
         }
 
         ~MatchProbesTest()
@@ -87,14 +94,10 @@ namespace NoID.Match.Database.Tests
 
         private void OnCaptured(CaptureResult captureResult)
         {
-            // Check capture quality and throw an error if bad.
+            // Check capture quality and throw an error if poor or incomplete capture.
             if (!biometricDevice.CheckCaptureResult(captureResult)) return;
 
-            bool newBest = false;
-            bool match = false;
-            Afis.Threshold = 70;
-            Score = 0;
-            
+
             Constants.CaptureQuality quality = captureResult.Quality;
             if ((int)quality != 0)
             {
@@ -112,109 +115,77 @@ namespace NoID.Match.Database.Tests
             }
             currentCapture.Fingerprints.Add(newFingerPrint);
             Afis.Extract(currentCapture);
-            currenFingerPrint = newFingerPrint;
             Template tmpCurrent = newFingerPrint.GetTemplate();
-            if (!(bestCapture == null))
-            {
-                Score = Afis.Verify(currentCapture, bestCapture);
-                match = (Score > Afis.Threshold);
-            }
-            else if ((bestCapture == null) && !(previousCapture == null))
-            {
-                Score = Afis.Verify(currentCapture, previousCapture);
-                match = (Score > Afis.Threshold);
-            }
 
             if (FingerCaptured != null)
             {
                 FingerCaptured(newFingerPrint, new EventArgs());
             }
+            _capturedFingerprints.Add(newFingerPrint);
 
-            if (!(match))
-            {
-                patientNoID = "";
-                Score = 0;
-                previousCapture = currentCapture;
-                DoesNotMatch(currenFingerPrint, new EventArgs());
-                return;
-            }
-            else if (match)
-            {
-                if (GoodPairFound != null)
+            if (_minutiaCaptureController.MatchFound == false)
+            { 
+                if (_minutiaCaptureController.AddMinutiaTemplateProbe(tmpCurrent) == true)
                 {
-                    GoodPairFound(currenFingerPrint, new EventArgs());
+                    // Good pair found.
+                    bestFingerprint1 = newFingerPrint;
+                    bestFingerprint2 = _capturedFingerprints[_minutiaCaptureController.OtherBestFingerprintItem];
+                    if (NewBestMatchFound != null)
+                    {
+                        NewBestMatchFound(bestFingerprint2, new EventArgs());
+                    }
                 }
-                if (fGoodPairFound == false)
-                    fGoodPairFound = true;
-            }
-
-            Template tmp;
-            if (Score > HighScore)
-            {
-                HighScore = Score;
-                bestCapture = currentCapture;
-                if (NewBestMatchFound != null)
+                else
                 {
-                    newBest = true;
-                    NewBestMatchFound(bestCapture.Fingerprints[0], new EventArgs());
+                    // Good fingerprint pairs not found yet.  Try again.
+                    return;
                 }
             }
-            if (!(bestCapture == null))
-            {
-                tmp = bestCapture.Fingerprints[0].GetTemplate();
-            }
-            else
-            {
-                tmp = tmpCurrent;
-            }
+            // Lookup minitia pair in database.
+            // If found, show NoID
+            // If not found, save minutia pair in database with new NoID.
+            // probe is set, search database for match.
+            Template Template1 = bestFingerprint1.GetTemplate();
+            Template Template2 = bestFingerprint2.GetTemplate();
 
-            MinutiaResult idFound = IdentifyFinger(tmp);
-            if ((idFound != null) && (idFound.NoID.Length != 0))
+            MinutiaResult idFound = IdentifyFinger(tmpCurrent);
+            if ((idFound != null && idFound.NoID.Length > 0))
             {
+                // Fingerprint found in database
                 Score = idFound.Score;
                 if (DatabaseMatchFound != null)
                 {
                     DatabaseMatchFound(newFingerPrint, new EventArgs());
                 }
-            }
-            else if (!(match) && (idFound == null || idFound.NoID.Length == 0))
-            {
-                patientNoID = "";
-                Score = 0;
-                previousCapture = currentCapture;
-                return;
-            }
-
-            if (match && (fGoodPairFound == true) && (patientNoID.Length == 0) && (idFound != null) && (idFound.NoID.Length == 0))
-            {
-                tmp.NoID = "NoID" + nextID;
-                dbMinutia.AddTemplate(tmp);
-                patientNoID = idFound.NoID;
-                nextID++;
-            }
-            else if (match && (fGoodPairFound == true) && (patientNoID.Length > 0) && (idFound.NoID.Length == 0))
-            {
-                if (DatabaseMatchError != null)
+                if (NoID.Length == 0)
                 {
-                    DatabaseMatchError(newFingerPrint, new EventArgs());
+                    NoID = idFound.NoID;
                 }
-                patientNoID = "Error, adjust threshold. It is too low.";
-            }
-            else
-            {
-                if (match)
+                else if (NoID.Length > 0 && NoID != idFound.NoID)
                 {
-                    if (newBest)
+                    //critical error! create false assert here.
+                    NoID = idFound.NoID;
+                    if (DatabaseMatchError != null)
                     {
-                        dbMinutia.UpdateTemplate(tmp, idFound.NoID);
+                        DatabaseMatchError(newFingerPrint, new EventArgs());
                     }
                 }
             }
-
-            previousCapture = currentCapture;
-            if (!(previousCapture == null))
+            else
             {
-                previousFingerPrint = previousCapture.Fingerprints[0];
+                // Not found in database
+                Score = 0;
+                if (DoesNotMatch != null)
+                    DoesNotMatch(newFingerPrint, new EventArgs());
+
+                if (NoID.Length == 0)
+                {
+                    Template1.NoID = Guid.NewGuid().ToString();
+                    Template2.NoID = Template1.NoID;
+                    dbMinutia.AddTemplate(Template1);
+                    dbMinutia.AddTemplate(Template2);
+                    // trigger event NewPatientAdded
+                }
             }
         }
 

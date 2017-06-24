@@ -106,6 +106,10 @@
       <Project>{02aa541d-3a2f-4a6a-b85c-86e2066d9cf6}</Project>
       <Name>biometric.match.database.engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\biometrics.fingerprint.database.client\biometrics.fingerprint.database.client.csproj">
+      <Project>{614ee79c-13db-4e8e-bf49-c8efbd836cb0}</Project>
+      <Name>biometrics.fingerprint.database.client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\biometrics.fingerprint.devices\biometrics.devices.csproj">
       <Project>{ca817c90-afb0-4b29-884c-609c239e1d32}</Project>
       <Name>biometrics.devices</Name>
