@@ -138,6 +138,9 @@ namespace NoID.Browser
             // Check capture quality and throw an error if poor or incomplete capture.
             if (!biometricDevice.CheckCaptureResult(captureResult)) return;
 
+            //TODO: Captures these values from the page.
+            FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+            FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
 
             Constants.CaptureQuality quality = captureResult.Quality;
             if ((int)quality != 0)
@@ -168,8 +171,7 @@ namespace NoID.Browser
                     // Good pair found.
                     // Query web service for a match.
                     NoIDServicePassword = NoID.Security.PasswordManager.GetPassword(NoIDServiceName);
-                    FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
-                    FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+                    
                     FingerPrintMinutias fingerprintMinutia = 
                         new FingerPrintMinutias("", tmpCurrent, laterality, captureSiteSnoMedCode); //need to pass session id instead of patient cert id.
                     noidFHIRProfile.OriginalDpi = tmpCurrent.OriginalDpi;
@@ -182,11 +184,8 @@ namespace NoID.Browser
                     string output = "Fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
                     DisplayOutput(output);
 #endif
-
                     // If match found, inform JavaScript that this is an returning patient for identity.
-
-
-
+                    browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + laterality.ToString() + "');");
 
                     // If not match found, inform JavaScript that this is an new patient enrollment.  reset _minutiaCaptureController for right side.
 #if NAVIGATE
@@ -197,6 +196,7 @@ namespace NoID.Browser
                 else
                 {
                     // Good fingerprint pairs not found yet.  inform JavaScript to promt the patient to try again.
+                    browser.GetMainFrame().ExecuteJavaScriptAsync("showFail('" + laterality.ToString() + "');");
 #if NAVIGATE
                     DisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
 #endif
