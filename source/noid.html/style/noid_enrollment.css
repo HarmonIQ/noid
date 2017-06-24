@@ -1,8 +1,14 @@
-﻿
+
 label {
 	font-size: 18px;
 }
-
+.spanArrow {
+    font-size: 24px;
+}
+.divContentScroll {
+  height: 300px; 
+  overflow-y: scroll; // Only add scroll to vertical column
+}
 .divSearch {
     width: 350px;
     height: 175px;
@@ -43,6 +49,9 @@ h2 {
 
 .hidden {
     visibility: hidden;    
+}
+.nodisplay {
+    display: none;
 }
 
 .pull-right2 {
