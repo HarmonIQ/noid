@@ -331,7 +331,7 @@ namespace SourceAFIS.Simple
             return 0;
         }
 
-        public float IdentifyFinger(Template probe, List<Template> candidateTemplates)
+        public float IdentifyFinger(Template probe, List<Template> candidateTemplates, float scoreThreshold)
         {
             lock (this)
             {
@@ -342,14 +342,23 @@ namespace SourceAFIS.Simple
                 {
                     for (int i = 0; i < scores.Count(); i++)
                     {
-                        if (scores[i] > 50)
+                        if (scores[i] > scoreThreshold)
                             return scores[i];
                     }
                 }
             }
             return 0;
         }
-        
+
+        public float[] IdentifyFingers(Template probe, List<Template> candidateTemplates)
+        {
+            lock (this)
+            {
+                ParallelMatcher.PreparedProbe probeIndex = Matcher.Prepare(probe);
+                return Matcher.Match(probeIndex, candidateTemplates);
+            }
+        }
+
         IEnumerable<Person> GetMatchingCandidates(Person[] candidateArray, BestMatchSkipper.PersonsSkipScore[] results)
         {
             foreach (var match in results)
