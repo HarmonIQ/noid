@@ -3,6 +3,8 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace NoID.Utilities
 {
@@ -57,6 +59,18 @@ namespace NoID.Utilities
                 returnValue = "";
             }
             return returnValue;
+        }
+
+        public static string SHA256(string hashIt)
+        {
+            SHA256Managed crypt = new SHA256Managed();
+            string hash = String.Empty;
+            byte[] crypto = crypt.ComputeHash(Encoding.ASCII.GetBytes(hashIt), 0, Encoding.ASCII.GetByteCount(hashIt));
+            foreach (byte theByte in crypto)
+            {
+                hash += theByte.ToString("x2");
+            }
+            return hash;
         }
     }
 }

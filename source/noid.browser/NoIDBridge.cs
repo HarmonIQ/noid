@@ -4,6 +4,7 @@
 
 using System;
 using Hl7.Fhir.Model;
+using SourceAFIS.Templates;
 using NoID.FHIR.Profile;
 using NoID.Security;
 using NoID.Utilities;
@@ -17,15 +18,20 @@ namespace NoID.Browser
 		Uri _endPoint;
 		string _serviceName;
 		string _errorDescription;
-		string _goodFingerprint;
 		string _alertFunction;
+        //default capture site and laterality.
+        FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+        FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+        SourceAFIS.Templates.NoID _noID;
 
-		public NoIDBridge(string organizationName, Uri endPoint, string serviceName)
+        public NoIDBridge(string organizationName, Uri endPoint, string serviceName)
 		{
 			_organizationName = organizationName;
 			_endPoint = endPoint;
-			_serviceName = serviceName;			
-		}
+			_serviceName = serviceName;
+            _noID = new SourceAFIS.Templates.NoID();
+            _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
+        }
 
 		// Javascript function is NoIDBridge.postLateralityCaptureSite ( <params> )
 		// mark schroeder 20170624
@@ -188,5 +194,25 @@ namespace NoID.Browser
 			get { return _alertFunction; }
 			private set { _alertFunction = value; }
 		}
-	}
+
+        public FHIRUtilities.CaptureSiteSnoMedCode CaptureSite
+        {
+            get { return _captureSite; }
+            set { _captureSite = value; }
+        }
+
+        public FHIRUtilities.LateralitySnoMedCode Laterality
+        {
+            get { return _laterality; }
+            set { _laterality = value; }
+        }
+        
+
+        public void ResetVariables()
+        {
+            _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+            _laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+            _alertFunction = "";
+        }
+    }
 }
