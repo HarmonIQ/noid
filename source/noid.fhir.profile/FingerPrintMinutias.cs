@@ -36,7 +36,7 @@ namespace NoID.FHIR.Profile
     public class FingerPrintMinutias : FingerPrintMinutiasSerialize
     {
         [ProtoMember(1)]
-        public string PatientCertificateID { get; private set; }
+        public SourceAFIS.Templates.NoID NoID { get; private set; }
 
         [ProtoMember(2)]
         public FHIRUtilities.LateralitySnoMedCode LateralitySnoMedCode { get; private set; }
@@ -47,9 +47,10 @@ namespace NoID.FHIR.Profile
         [ProtoMember(4)]
         public List<FingerPrintMinutia> Minutiae { get; private set; }
 
-        public FingerPrintMinutias(string patientCertificateID, Template template, FHIRUtilities.LateralitySnoMedCode laterality, FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode)
+        public FingerPrintMinutias(string sessionID, Template template, FHIRUtilities.LateralitySnoMedCode laterality, FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode)
         {
-            PatientCertificateID = patientCertificateID;
+            SourceAFIS.Templates.NoID noID = new SourceAFIS.Templates.NoID();
+            noID.SessionID = sessionID;
             LateralitySnoMedCode = laterality;
             CaptureSiteSnoMedCode = captureSiteSnoMedCode;
             Minutiae = FingerprintMinutiaConvertor.ConvertTemplate(template);
