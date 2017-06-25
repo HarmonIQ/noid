@@ -194,24 +194,56 @@ namespace NoID.Browser
 			private set { _alertFunction = value; }
 		}
 
-        public FHIRUtilities.CaptureSiteSnoMedCode CaptureSite
+        public FHIRUtilities.CaptureSiteSnoMedCode captureSite
         {
             get { return _captureSite; }
             set { _captureSite = value; }
         }
 
-        public FHIRUtilities.LateralitySnoMedCode Laterality
+        public FHIRUtilities.LateralitySnoMedCode laterality
         {
             get { return _laterality; }
             set { _laterality = value; }
         }
-        
 
-        public void ResetVariables()
+        private void ResetVariables()
         {
             _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
             _laterality = FHIRUtilities.LateralitySnoMedCode.Right;
             _alertFunction = "";
+            _noID = new SourceAFIS.Templates.NoID();
+            _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
+        }
+
+        public bool postResetForNewPatient()
+        {
+            try
+            {
+                ResetVariables();
+            }
+            catch (Exception ex)
+            {
+                ErrorDescription = ex.Message;
+                return false;
+            }
+            return true;
+        }
+
+        public string sessionID
+        {
+            get { return _noID.SessionID; }
+        }
+
+        public string localNoID
+        {
+            get { return _noID.LocalNoID; }
+            set { _noID.LocalNoID = value; }
+        }
+
+        public string remoteNoID
+        {
+            get { return _noID.RemoteNoID; }
+            set { _noID.RemoteNoID = value; }
         }
     }
 }

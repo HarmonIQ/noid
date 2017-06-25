@@ -329,14 +329,31 @@ namespace NoID.Browser
 
         FHIRUtilities.LateralitySnoMedCode Laterality
         {
-            get { return bridge.Laterality; }
-            set { bridge.Laterality = value; }
+            get { return bridge.laterality; }
+            set { bridge.laterality = value; }
         }
 
         FHIRUtilities.CaptureSiteSnoMedCode CaptureSite
         {
-            get { return bridge.CaptureSite; }
-            set { bridge.CaptureSite = value; }
+            get { return bridge.captureSite; }
+            set { bridge.captureSite = value; }
+        }
+
+        string SessionID
+        {
+            get { return bridge.sessionID; }
+        }
+
+        string LocalNoID
+        {
+            get { return bridge.localNoID; }
+            set { bridge.localNoID = value; }
+        }
+
+        string RemoteNoID
+        {
+            get { return bridge.remoteNoID; }
+            set { bridge.remoteNoID = value; }
         }
     }
 }
