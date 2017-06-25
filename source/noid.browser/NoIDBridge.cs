@@ -39,9 +39,8 @@ namespace NoID.Browser
 		{
 			try
 			{
-				//string test = NoID.Utilities.FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger.ToString();
-				string testLaterality = laterality;
-				string testCaptureSite = captureSite;
+                _captureSite = FHIRUtilities.StringToCaptureSite(captureSite);
+                _laterality = FHIRUtilities.StringToLaterality(laterality);
 				ErrorDescription = "";
 			}
 			catch (Exception ex)

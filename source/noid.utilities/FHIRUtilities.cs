@@ -210,6 +210,52 @@ namespace NoID.Utilities
             return Enum.GetName(typeof(LateralitySnoMedCode), laterality);
         }
 
+        public static LateralitySnoMedCode StringToLaterality(string laterality)
+        {
+            Type latType = typeof(LateralitySnoMedCode);
+            if (laterality.ToLower() == "left")
+            {
+                return LateralitySnoMedCode.Left;
+            }
+            else if (laterality.ToLower() == "right")
+            {
+                return LateralitySnoMedCode.Right;
+            }
+            else
+            {
+                return LateralitySnoMedCode.Unknown;
+            }   
+        }
+
+        public static CaptureSiteSnoMedCode StringToCaptureSite(string captureSite)
+        {
+            Type latType = typeof(LateralitySnoMedCode);
+            if (captureSite.ToLower() == "indexfinger")
+            {
+                return CaptureSiteSnoMedCode.IndexFinger;
+            }
+            else if (captureSite.ToLower() == "ringfinger")
+            {
+                return CaptureSiteSnoMedCode.RingFinger;
+            }
+            else if (captureSite.ToLower() == "middlefinger")
+            {
+                return CaptureSiteSnoMedCode.MiddleFinger;
+            }
+            else if (captureSite.ToLower() == "thumb")
+            {
+                return CaptureSiteSnoMedCode.Thumb;
+            }
+            else if (captureSite.ToLower() == "littlefinger")
+            {
+                return CaptureSiteSnoMedCode.LittleFinger;
+            }
+            else
+            {
+                return CaptureSiteSnoMedCode.Unknown;
+            }
+        }
+
         public static string CaptureSiteToString(CaptureSiteSnoMedCode captureSite)
         {
             return Enum.GetName(typeof(CaptureSiteSnoMedCode), captureSite);
