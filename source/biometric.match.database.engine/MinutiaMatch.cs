@@ -109,7 +109,7 @@ namespace NoID.Match.Database.FingerPrint
                         {
                             result = new MinutiaResult();
                             result.Score = scores[i];
-                            result.NoID = _fingerPrintCandidateList[i].NoID;
+                            result.NoID = _fingerPrintCandidateList[i].NoID.LocalNoID;
                             break;
                         }
                     }
@@ -152,10 +152,10 @@ namespace NoID.Match.Database.FingerPrint
                         {
                             if (scores[i] > _matchThreshold)
                             {
-                                _NoID = _fingerPrintCandidateList[i].NoID;
+                                _NoID = _fingerPrintCandidateList[i].NoID.LocalNoID;
                                 if (_NoID == NoID)
                                 {
-                                    newBest.NoID = _NoID;
+                                    newBest.NoID.LocalNoID = _NoID;
                                     _fingerPrintCandidateList[i] = newBest;
                                     break;
                                 }

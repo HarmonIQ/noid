@@ -180,7 +180,7 @@ namespace NoID.Match.Database.Tests
 
                 if (NoID.Length == 0)
                 {
-                    Template1.NoID = Guid.NewGuid().ToString();
+                    Template1.NoID.LocalNoID = Guid.NewGuid().ToString();
                     Template2.NoID = Template1.NoID;
                     dbMinutia.AddTemplate(Template1);
                     dbMinutia.AddTemplate(Template2);
@@ -209,7 +209,7 @@ namespace NoID.Match.Database.Tests
                                 {
                                     Afis.ExtractFingerprint(fingerprint);
                                     Template template = fingerprint.GetTemplate();
-                                    template.NoID = "Test" + nextID.ToString();
+                                    template.NoID.LocalNoID = "Test" + nextID.ToString();
                                     dbMinutia.AddTemplate(template);
                                     nextID++;
                                     if (breakAtOneHundred && nextID > 10)

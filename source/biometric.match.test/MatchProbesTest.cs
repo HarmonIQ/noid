@@ -143,7 +143,7 @@ namespace NoID.Match.Database.Tests
                 MinutiaResult idFound = IdentifyFinger(tmp);
                 if ((fGoodPairFound == false) && (patientNoID.NoID.Length == 0) && (idFound.NoID.Length == 0))
                 {
-                    tmp.NoID = "NoID" + nextID;
+                    tmp.NoID.LocalNoID = "NoID" + nextID;
                     dbMinutia.AddTemplate(tmp);
                     patientNoID = idFound;
 
@@ -196,7 +196,7 @@ namespace NoID.Match.Database.Tests
                                 {
                                     Afis.ExtractFingerprint(fingerprint);
                                     Template template = fingerprint.GetTemplate();
-                                    template.NoID = "NoID" + nextID.ToString();
+                                    template.NoID.LocalNoID = "NoID" + nextID.ToString();
                                     dbMinutia.AddTemplate(template);
                                     nextID++;
                                     if (breakAtOneHundred && nextID > 10)

@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using Hl7.Fhir.Model;
 using SourceAFIS.Templates;
+using Hl7.Fhir.Model;
 
 namespace NoID.Match.Database.Client
 {
@@ -33,6 +33,31 @@ namespace NoID.Match.Database.Client
                 throw ex;
             }
             return converted;
+        }
+
+        static SourceAFIS.Templates.NoID FHIRToNoID(Resource fhirMessage)
+        {
+            SourceAFIS.Templates.NoID GetNoID = null;
+            try
+            {
+                switch (fhirMessage.TypeName)
+                {
+                    case "Media":
+                        
+                        break;
+                    case "Patient":
+                    case "NoID Profile":
+                        throw new Exception("Processing the " + fhirMessage.TypeName + " is not implemented yet.");
+                    default:
+                        throw new Exception("Could not convert FHIR resource type " + fhirMessage.TypeName + " to a minutia template class.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return GetNoID;
         }
 
         static Template MediaFHIRToTemplate(Resource fhirMessage)
