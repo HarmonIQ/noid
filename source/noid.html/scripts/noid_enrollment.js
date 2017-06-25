@@ -1,3 +1,46 @@
+function populateReviewPage() {
+    var firstName = document.getElementById("FirstName").value;
+    var middleName = document.getElementById("MiddleName").value;
+    var lastName = document.getElementById("LastName").value;
+    var birthYear = document.getElementById('BirthYear');
+    var selectedBirthYear = birthYear.options[birthYear.selectedIndex].text;
+    var birthMonth = document.getElementById('BirthMonth');
+    var selectedBirthMonth = birthMonth.options[birthMonth.selectedIndex].text;
+    var birthDay = document.getElementById('BirthDay');
+    var selectedBirthDay = birthDay.options[birthDay.selectedIndex].text;
+    if (document.getElementById("GenderMale").checked) {
+        var gender = document.getElementById("GenderMale").value;
+    };
+    if (document.getElementById("GenderFemale").checked) {
+        var gender = document.getElementById("GenderFemale").value;
+    };
+    var streetAddress = document.getElementById("StreetAddress").value;
+    var streetAddress2 = document.getElementById("StreetAddress2").value;
+    var city = document.getElementById("City").value;
+    var state = document.getElementById("State").value;
+    var postalCode = document.getElementById("ZipCode").value;
+    var phoneCell = document.getElementById("PhoneNumber").value;
+    var emailAddress = document.getElementById("EmailAddress").value;   
+    var multipleBirthPregnancy = document.getElementById('FromMultipleBirthPregnancy');
+    var selectedMultipleBirthPregnancy = multipleBirthPregnancy.options[multipleBirthPregnancy.selectedIndex].innerText;
+    var genderChanged = document.getElementById('GenderChanged');
+    var selectedGenderChanged = genderChanged.options[genderChanged.selectedIndex].innerText;
+    
+    //begin populate reveiw page
+    document.getElementById('revName').innerText = firstName + " " + (middleName.length > 0 ? middleName + " " + lastName : lastName);
+    document.getElementById('revDOB').innerText = selectedBirthMonth + " " + selectedBirthDay + ", " + selectedBirthYear;
+    document.getElementById('revGender').innerText = gender;
+    document.getElementById('revStreetAddress').innerText = streetAddress;
+    //if street address2 not blank set innerhtml and include line break after
+    document.getElementById('revStreetAddress2').innerHTML = (streetAddress2.length > 0 ? streetAddress2 + "<br />" : "");
+    document.getElementById('revCityState').innerText = city + ", " + state;
+    document.getElementById('revPostalCode').innerText = postalCode;
+    document.getElementById('revPhoneNumber').innerText = phoneCell;
+    document.getElementById('revEmail').innerText = emailAddress;
+    document.getElementById('revTwin').innerText = selectedMultipleBirthPregnancy;
+    document.getElementById('revGenderChanged').innerText = selectedGenderChanged;
+  
+};
 function setLateralitySite(selectedElementID) {
     switch (selectedElementID) {
         case 'selectLeftLittle':
@@ -85,7 +128,7 @@ function showFail(whichStep) {
             break;
         case 'Right':
             //document.getElementById('checkRight').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right complete');
-            document.getElementById('checkRight').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right incomplete');
+            document.getElementById('checkRight').setAttribute('class', 'fa fa-spinner fa-spin fa-5x fa-fw pull-left incomplete');
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Fingerprint scan attempt<br />was not successful.<br />Please try again</h4>";
             break;
     };
@@ -166,7 +209,7 @@ function checkTime(i) {
     if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
     return i;
 };
-function savePatientTest() {
+/*function savePatientTest() {
     var language = document.getElementById('selectedLanguage');
     var languageSelected = language.options[language.selectedIndex].text;
     var firstName = document.getElementById("FirstName").value;
@@ -223,20 +266,5 @@ function savePatientTest() {
 		+ "\nPatient Hub = " + selectedPatientHub
 		+ "\nPortal Password = " + portalPassword);
     
-    /*
-    string language,
-                string firstName,
-                string middleName,
-                string lastName,
-                string gender,
-                string birthYear,
-                string birthMonth,save
-                string streetAddress,
-				string streetAddress2,
-                string city,
-                string state,
-                string postalCode,
-                string emailAddress,
-                string phoneCell
-    */
-};
+   
+};*/
