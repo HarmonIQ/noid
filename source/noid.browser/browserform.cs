@@ -43,6 +43,9 @@ namespace NoID.Browser
         private string healthcareNodeChainVerifyAddress;
         private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
         private string NoIDServicePassword;
+        // Default to left index finger.
+        FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+        FHIRUtilities.CaptureSiteSnoMedCode captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
 
         public BrowserForm()
         {
@@ -138,10 +141,6 @@ namespace NoID.Browser
             // Check capture quality and throw an error if poor or incomplete capture.
             if (!biometricDevice.CheckCaptureResult(captureResult)) return;
 
-            //TODO: Captures these values from the page.
-            FHIRUtilities.LateralitySnoMedCode laterality = FHIRUtilities.LateralitySnoMedCode.Left;
-            FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
-
             Constants.CaptureQuality quality = captureResult.Quality;
             if ((int)quality != 0)
             {
@@ -173,25 +172,27 @@ namespace NoID.Browser
                     NoIDServicePassword = NoID.Security.PasswordManager.GetPassword(NoIDServiceName);
                     
                     FingerPrintMinutias fingerprintMinutia = 
-                        new FingerPrintMinutias("", tmpCurrent, laterality, captureSiteSnoMedCode); //need to pass session id instead of patient cert id.
-                    noidFHIRProfile.OriginalDpi = tmpCurrent.OriginalDpi;
-
+                        new FingerPrintMinutias("", tmpCurrent, laterality, captureSite); //need to pass session id instead of patient cert id.
+                    //TODO: 
                     Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia, "DigitalPersona U.Are.U 4500", tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
                     HttpsClient dataTransport = new HttpsClient();
                     Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
                     dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
+                    string lateralityString = FHIRUtilities.LateralityToString(laterality);
+                    string captureSiteString = FHIRUtilities.CaptureSiteToString(captureSite);
 #if NAVIGATE
-                    string output = "Fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
+                    string output = lateralityString + " " + captureSiteString + " fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
                     DisplayOutput(output);
 #endif
                     // If match found, inform JavaScript that this is an returning patient for identity.
                     browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + laterality.ToString() + "');");
+                    if (laterality == FHIRUtilities.LateralitySnoMedCode.Left)
+                    {
+                        laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+                        _minutiaCaptureController = new MinutiaCaptureController();
+                    }
 
                     // If not match found, inform JavaScript that this is an new patient enrollment.  reset _minutiaCaptureController for right side.
-#if NAVIGATE
-                    DisplayOutput("Fingerprint accepted. Score = " + _minutiaCaptureController.BestScore);
-                    
-#endif
                 }
                 else
                 {
