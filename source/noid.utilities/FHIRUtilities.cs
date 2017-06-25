@@ -348,5 +348,15 @@ namespace NoID.Utilities
                     return LateralitySnoMedCode.Unknown;
             }
         }
+
+        public static uint SnoMedCaptureSiteNameToCode(string snoMedCodeName)
+        {
+            return (uint)Enum.Parse(typeof(CaptureSiteSnoMedCode), snoMedCodeName, true);
+        }
+
+        public static uint SnoMedLateralityNameToCode(string snoMedCodeName)
+        {
+            return (uint)Enum.Parse(typeof(LateralitySnoMedCode), snoMedCodeName, true);
+        }
     }
 }

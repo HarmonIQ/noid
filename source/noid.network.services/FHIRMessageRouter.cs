@@ -6,12 +6,13 @@ using System;
 using System.Web;
 using System.IO;
 using System.Web.Configuration;
+using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
-using SourceAFIS.Templates;
 using NoID.FHIR.Profile;
 using NoID.Utilities;
 using NoID.Match.Database.Client;
+using NoID.Match.Database.FingerPrint;
 
 namespace NoID.Network.Services
 {
@@ -24,10 +25,13 @@ namespace NoID.Network.Services
     public class FHIRMessageRouter
     {
         private PatientFHIRProfile _patientFHIRProfile;
+        private FingerPrintMatchDatabase dbMinutia;
         private string _responseText;
         private Patient _patient = null;
         private Media _biometics = null;
         private Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
+        private string _databaseDirectory = WebConfigurationManager.AppSettings["DatabaseLocation"];
+        private string _backupDatabaseDirectory = WebConfigurationManager.AppSettings["BackupLocation"];
         private Exception _exception;
 
         public FHIRMessageRouter(HttpContext context)
@@ -35,7 +39,7 @@ namespace NoID.Network.Services
             try
             {
                 Resource newResource = FHIRUtilities.StreamToFHIR(new StreamReader(context.Request.InputStream));
-
+                
                 switch (newResource.TypeName.ToLower())
                 {
                     case "patient":
@@ -50,10 +54,21 @@ namespace NoID.Network.Services
                         _biometics = (Media)newResource;
                         // TODO send to biometric match engine. If found, add patient reference to FHIR message.
                         // convert FHIR fingerprint message (_biometics) to AFIS template class
-                        Template template = ConvertFHIR.FHIRToTemplate(_biometics);
+                        Template probe = ConvertFHIR.FHIRToTemplate(_biometics);
+                        dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory, probe.NoID.LateralitySnoMedCode.ToString(), probe.NoID.CaptureSiteSnoMedCode.ToString());
+                        MinutiaResult minutiaResult = dbMinutia.SearchPatients(probe);
+                        if (minutiaResult.NoID.Length > 0)
+                        {
+                            // Fingerprint found in database
+                            //Score = idFound.Score;
+                            _responseText = minutiaResult.NoID;
+                        }
+                        else
+                        {
+                            _responseText = "No local database match.";
+                        }
 
                         if (!(SendBiometicsToSparkServer()))
-
                         {
                             _responseText = "Error sending Biometric Media FHIR message to the Spark FHIR endpoint. " + ExceptionString;
                         }

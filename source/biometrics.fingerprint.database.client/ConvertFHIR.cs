@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using SourceAFIS.Templates;
+using NoID.Utilities;
 
 namespace NoID.Match.Database.Client
 {
@@ -60,7 +61,6 @@ namespace NoID.Match.Database.Client
                                 GetNoID.RemoteNoID = id.Value;
                             }
                         }
-                        
                         break;
                     case "Patient":
                     case "NoID Profile":
@@ -118,7 +118,12 @@ namespace NoID.Match.Database.Client
                     templateBuilder.OriginalWidth = Int32.Parse(captureSiteExtension.Value.Extension[7].Value.ToString());
                     converted = new Template(templateBuilder);
                 }
+                string captureSiteCode = biometricFHIR.Extension[1].Value.Extension[1].Value.ToString();
+                string lateralityCode = biometricFHIR.Extension[1].Value.Extension[2].Value.ToString();
+
                 converted.NoID = FHIRToNoID(fhirMessage); //Gets the NoID Identifiers
+                converted.NoID.CaptureSiteSnoMedCode = FHIRUtilities.SnoMedCaptureSiteNameToCode(captureSiteCode);
+                converted.NoID.LateralitySnoMedCode  = UInt32.Parse(lateralityCode);
             }
             catch (Exception ex)
             {

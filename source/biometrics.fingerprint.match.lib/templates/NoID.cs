@@ -12,6 +12,8 @@ namespace SourceAFIS.Templates
         public string SessionID = "";
         public string LocalNoID = "";
         public string RemoteNoID = "";
+        public uint CaptureSiteSnoMedCode = 0;
+        public uint LateralitySnoMedCode = 0;
         public DateTime SessionStartDateTime = DateTime.UtcNow;
     }
 }
