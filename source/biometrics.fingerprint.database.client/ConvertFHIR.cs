@@ -35,12 +35,55 @@ namespace NoID.Match.Database.Client
             return converted;
         }
 
+        static SourceAFIS.Templates.NoID FHIRToNoID(Resource fhirMessage)
+        {
+            SourceAFIS.Templates.NoID GetNoID = null;
+            try
+            {
+                switch (fhirMessage.TypeName)
+                {
+                    case "Media":
+                        Media mediaBiometrics = (Media)fhirMessage;
+                        GetNoID = new SourceAFIS.Templates.NoID();
+                        foreach (Identifier id in mediaBiometrics.Identifier)
+                        {
+                            if (id.System.Contains("SessionID") == true)
+                            {
+                                GetNoID.SessionID = id.Value;
+                            }
+                            else if (id.System.Contains("LocalNoID") == true)
+                            {
+                                GetNoID.LocalNoID = id.Value;
+                            }
+                            else if (id.System.Contains("RemoteNoID") == true)
+                            {
+                                GetNoID.RemoteNoID = id.Value;
+                            }
+                        }
+                        
+                        break;
+                    case "Patient":
+                    case "NoID Profile":
+                        throw new Exception("Processing the " + fhirMessage.TypeName + " is not implemented yet.");
+                    default:
+                        throw new Exception("Could not convert FHIR resource type " + fhirMessage.TypeName + " to a minutia template class.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return GetNoID;
+        }
+
         static Template MediaFHIRToTemplate(Resource fhirMessage)
         {
             Template converted = null;
             try
             {
                 Media biometricFHIR = (Media)fhirMessage;
+                
                 Extension organizationExtension = null;
                 Extension captureSiteExtension = null;
                 uint n = 0;
@@ -75,6 +118,7 @@ namespace NoID.Match.Database.Client
                     templateBuilder.OriginalWidth = Int32.Parse(captureSiteExtension.Value.Extension[7].Value.ToString());
                     converted = new Template(templateBuilder);
                 }
+                converted.NoID = FHIRToNoID(fhirMessage); //Gets the NoID Identifiers
             }
             catch (Exception ex)
             {

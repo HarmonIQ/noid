@@ -8,9 +8,17 @@ namespace SourceAFIS.Templates
     [Serializable]
     public sealed class Template : ICloneable
     {
-        private string _noID;
+        private NoID _noID = new NoID();
 
+        /*
         public string NoID
+        {
+            get { return _noID; }
+            set { _noID = value; }
+        }
+        */
+
+        public NoID NoID
         {
             get { return _noID; }
             set { _noID = value; }

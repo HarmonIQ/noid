@@ -153,6 +153,7 @@
     <Compile Include="templates\CompactFormat.cs" />
     <Compile Include="templates\IsoFormat.cs" />
     <Compile Include="templates\ITemplateFormat.cs" />
+    <Compile Include="templates\NoID.cs" />
     <Compile Include="templates\SerializedFormat.cs" />
     <Compile Include="templates\Template.cs" />
     <Compile Include="templates\TemplateBuilder.cs" />

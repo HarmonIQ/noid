@@ -492,11 +492,12 @@ namespace NoID.FHIR.Profile
                         if (PatientCertificateID.Length > 0)
                         {
                             idPatientCertificate = new Identifier();
-                            idPatientCertificate.System = ServerName + "/fhir/PatientCertificateID";
+                            idPatientCertificate.System = ServerName + "/fhir/LocalNoID";
                             idPatientCertificate.Value = PatientCertificateID;
                             FingerPrintMedia.Identifier.Add(idPatientCertificate);
                         }
                     }
+                    // TODO: Add RemoteNoID.
 
                     foreach (var Minutia in fingerPrints.Minutiae)
                     {
