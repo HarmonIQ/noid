@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright © 2016-2017 NoID Developers. All rights reserved.
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+using System;
 using NoID.Cryptographic.Hash;
 
-namespace hash.tester
+namespace NoID.Cryptographic.Hash.Test
 {
-    class test
+    public class HashTest
     {
         static void Main(string[] args)
         {
