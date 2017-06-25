@@ -4,8 +4,8 @@
 
 using System;
 using System.Collections.Generic;
-using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
+using SourceAFIS.Templates;
 
 namespace NoID.Match.Database.Client
 {
@@ -43,6 +43,23 @@ namespace NoID.Match.Database.Client
                 switch (fhirMessage.TypeName)
                 {
                     case "Media":
+                        Media mediaBiometrics = (Media)fhirMessage;
+                        GetNoID = new SourceAFIS.Templates.NoID();
+                        foreach (Identifier id in mediaBiometrics.Identifier)
+                        {
+                            if (id.System.Contains("SessionID") == true)
+                            {
+                                GetNoID.SessionID = id.Value;
+                            }
+                            else if (id.System.Contains("LocalNoID") == true)
+                            {
+                                GetNoID.LocalNoID = id.Value;
+                            }
+                            else if (id.System.Contains("RemoteNoID") == true)
+                            {
+                                GetNoID.RemoteNoID = id.Value;
+                            }
+                        }
                         
                         break;
                     case "Patient":
@@ -66,6 +83,7 @@ namespace NoID.Match.Database.Client
             try
             {
                 Media biometricFHIR = (Media)fhirMessage;
+                
                 Extension organizationExtension = null;
                 Extension captureSiteExtension = null;
                 uint n = 0;
@@ -100,6 +118,7 @@ namespace NoID.Match.Database.Client
                     templateBuilder.OriginalWidth = Int32.Parse(captureSiteExtension.Value.Extension[7].Value.ToString());
                     converted = new Template(templateBuilder);
                 }
+                converted.NoID = FHIRToNoID(fhirMessage); //Gets the NoID Identifiers
             }
             catch (Exception ex)
             {
