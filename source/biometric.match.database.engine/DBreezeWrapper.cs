@@ -43,6 +43,12 @@ namespace NoID.Match.Database
                 directoryInfo.Create();
             }
 
+            directoryInfo = new DirectoryInfo(backupDirectoryPath);
+            if (directoryInfo.Exists == false)
+            {
+                directoryInfo.Create();
+            }
+
             try
             {
                 _configDBreeze = new DBreezeConfiguration();
@@ -60,6 +66,11 @@ namespace NoID.Match.Database
 
         ~DBreezeWrapper()
         {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
             try
             {
                 if (_configDBreeze != null)
@@ -73,7 +84,7 @@ namespace NoID.Match.Database
                 if (_backup != null)
                 {
                     _dBreezeEngine.Dispose();
-                } 
+                }
             }
             catch { }
         }

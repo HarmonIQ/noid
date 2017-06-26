@@ -55,12 +55,13 @@ namespace NoID.Network.Client
                 if (!(_payloadJSON is null))
                     SetBodyAndContentType(request, _payloadJSON, ResourceFormat.Json, true, out output);
 
+                /*
                 if (!(_payloadProtoBuff is null))
                 {
                     output = _payloadProtoBuff.Serialize();
                     request.ContentType = "Binary";
                 }
-
+                */
                 request.GetRequestStream().Write(output, 0, output.Length);
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 using (Stream stream = response.GetResponseStream())

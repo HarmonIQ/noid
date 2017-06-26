@@ -61,8 +61,6 @@ namespace NoID.Utilities
             string jsonString;
             try
             {
-                //byte[] body = FhirSerializer.SerializeToJsonBytes(_fhir, summary: Hl7.Fhir.Rest.SummaryType.False);
-                //jsonString = StringUtilities.ByteArrayToString(body);
                 jsonString = _fhir.ToString();
             }
             catch (Exception ex)
@@ -70,6 +68,103 @@ namespace NoID.Utilities
                 throw ex;
             }
             return jsonString;
+        }
+
+        public static Patient CreateTestFHIRPatientProfile
+            (
+                string organizationName, string sessionID, string internalNoID, string language, string birthDate,
+                string genderCode, string multipleBirth, string firstName, string middleName, string lastName,
+                string address1, string address2, string city, string state, string postalCode,
+                string homePhone, string cellPhone, string workPhone, string emailAddress
+            )
+        {
+            Patient pt = new Patient();
+            Identifier idSession;
+            Identifier idPatientCertificate;
+
+            idSession = new Identifier();
+            idSession.System = "http://www.mynoid.com/fhir/SessionID";
+            idSession.Value = sessionID;
+            pt.Identifier.Add(idSession);
+
+            idPatientCertificate = new Identifier();
+            idPatientCertificate.System = "http://www.mynoid.com/fhir/PatientCertificateID";
+            idPatientCertificate.Value = internalNoID;
+            pt.Identifier.Add(idPatientCertificate);
+
+            ResourceReference managingOrganization = new ResourceReference(NoID_OID, organizationName);
+            pt.ManagingOrganization = managingOrganization;
+
+            pt.Language = language;
+            pt.BirthDate = birthDate;
+            if (genderCode.Substring(0,1).ToLower() == "f")
+            {
+                pt.Gender = AdministrativeGender.Female;
+            }
+            else if (genderCode.Substring(0, 1).ToLower() == "m")
+            {
+                pt.Gender = AdministrativeGender.Male;
+            }
+            else
+            {
+                pt.Gender = AdministrativeGender.Other;
+            }
+            
+            // just use Yes or No
+            if (multipleBirth.ToLower() == "no")
+            {
+                pt.MultipleBirth = new FhirString(multipleBirth);
+            }
+            else
+            {
+                pt.MultipleBirth = new FhirString("Yes");
+            }
+            
+            // Add patient name
+            HumanName ptName = new HumanName();
+            ptName.Given = new string[] { firstName, middleName };
+            ptName.Family = lastName;
+            pt.Name = new List<HumanName> { ptName };
+            // Add patient address
+            Address address = new Address();
+            address.Line = new string[] { address1, address2 };
+            address.City = city;
+            address.State = state;
+            address.Country = "USA";
+            address.PostalCode = postalCode;
+            pt.Address.Add(address);
+
+            Patient.ContactComponent contact = new Patient.ContactComponent();
+            bool addContact = false;
+            if (!(emailAddress != null) && emailAddress.Length > 0)
+            {
+                ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, emailAddress);
+                contact.Telecom.Add(newContact);
+                addContact = true;
+            }
+            if (!(homePhone != null) && homePhone.Length > 0)
+            {
+                ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Home, homePhone);
+                contact.Telecom.Add(newContact);
+                addContact = true;
+            }
+            if (!(cellPhone != null) && cellPhone.Length > 0)
+            {
+                ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, cellPhone);
+                contact.Telecom.Add(newContact);
+                addContact = true;
+            }
+            if (!(workPhone != null) && workPhone.Length > 0)
+            {
+                ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Work, workPhone);
+                contact.Telecom.Add(newContact);
+                addContact = true;
+            }
+            if (addContact)
+            {
+                pt.Contact.Add(contact);
+            }
+            return pt;
         }
 
         public static Patient CreateTestFHIRPatientProfile()
@@ -347,6 +442,16 @@ namespace NoID.Utilities
                 default:
                     return LateralitySnoMedCode.Unknown;
             }
+        }
+
+        public static uint SnoMedCaptureSiteNameToCode(string snoMedCodeName)
+        {
+            return (uint)Enum.Parse(typeof(CaptureSiteSnoMedCode), snoMedCodeName, true);
+        }
+
+        public static uint SnoMedLateralityNameToCode(string snoMedCodeName)
+        {
+            return (uint)Enum.Parse(typeof(LateralitySnoMedCode), snoMedCodeName, true);
         }
     }
 }

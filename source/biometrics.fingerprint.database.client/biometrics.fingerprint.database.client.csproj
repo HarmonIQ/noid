@@ -65,6 +65,10 @@
       <Project>{0f1d6fcb-f813-4e2f-9d6c-de4bd7866233}</Project>
       <Name>biometrics.fingerprint.match.lib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\noid.utilities\noid.utilities.csproj">
+      <Project>{c0c23c18-5406-4415-8def-3d11eb6a5fce}</Project>
+      <Name>noid.utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
