@@ -136,25 +136,25 @@ namespace NoID.Utilities
 
             Patient.ContactComponent contact = new Patient.ContactComponent();
             bool addContact = false;
-            if (!(emailAddress != null) && emailAddress.Length > 0)
+            if ((emailAddress != null) && emailAddress.Length > 0)
             {
                 ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, emailAddress);
                 contact.Telecom.Add(newContact);
                 addContact = true;
             }
-            if (!(homePhone != null) && homePhone.Length > 0)
+            if ((homePhone != null) && homePhone.Length > 0)
             {
                 ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Home, homePhone);
                 contact.Telecom.Add(newContact);
                 addContact = true;
             }
-            if (!(cellPhone != null) && cellPhone.Length > 0)
+            if ((cellPhone != null) && cellPhone.Length > 0)
             {
                 ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, cellPhone);
                 contact.Telecom.Add(newContact);
                 addContact = true;
             }
-            if (!(workPhone != null) && workPhone.Length > 0)
+            if ((workPhone != null) && workPhone.Length > 0)
             {
                 ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Work, workPhone);
                 contact.Telecom.Add(newContact);

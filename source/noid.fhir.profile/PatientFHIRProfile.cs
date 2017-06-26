@@ -85,7 +85,31 @@ namespace NoID.FHIR.Profile
                 }
                 if (loadPatient.Contact.Count > 0)
                 {
-                    //TODO: Load contact information, email, phones.
+                    foreach(var contact in loadPatient.Contact)
+                    {
+                        foreach (var telecom in contact.Telecom)
+                        {
+                            if (telecom.Use.ToString().ToLower() == "home")
+                            {
+                                if (telecom.System.ToString().ToLower() == "email")
+                                {
+                                    EmailAddress = telecom.Value.ToString();
+                                }
+                                else if (telecom.System.ToString().ToLower() == "phone")
+                                {
+                                    PhoneHome = telecom.Value.ToString();
+                                }
+                            }
+                            else if (telecom.Use.ToString().ToLower() == "work")
+                            {
+                                PhoneWork = telecom.Value.ToString();
+                            }
+                            else if (telecom.Use.ToString().ToLower() == "mobile")
+                            {
+                                PhoneCell = telecom.Value.ToString();
+                            }
+                        }
+                    }
                 }
             }
             else
