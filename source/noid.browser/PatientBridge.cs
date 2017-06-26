@@ -21,11 +21,9 @@ namespace NoID.Browser
 
     class PatientBridge : CEFBridge
     {
-        
-
-        //default capture site and laterality.
-        FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
-        FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+        // default capture site and laterality.
+        FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
+        FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
         SourceAFIS.Templates.NoID _noID;
         PatientFHIRProfile _patientFHIRProfile;
 
@@ -77,7 +75,6 @@ namespace NoID.Browser
         {
             try
             {
-
                 _patientFHIRProfile.Language = language;
                 _patientFHIRProfile.LastName = lastName;
                 _patientFHIRProfile.FirstName = firstName;
@@ -117,6 +114,36 @@ namespace NoID.Browser
                 return false;
             }
             return true;
+        }
+
+        //postChangePage
+        //  C# -> Javascript function is NoIDBridge.postChangePage( <params> )
+        public bool postChangePage(string newPageName)
+        {
+            bool result = false;
+            try
+            {
+                /*
+                onclick="setCurrentPage('SelectLanguage');"
+                onclick="setCurrentPage('SelectNewOrReturn');"
+                onclick="setCurrentPage('ConsentAgreement');"
+                onclick="setCurrentPage('SelectLeftFinger');"
+                onclick="setCurrentPage('SelectRightFinger');"
+                onclick="setCurrentPage('EnterDemographics');"
+                onclick="setCurrentPage('EnterContactInfo');"
+                onclick="setCurrentPage('SelectHub');"
+                onclick="setCurrentPage('EnterPassword');"
+                onclick="setCurrentPage('ReviewEnrollment');"
+                onclick="setCurrentPage('EnrollmentComplete');"
+                */
+                currentPage = newPageName;
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                errorDescription = ex.Message;
+            }
+            return result;
         }
 
         private string formatDateOfBirth(string year, string month, string day)
@@ -202,8 +229,8 @@ namespace NoID.Browser
         private void ResetVariables()
         {
             alertFunction = "";
-            _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
-            _laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+            _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
+            _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
             _noID = new SourceAFIS.Templates.NoID();
             _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
         }

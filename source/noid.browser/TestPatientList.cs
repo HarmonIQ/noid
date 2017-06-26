@@ -37,7 +37,7 @@ namespace NoID.Browser
                 (
                 organizationName, Guid.NewGuid().ToString(), "", "English", "1992-10-30", "F", "Yes",
                 "Christine", "J", "Pinkentinfuter", "2088 N 23nd St.", "Unit 51", "New York", "NY", "10012-0159",
-                "", "", "", ""
+                "", "318-777-8888", "318-222-4111", "Christine@Pinkentinfuter.com"
                 );
 
             newProfile = new PatientProfile(organizationName, endPoint, testPatient);
@@ -48,7 +48,7 @@ namespace NoID.Browser
                 (
                 organizationName, Guid.NewGuid().ToString(), "", "English", "1954-02-19", "M", "No",
                 "Mitchel", "James", "Hendrichs", "2442 Bleaker St.", "Apt 722", "New York", "NY", "10503-04855",
-                "212-111-1234", "", "", ""
+                "212-111-1234", "", "", "jhendrichs@gtestmail.com"
                 );
 
             newProfile = new PatientProfile(organizationName, endPoint, testPatient);
