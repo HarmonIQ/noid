@@ -11,6 +11,7 @@ using ProtoBuf;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
 using NoID.Utilities;
+using System.Linq;
 
 namespace NoID.FHIR.Profile
 {
@@ -18,65 +19,229 @@ namespace NoID.FHIR.Profile
     /// <summary cref="PatientFHIRProfileSerialize">  
     /// Lightweight NoID Patient FHIR profile
     /// </summary>  
-    [ProtoContract]
-    public abstract class PatientFHIRProfileSerialize
+    public class PatientProfile
     {
-        public byte[] Serialize()
-        {
-            byte[] result;
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, this);
-                result = stream.ToArray();
-            }
-            return result;
-        }
-    }
-
-    [ProtoContract]
-    public class PatientFHIRProfile : PatientFHIRProfileSerialize
-    { 
-        private string FingerTipSnoMedCTCode(FHIRUtilities.CaptureSiteSnoMedCode fingerTip)
-        {
-            return fingerTip.ToString();
-        }
-
-        private string SnoMedCTLaterality(FHIRUtilities.LateralitySnoMedCode laterality)
-        {
-            return laterality.ToString();
-        }
-
-        public PatientFHIRProfile(string organizationName, Uri fhirAddress)
-        {
-            _fhirAddress = fhirAddress;
-            _organizationName = organizationName;
-            NewSession();
-        }
-
+        private SourceAFIS.Templates.NoID _noID;
+        private readonly string _organizationName;
         private readonly Uri _fhirAddress;
-        private Exception _exception;
 
-        private string _organizationName = "";
         private string _language = "";
         private string _firstName = "";
         private string _lastName = "";
         private string _middleName = "";
-        private AdministrativeGender _gender;
-        private string _birthDay = "";
+        private string _gender; // F, M or O
+        private string _birthDate = "";
         private string _streetAddress = "";
         private string _streetAddress2;
         private string _city = "";
         private string _state = "";
-        private string _country = "";  
+        private string _country = "";
         private string _postalCode = "";
         private string _phoneHome = "";
         private string _phoneCell = "";
         private string _phoneWork = "";
         private string _emailAddress = "";
-        private bool   _twinIndicator = false;
-        private Element _multipleBirth;
-        private string _patientCertificateID;
-        private string _sessionID;
+        private string _multipleBirth; //Yes or No
+
+        public PatientProfile(string organizationName, Uri fhirAddress)
+        {
+            _organizationName = organizationName;
+            _fhirAddress = fhirAddress;
+            _noID = new SourceAFIS.Templates.NoID();
+        }
+
+        public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient)
+        {
+            _organizationName = organizationName;
+            _fhirAddress = fhirAddress;
+            _noID = new SourceAFIS.Templates.NoID();
+            if (loadPatient != null)
+            {
+                _lastName   = loadPatient.Name[0].Family.ToString();
+                List<string> givenNames = loadPatient.Name[0].Given.ToList();
+                _firstName = givenNames[0].ToString();
+                if (givenNames.Count > 1)
+                {
+                    _middleName = givenNames[1].ToString();
+                }
+                
+                _gender = loadPatient.Gender.ToString().Substring(0, 1).ToUpper();
+                _birthDate = loadPatient.BirthDate.ToString();
+
+                if (loadPatient.Address.Count > 0)
+                {
+                    List<string> addressLines = loadPatient.Address[0].Line.ToList();
+                    _streetAddress = addressLines[0].ToString();
+                    if (addressLines.Count > 1)
+                    {
+                        _streetAddress2 = addressLines[1].ToString();
+                    }
+                   
+                    _city = loadPatient.Address[0].City.ToString();
+                    _state = loadPatient.Address[0].State.ToString();
+                    _postalCode = loadPatient.Address[0].PostalCode.ToString();
+                    _country = loadPatient.Address[0].Country.ToString();
+                }
+                if (loadPatient.Contact.Count > 0)
+                {
+                    //TODO: Load contact information, email, phones.
+                }
+            }
+            else
+            {
+                throw new Exception("Error in PatientProfile constructor.  loadPatient is null.");
+            }
+        }
+
+        ~PatientProfile() { }
+
+        public void NewSession()
+        {
+            _noID = new SourceAFIS.Templates.NoID();
+            _noID.SessionID = sha256Hash(Guid.NewGuid().ToString());
+        }
+
+        public Uri FHIRAddress
+        {
+            get { return _fhirAddress; }
+        }
+
+        public string OrganizationName
+        {
+            get { return _organizationName; }
+        }
+
+        public string PatientCertificateID
+        {
+            get { return _noID.LocalNoID; }
+            set { _noID.LocalNoID = value; }
+        }
+
+        public string SessionID
+        {
+            get { return _noID.SessionID; }
+            private set { _noID.SessionID = value; }
+        }
+
+        public string Language
+        {
+            get { return _language; }
+            set { _language = value; }
+        }
+
+        public string FirstName
+        {
+            get { return _firstName; }
+            set { _firstName = value; }
+        }
+
+        public string LastName
+        {
+            get { return _lastName; }
+            set { _lastName = value; }
+        }
+
+        public string MiddleName
+        {
+            get { return _middleName; }
+            set { _middleName = value; }
+        }
+
+        public string Gender
+        {
+            get { return _gender; }
+            set { _gender = value; }
+        }
+
+        public string BirthDate
+        {
+            get { return _birthDate; }
+            set { _birthDate = value; }
+        }
+
+        public string StreetAddress
+        {
+            get { return _streetAddress; }
+            set { _streetAddress = value; }
+        }
+
+        public string StreetAddress2
+        {
+            get { return _streetAddress2; }
+            set { _streetAddress2 = value; }
+        }
+
+        public string City
+        {
+            get { return _city; }
+            set { _city = value; }
+        }
+
+        public string State
+        {
+            get { return _state; }
+            set { _state = value; }
+        }
+
+        public string PostalCode
+        {
+            get { return _postalCode; }
+            set { _postalCode = value; }
+        }
+
+        public string Country
+        {
+            get { return _country; }
+            set { _country = value; }
+        }
+
+        public string PhoneHome
+        {
+            get { return _phoneHome; }
+            set { _phoneHome = value; }
+        }
+
+        public string PhoneCell
+        {
+            get { return _phoneCell; }
+            set { _phoneCell = value; }
+        }
+
+        public string PhoneWork
+        {
+            get { return _phoneWork; }
+            set { _phoneWork = value; }
+        }
+
+        public string EmailAddress
+        {
+            get { return _emailAddress; }
+            set { _emailAddress = value; }
+        }
+
+        public string MultipleBirth
+        {
+            get { return _multipleBirth; }
+            set { _multipleBirth = value; }
+        }
+
+        private static string sha256Hash(string _value)
+        {
+            SHA256Managed crypt = new System.Security.Cryptography.SHA256Managed();
+            System.Text.StringBuilder hash = new System.Text.StringBuilder();
+            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(_value), 0, Encoding.UTF8.GetByteCount(_value));
+            foreach (byte theByte in crypto)
+            {
+                hash.Append(theByte.ToString("x2"));
+            }
+            return hash.ToString();
+        }
+    }
+
+    public class PatientFHIRProfile : PatientProfile
+    {
+
+        private Exception _exception;
 
         private FingerPrintMinutias _leftFingerPrints;
         private FingerPrintMinutias _rightFingerPrints;
@@ -87,34 +252,29 @@ namespace NoID.FHIR.Profile
         public int OriginalHeight;
         public int OriginalWidth;
 
+        public PatientFHIRProfile(string organizationName, Uri endPoint) : base(organizationName, endPoint)
+        {
+        }
+
+        public PatientFHIRProfile(string organizationName, Uri endPoint, Patient loadPatient) : base(organizationName, endPoint, loadPatient)
+        {
+        }
+
+        ~PatientFHIRProfile() { }
+
+        private string FingerTipSnoMedCTCode(FHIRUtilities.CaptureSiteSnoMedCode fingerTip)
+        {
+            return fingerTip.ToString();
+        }
+
+        private string SnoMedCTLaterality(FHIRUtilities.LateralitySnoMedCode laterality)
+        {
+            return laterality.ToString();
+        }
+
         public Exception Exception
         {
             get { return _exception; }
-        }
-
-        public Uri FHIRAddress
-        {
-            get { return _fhirAddress; }
-        }
-
-        public string PatientCertificateID
-        {
-            get { return _patientCertificateID; }
-            set { _patientCertificateID = value; }
-        }
-
-        [ProtoMember(1)]
-        public string SessionID
-        {
-            get { return _sessionID; }
-            private set { _organizationName = value; }
-        }
-
-        [ProtoMember(2)]
-        public string OrganizationName
-        {
-            get { return _organizationName; }
-            set { _organizationName = value; }
         }
 
         public string DomainName
@@ -123,7 +283,7 @@ namespace NoID.FHIR.Profile
             {
                 try
                 {
-                    return _fhirAddress.Host.Substring(_fhirAddress.Host.LastIndexOf('.', _fhirAddress.Host.LastIndexOf('.') - 1) + 1);
+                    return FHIRAddress.Host.Substring(FHIRAddress.Host.LastIndexOf('.', FHIRAddress.Host.LastIndexOf('.') - 1) + 1);
                 }
                 catch
                 {
@@ -136,131 +296,8 @@ namespace NoID.FHIR.Profile
         {
             get
             {
-                return _fhirAddress.GetLeftPart(UriPartial.Authority).ToString();
+                return FHIRAddress.GetLeftPart(UriPartial.Authority).ToString();
             }
-        }
-
-        public string Language
-        {
-            get { return _language; }
-            set { _language = value; }
-        }
-
-        [ProtoMember(3)]
-        public string FirstName
-        {
-            get { return _firstName; }
-            set { _firstName = value; }
-        }
-
-        [ProtoMember(4)]
-        public string LastName
-        {
-            get { return _lastName;}
-            set { _lastName = value; }
-        }
-
-        [ProtoMember(5)]
-        public string MiddleName
-        {
-            get { return _middleName; }
-            set { _middleName = value; }
-        }
-
-        public AdministrativeGender Gender
-        {
-            get { return _gender; }
-            set { _gender = value; }
-        }
-
-        [ProtoMember(6)]
-        public string BirthDay
-        {
-            get { return _birthDay; }
-            set { _birthDay = value; }
-        }
-
-        [ProtoMember(7)]
-        public string StreetAddress
-        {
-            get { return _streetAddress; }
-            set { _streetAddress = value; }
-        }
-
-        [ProtoMember(8)]
-        public string StreetAddress2
-        {
-            get { return _streetAddress2; }
-            set { _streetAddress2 = value; }
-        }
-
-        [ProtoMember(9)]
-        public string City
-        {
-            get { return _city; }
-            set { _city = value; }
-        }
-
-        [ProtoMember(10)]
-        public string State
-        {
-            get { return _state; }
-            set { _state = value; }
-        }
-
-        [ProtoMember(11)]
-        public string PostalCode
-        {
-            get { return _postalCode; }
-            set { _postalCode = value; }
-        }
-        
-        [ProtoMember(12)]
-        public string Country
-        {
-            get { return _country; }
-            set { _country = value; }
-        }
-
-        [ProtoMember(13)]
-        public string PhoneHome
-        {
-            get { return _phoneHome; }
-            set { _phoneHome = value; }
-        }
-
-        [ProtoMember(14)]
-        public string PhoneCell
-        {
-            get { return _phoneCell; }
-            set { _phoneCell = value; }
-        }
-       
-        [ProtoMember(15)]
-        public string PhoneWork
-        {
-            get { return _phoneWork; }
-            set { _phoneWork = value; }
-        }
-        
-        [ProtoMember(16)]
-        public string EmailAddress
-        {
-            get { return _emailAddress; }
-            set { _emailAddress = value; }
-        }
-        
-        [ProtoMember(17)]
-        public bool TwinIndicator
-        {
-            get { return _twinIndicator; }
-            set { _twinIndicator = value; }
-        }
-
-        public Element MultipleBirth
-        {
-            get { return _multipleBirth; }
-            set { _multipleBirth = value; }
         }
 
         public FingerPrintMinutias LeftFingerPrints
@@ -287,23 +324,6 @@ namespace NoID.FHIR.Profile
             set { _rightAlternateFingerPrints = value; }
         }
         
-        public void NewSession()
-        {
-            _sessionID = sha256Hash(Guid.NewGuid().ToString());
-        }
-
-        private static string sha256Hash(string _value)
-        {
-            SHA256Managed crypt = new System.Security.Cryptography.SHA256Managed();
-            System.Text.StringBuilder hash = new System.Text.StringBuilder();
-            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(_value), 0, Encoding.UTF8.GetByteCount(_value));
-            foreach (byte theByte in crypto)
-            {
-                hash.Append(theByte.ToString("x2"));
-            }
-            return hash.ToString();
-        }
-
         public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
         {
             try   
@@ -382,11 +402,30 @@ namespace NoID.FHIR.Profile
 
                 // Add patient demographics
                 pt.Language = Language;
-                pt.BirthDate = BirthDay;
-                pt.Gender = Gender;
-                if (!(MultipleBirth == null))
+                pt.BirthDate = BirthDate;
+                if (Gender.ToLower() == "f")
                 {
-                    pt.MultipleBirth = MultipleBirth;
+                    pt.Gender = AdministrativeGender.Female;
+                }
+                else if (Gender.ToLower() == "m")
+                {
+                    pt.Gender = AdministrativeGender.Male;
+                }
+                else
+                {
+                    pt.Gender = AdministrativeGender.Unknown;
+                }
+                
+                if (!(MultipleBirth == null) && MultipleBirth.Length > 0)
+                {
+                    if (MultipleBirth.ToLower() == "no")
+                    {
+                        pt.MultipleBirth = new FhirString("No");
+                    }
+                    else if (MultipleBirth.ToLower() == "yes")
+                    {
+                        pt.MultipleBirth = new FhirString("Yes");
+                    }
                 }
                 // Add patient name
                 HumanName ptName = new HumanName();
@@ -407,25 +446,25 @@ namespace NoID.FHIR.Profile
                 // Validate phone with UI.
                 Patient.ContactComponent contact = new Patient.ContactComponent();
                 bool addContact = false;
-                if (!(EmailAddress is null) && EmailAddress.Length > 0)
+                if (!(EmailAddress != null) && EmailAddress.Length > 0)
                 {
                     ContactPoint emailAddress = new ContactPoint(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, EmailAddress);
                     contact.Telecom.Add(emailAddress);
                     addContact = true;
                 }
-                if (!(PhoneHome is null) && PhoneHome.Length > 0)
+                if (!(PhoneHome != null) && PhoneHome.Length > 0)
                 {
                     ContactPoint phoneHome = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Home, PhoneHome);
                     contact.Telecom.Add(phoneHome);
                     addContact = true;
                 }
-                if (!(PhoneCell is null) && PhoneCell.Length > 0)
+                if (!(PhoneCell != null) && PhoneCell.Length > 0)
                 {
                     ContactPoint phoneCell = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, PhoneCell);
                     contact.Telecom.Add(phoneCell);
                     addContact = true;
                 }
-                if (!(PhoneWork is null) && PhoneWork.Length > 0)
+                if (!(PhoneWork != null) && PhoneWork.Length > 0)
                 {
                     ContactPoint phoneWork = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Work, PhoneWork);
                     contact.Telecom.Add(phoneWork);

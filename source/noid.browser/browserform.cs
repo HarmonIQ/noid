@@ -31,7 +31,8 @@ namespace NoID.Browser
     {
         private static AfisEngine Afis = new AfisEngine();
         private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
-        private static NoIDBridge bridge;
+        private PatientBridge _patientBridge;
+        private ProviderBridge _providerBridge;
 
         private const float PROBE_MATCH_THRESHOLD = 70;
         private readonly ChromiumWebBrowser browser;
@@ -64,45 +65,37 @@ namespace NoID.Browser
 
             switch (approle)
             {
-                case "enrollment-kiosk":
-                    endPath = healthcareNodeWebAddress + "/enrollment-kiosk.html";
+                case "patient":
+                case "patient-pc":
+                case "patient-kiosk":
+                    endPath = endPath = healthcareNodeWebAddress + "/enrollment.html"; //TODO: rename to patient.html
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
+                    _patientBridge = new PatientBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+                    browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     break;
-                case "enrollment-pc":
-                    endPath = endPath = healthcareNodeWebAddress + "/enrollment.html";
-                    break;
-                case "identity-kiosk":
-                    endPath = endPath = healthcareNodeWebAddress + "/identity-kiosk.html";
-                    break;
-                case "identity-pc":
-                    endPath = healthcareNodeWebAddress + "/identity.html";
-                    break;
-                case "patient-portal-kiosk":
-                    endPath = healthcareNodeWebAddress + "/patient-portal-kiosk.html";
-                    break;
-                case "patient-portal-pc":
-                    endPath = healthcareNodeWebAddress + "patient-portal-pc.html";
+                case "provider":
+                case "provider-pc":
+                case "provider-kiosk":
+                    endPath = healthcareNodeWebAddress + "/provider.html";
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
+                    _providerBridge = new ProviderBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+                    browser.RegisterJsObject("NoIDBridge", _providerBridge);
                     break;
                 case "healthcare-node-admin-kiosk":
-                    endPath = healthcareNodeWebAddress + "/healthcare-node-admin-kiosk.html";
-                    break;
                 case "healthcare-node-admin-pc":
-                    endPath = healthcareNodeWebAddress + "/healthcare-node-admin-pc.html";
+                    endPath = healthcareNodeWebAddress + "/healthcare.admin.html";
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     break;
                 case "match-hub-admin-kiosk":
-                    endPath = healthcareNodeWebAddress + "/match-hub-admin-kiosk.html";
-                    break;
                 case "match-hub-admin-pc":
-                    endPath = healthcareNodeWebAddress + "/match-hub-admin-pc.html";
+                    endPath = healthcareNodeWebAddress + "/hub.admin.html";
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     break;
                 default:
                     endPath = healthcareNodeWebAddress + "/enrollment.html";
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     break;
             }
-
-            browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
-            // Handles JavaScripts Events
-            bridge = new NoIDBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
-            browser.RegisterJsObject("NoIDBridge", bridge);
 
             biometricDevice = new DigitalPersona();
             if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
@@ -329,31 +322,125 @@ namespace NoID.Browser
 
         FHIRUtilities.LateralitySnoMedCode Laterality
         {
-            get { return bridge.laterality; }
-            set { bridge.laterality = value; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                       return _patientBridge.laterality;
+                }
+                else
+                {
+                    throw new Exception("Tried to access Laterality when _patientBridge is null");
+                }
+            }
+            set
+            {
+                if (_patientBridge != null)
+                {
+
+                    _patientBridge.laterality = value;
+                }
+                else
+                {
+                    throw new Exception("Tried to access Laterality when _patientBridge is null");
+                }
+            }
         }
 
         FHIRUtilities.CaptureSiteSnoMedCode CaptureSite
         {
-            get { return bridge.captureSite; }
-            set { bridge.captureSite = value; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.captureSite;
+                }
+                else
+                {
+                    throw new Exception("Tried to access CaptureSite when _patientBridge is null");
+                }
+            }
+            set
+            {
+                if (_patientBridge != null)
+                {
+
+                    _patientBridge.captureSite = value;
+                }
+                else
+                {
+                    throw new Exception("Tried to access CaptureSite when _patientBridge is null");
+                }
+            }
         }
 
         string SessionID
         {
-            get { return bridge.sessionID; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.sessionID;
+                }
+                else
+                {
+                    throw new Exception("Tried to access SessionID when _patientBridge is null");
+                }
+            }
         }
 
         string LocalNoID
         {
-            get { return bridge.localNoID; }
-            set { bridge.localNoID = value; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.localNoID;
+                }
+                else
+                {
+                    throw new Exception("Tried to access LocalNoID when _patientBridge is null");
+                }
+            }
+            set
+            {
+                if (_patientBridge != null)
+                {
+
+                    _patientBridge.localNoID = value;
+                }
+                else
+                {
+                    throw new Exception("Tried to access LocalNoID when _patientBridge is null");
+                }
+            }
         }
 
         string RemoteNoID
         {
-            get { return bridge.remoteNoID; }
-            set { bridge.remoteNoID = value; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.remoteNoID;
+                }
+                else
+                {
+                    throw new Exception("Tried to access RemoteNoID when _patientBridge is null");
+                }
+            }
+            set
+            {
+                if (_patientBridge != null)
+                {
+
+                    _patientBridge.remoteNoID = value;
+                }
+                else
+                {
+                    throw new Exception("Tried to access RemoteNoID when _patientBridge is null");
+                }
+            }
         }
     }
 }
