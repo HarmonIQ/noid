@@ -21,7 +21,7 @@ namespace NoID.Utilities
         public static readonly string Type_OID = "3.15.750.1.113883.6.40";
 
         private static readonly string FHIRDateExpression = "yyyy-MM-dd";
-        private static readonly string FHIRDateTimeExpression = "yyyy-MM-dd HH:mm:ss'-Z";
+        private static readonly string FHIRDateTimeExpression = "yyyy-MM-dd HH:mm:ss -Z";
 
         //TODO: add right and left feet
         public enum CaptureSiteSnoMedCode : uint
@@ -136,25 +136,25 @@ namespace NoID.Utilities
 
             Patient.ContactComponent contact = new Patient.ContactComponent();
             bool addContact = false;
-            if (!(emailAddress != null) && emailAddress.Length > 0)
+            if ((emailAddress != null) && emailAddress.Length > 0)
             {
                 ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, emailAddress);
                 contact.Telecom.Add(newContact);
                 addContact = true;
             }
-            if (!(homePhone != null) && homePhone.Length > 0)
+            if ((homePhone != null) && homePhone.Length > 0)
             {
                 ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Home, homePhone);
                 contact.Telecom.Add(newContact);
                 addContact = true;
             }
-            if (!(cellPhone != null) && cellPhone.Length > 0)
+            if ((cellPhone != null) && cellPhone.Length > 0)
             {
                 ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, cellPhone);
                 contact.Telecom.Add(newContact);
                 addContact = true;
             }
-            if (!(workPhone != null) && workPhone.Length > 0)
+            if ((workPhone != null) && workPhone.Length > 0)
             {
                 ContactPoint newContact = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Work, workPhone);
                 contact.Telecom.Add(newContact);

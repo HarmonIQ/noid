@@ -3,15 +3,11 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
-using System.IO;
-using System.Text;
+using System.Linq;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using ProtoBuf;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
 using NoID.Utilities;
-using System.Linq;
 
 namespace NoID.FHIR.Profile
 {
@@ -43,6 +39,8 @@ namespace NoID.FHIR.Profile
         private string _phoneWork = "";
         private string _emailAddress = "";
         private string _multipleBirth = ""; //Yes or No
+        private string _noidStatus = ""; //new, return, error or critical
+        private string _checkinDateTime = "";
 
         public PatientProfile(string organizationName, Uri fhirAddress)
         {
@@ -51,13 +49,52 @@ namespace NoID.FHIR.Profile
             _noID = new SourceAFIS.Templates.NoID();
         }
 
-        public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient)
+        public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient, string noidStatus, DateTime checkinDateTime)
         {
             _organizationName = organizationName;
             _fhirAddress = fhirAddress;
-            _noID = new SourceAFIS.Templates.NoID();
+            _noidStatus = noidStatus;
+            _checkinDateTime = FHIRUtilities.DateTimeToFHIRString(checkinDateTime);
+
             if (loadPatient != null)
             {
+                _noID = new SourceAFIS.Templates.NoID();
+                // Gets the identifiers from the patient FHIR resource class
+                if (loadPatient.Identifier.Count > 0)
+                {
+                    Identifier identifier = loadPatient.Identifier[0];
+
+                    if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
+                    {
+                        _noID.SessionID = identifier.Value.ToString();
+                    }
+                    else if (identifier.System.ToString().ToLower().Contains("local") == true)
+                    {
+                        _noID.LocalNoID = identifier.Value.ToString();
+                    }
+                    else if (identifier.System.ToString().ToLower().Contains("remote") == true)
+                    {
+                        _noID.RemoteNoID = identifier.Value.ToString();
+                    }
+
+                    if (loadPatient.Identifier.Count > 1)
+                    {
+                        identifier = loadPatient.Identifier[1];
+                        if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
+                        {
+                            _noID.SessionID = identifier.Value.ToString();
+                        }
+                        else if (identifier.System.ToString().ToLower().Contains("local") == true)
+                        {
+                            _noID.LocalNoID = identifier.Value.ToString();
+                        }
+                        else if (identifier.System.ToString().ToLower().Contains("remote") == true)
+                        {
+                            _noID.RemoteNoID = identifier.Value.ToString();
+                        }
+                    }
+                }
+                // Gets the demographics from the patient FHIR resource class
                 _lastName   = loadPatient.Name[0].Family.ToString();
                 List<string> givenNames = loadPatient.Name[0].Given.ToList();
                 _firstName = givenNames[0].ToString();
@@ -65,10 +102,10 @@ namespace NoID.FHIR.Profile
                 {
                     _middleName = givenNames[1].ToString();
                 }
-                
                 _gender = loadPatient.Gender.ToString().Substring(0, 1).ToUpper();
                 _birthDate = loadPatient.BirthDate.ToString();
 
+                // Gets the address information from the patient FHIR resource class
                 if (loadPatient.Address.Count > 0)
                 {
                     List<string> addressLines = loadPatient.Address[0].Line.ToList();
@@ -83,9 +120,34 @@ namespace NoID.FHIR.Profile
                     _postalCode = loadPatient.Address[0].PostalCode.ToString();
                     _country = loadPatient.Address[0].Country.ToString();
                 }
+                // Gets the contact information from the patient FHIR resource class
                 if (loadPatient.Contact.Count > 0)
                 {
-                    //TODO: Load contact information, email, phones.
+                    foreach(var contact in loadPatient.Contact)
+                    {
+                        foreach (var telecom in contact.Telecom)
+                        {
+                            if (telecom.Use.ToString().ToLower() == "home")
+                            {
+                                if (telecom.System.ToString().ToLower() == "email")
+                                {
+                                    EmailAddress = telecom.Value.ToString();
+                                }
+                                else if (telecom.System.ToString().ToLower() == "phone")
+                                {
+                                    PhoneHome = telecom.Value.ToString();
+                                }
+                            }
+                            else if (telecom.Use.ToString().ToLower() == "work")
+                            {
+                                PhoneWork = telecom.Value.ToString();
+                            }
+                            else if (telecom.Use.ToString().ToLower() == "mobile")
+                            {
+                                PhoneCell = telecom.Value.ToString();
+                            }
+                        }
+                    }
                 }
             }
             else
@@ -99,7 +161,7 @@ namespace NoID.FHIR.Profile
         public void NewSession()
         {
             _noID = new SourceAFIS.Templates.NoID();
-            _noID.SessionID = sha256Hash(Guid.NewGuid().ToString());
+            _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
         }
 
         public Uri FHIRAddress
@@ -226,16 +288,16 @@ namespace NoID.FHIR.Profile
             set { _multipleBirth = value; }
         }
 
-        private static string sha256Hash(string _value)
+        public string NoIDStatus
         {
-            SHA256Managed crypt = new System.Security.Cryptography.SHA256Managed();
-            System.Text.StringBuilder hash = new System.Text.StringBuilder();
-            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(_value), 0, Encoding.UTF8.GetByteCount(_value));
-            foreach (byte theByte in crypto)
-            {
-                hash.Append(theByte.ToString("x2"));
-            }
-            return hash.ToString();
+            get { return _noidStatus; }
+            set { _noidStatus = value; }
+        }
+
+        public string CheckinDateTime
+        {
+            get { return _checkinDateTime; }
+            set { _checkinDateTime = value; }
         }
     }
 
@@ -257,7 +319,7 @@ namespace NoID.FHIR.Profile
         {
         }
 
-        public PatientFHIRProfile(string organizationName, Uri endPoint, Patient loadPatient) : base(organizationName, endPoint, loadPatient)
+        public PatientFHIRProfile(string organizationName, Uri endPoint, Patient loadPatient, string noidStatus, DateTime checkinDateTime) : base(organizationName, endPoint, loadPatient, noidStatus, checkinDateTime)
         {
         }
 
@@ -583,16 +645,6 @@ namespace NoID.FHIR.Profile
                 }
             }
             return true;
-        }
-
-        public static PatientFHIRProfile Deserialize(byte[] message)
-        {
-            PatientFHIRProfile result;
-            using (var stream = new MemoryStream(message))
-            {
-                result = Serializer.Deserialize<PatientFHIRProfile>(stream);
-            }
-            return result;
         }
     }
 }

@@ -313,7 +313,7 @@
                                     </div>
                                 </div>
                                 <ul class="list-inline">
-                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                    <li><button type="button" onclick="setCurrentPage('ConsentAgreement');" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                                 </ul>
                                 <ul class="list-inline pull-right pull-right2">
                                     <li><button disabled onclick="setLateralitySite('selectRightIndex');" id="leftFingerNextButton" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button>
@@ -352,10 +352,10 @@
                                 </div>
                                 </div>
                             <ul class="list-inline">
-                                <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                <li><button type="button" onclick="setLateralitySite('selectLeftIndex');" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button disabled id="rightFingerNextButton" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button disabled id="rightFingerNextButton" onclick="setCurrentPage('ConsentAgreement');" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <!--<div class="tab-pane" role="tabpanel" id="step6">
@@ -621,10 +621,10 @@
                                 </div>
                             </div>
                             <ul class="list-inline">
-                                <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                <li><button type="button" onclick="setLateralitySite('selectRightIndex');"  class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button type="button" onclick="setCurrentPage('EnterContactInfo');"  class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="step7">
@@ -679,10 +679,10 @@
                                 </div>
                             </div>
                             <ul class="list-inline">
-                                <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                <li><button type="button" onclick="setCurrentPage('EnterDemographics');" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button type="button" onclick="setCurrentPage('EnterAdditionalInfo');" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="step8">
@@ -725,10 +725,10 @@
                                 </div>
                             </div>
                             <ul class="list-inline">
-                                <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                <li><button type="button" onclick="setCurrentPage('EnterContactInfo');" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button type="button" onclick="setCurrentPage('SelectHub');" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="step9">
@@ -757,10 +757,10 @@
                                 </div>
                             </div>
                             <ul class="list-inline">
-                                <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                <li><button type="button" onclick="setCurrentPage('SelectHub');" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button type="button" onclick="setCurrentPage('EnterPassword');" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="step10">
@@ -788,7 +788,7 @@
                                 </div>
                             </div>
                             <ul class="list-inline">
-                                <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                <li><button type="button" onclick="setCurrentPage('EnterPassword');" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
                                 <li><button onclick="populateReviewPage();" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
@@ -893,7 +893,7 @@
                                 </div>
                             </div>
                             <ul class="list-inline">
-                                <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
+                                <li><button type="button" onclick="setCurrentPage('EnrollmentComplete');" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
                                 <li><button onclick="savePatient();" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Submit</button></li>
