@@ -49,8 +49,8 @@ namespace NoID.Network.Client.Test
             pt.LastName = "Williams";
             pt.FirstName = "Brianna";
             pt.MiddleName = "E.";
-            pt.BirthDay = "20030514";
-            pt.Gender = AdministrativeGender.Female;
+            pt.BirthDate = "20030514";
+            pt.Gender = AdministrativeGender.Female.ToString().Substring(0,1).ToUpper();
             pt.EmailAddress = "Test@gtest.com";
             pt.StreetAddress = "321 Easy St";
             pt.StreetAddress2 = "Unit 4A";

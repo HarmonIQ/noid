@@ -11,15 +11,17 @@ using NoID.Network.Transport;
 
 namespace NoID.Browser
 {
+    /// <summary>Binds JavaScript in the CEF browser with this .NET framework class.
+    /// <para> Used to handle the Patient UI and briges calls between CEF and .NET.</para>
+    /// <para> Uses JavaScript naming because CEF renames them anyways.</para>
+    /// <para> Use CEFBridge as a base class and contains</para>
+    /// <para> organizationName, endPoint, serviceName, errorDescription, alertFunction</para>
+    /// <seealso cref="CEFBridge"/>
+    /// </summary>
+
     class PatientBridge : CEFBridge
     {
-        /// <summary>Binds JavaScript in the CEF browser with this .NET framework class.
-        /// <para> Used to handle the Patient UI and briges calls between CEF and .NET.</para>
-        /// <para> Uses JavaScript naming because CEF renames them anyways.</para>
-        /// <para> Use CEFBridge as a base class and contains</para>
-        /// <para> organizationName, endPoint, serviceName, errorDescription, alertFunction</para>
-        /// <seealso cref="CEFBridge"/>
-        /// </summary>
+        
 
         //default capture site and laterality.
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;

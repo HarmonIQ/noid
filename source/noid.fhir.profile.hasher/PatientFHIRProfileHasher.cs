@@ -58,7 +58,7 @@ namespace NoID.FHIR.Profile.Hasher
 
         public string BirthDayHash
         {
-            get { return HashWriter.Hash(BirthDay, hashSalt, argonParams); }
+            get { return HashWriter.Hash(BirthDate, hashSalt, argonParams); }
         }
 
         public string StreetAddressHash
@@ -111,11 +111,6 @@ namespace NoID.FHIR.Profile.Hasher
         public string MultipleBirthHash
         {
             get { return HashWriter.Hash(MultipleBirth.ToString(), hashSalt, argonParams); }
-        }
-
-        public string TwinIndicatorHash
-        {
-            get { return HashWriter.Hash(TwinIndicator.ToString(), hashSalt, argonParams); }
         }
 
         public string LeftFingerPrintHash
