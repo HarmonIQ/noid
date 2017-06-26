@@ -28,7 +28,7 @@ namespace NoID.Browser
                 "212-555-3000", "212-555-7400", "212-555-9555", "donnakasick@yandex.com"
                 );
 
-            PatientProfile newProfile = new PatientProfile(organizationName, endPoint, testPatient);
+            PatientProfile newProfile = new PatientProfile(organizationName, endPoint, testPatient, "New", DateTime.UtcNow.AddMinutes(-3));
 
 
             newList.Add(newProfile);
@@ -40,7 +40,7 @@ namespace NoID.Browser
                 "", "318-777-8888", "318-222-4111", "Christine@Pinkentinfuter.com"
                 );
 
-            newProfile = new PatientProfile(organizationName, endPoint, testPatient);
+            newProfile = new PatientProfile(organizationName, endPoint, testPatient, "Return", DateTime.UtcNow.AddMinutes(-5));
 
             newList.Add(newProfile);
 
@@ -51,7 +51,7 @@ namespace NoID.Browser
                 "212-111-1234", "", "", "jhendrichs@gtestmail.com"
                 );
 
-            newProfile = new PatientProfile(organizationName, endPoint, testPatient);
+            newProfile = new PatientProfile(organizationName, endPoint, testPatient, "Return", DateTime.UtcNow.AddMinutes(-15));
 
             newList.Add(newProfile);
 
@@ -62,7 +62,7 @@ namespace NoID.Browser
                 "", "212-555-1234", "", "BrianODonald2001@yahoo.com"
                 );
 
-            newProfile = new PatientProfile(organizationName, endPoint, testPatient);
+            newProfile = new PatientProfile(organizationName, endPoint, testPatient, "New", DateTime.UtcNow.AddMinutes(-32));
 
             newList.Add(newProfile);
 
@@ -73,7 +73,7 @@ namespace NoID.Browser
                 "", "", "", ""
                 );
 
-            newProfile = new PatientProfile(organizationName, endPoint, testPatient);
+            newProfile = new PatientProfile(organizationName, endPoint, testPatient, "Return", DateTime.UtcNow.AddMinutes(-41));
 
             newList.Add(newProfile);
 
