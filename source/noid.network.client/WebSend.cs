@@ -14,6 +14,9 @@ using NoID.Security;
 
 namespace NoID.Network.Client
 {
+    /// <summary>Sends NoID Message from the client to a NoID webservice
+    /// </summary>
+    
     public class WebSend
     {
         private Uri _enpoint;

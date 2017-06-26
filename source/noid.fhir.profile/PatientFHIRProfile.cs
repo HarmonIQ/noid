@@ -19,6 +19,7 @@ namespace NoID.FHIR.Profile
     /// <summary cref="PatientFHIRProfileSerialize">  
     /// Lightweight NoID Patient FHIR profile
     /// </summary>  
+
     public class PatientProfile
     {
         private SourceAFIS.Templates.NoID _noID;
@@ -29,7 +30,7 @@ namespace NoID.FHIR.Profile
         private string _firstName = "";
         private string _lastName = "";
         private string _middleName = "";
-        private string _gender; // F, M or O
+        private string _gender = ""; // F, M or O
         private string _birthDate = "";
         private string _streetAddress = "";
         private string _streetAddress2;
@@ -41,7 +42,7 @@ namespace NoID.FHIR.Profile
         private string _phoneCell = "";
         private string _phoneWork = "";
         private string _emailAddress = "";
-        private string _multipleBirth; //Yes or No
+        private string _multipleBirth = ""; //Yes or No
 
         public PatientProfile(string organizationName, Uri fhirAddress)
         {
