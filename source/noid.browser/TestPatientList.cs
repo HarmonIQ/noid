@@ -25,7 +25,7 @@ namespace NoID.Browser
                 (
                 organizationName, Guid.NewGuid().ToString(), "", "English", "1961-04-22", "F", "No",
                 "Donna", "Marie", "Kasick", "4712 W 3rd St.", "Apt 35", "New York", "NY", "10000-2221",
-                "212-555-3000", "212-555-7400", "212-555-9555", ""
+                "212-555-3000", "212-555-7400", "212-555-9555", "donnakasick@yandex.com"
                 );
 
             PatientProfile newProfile = new PatientProfile(organizationName, endPoint, testPatient);

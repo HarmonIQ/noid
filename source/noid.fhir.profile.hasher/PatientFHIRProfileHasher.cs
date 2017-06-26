@@ -3,7 +3,6 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
-using Hl7.Fhir.Model;
 using NoID.Cryptographic.Hash;
 
 namespace NoID.FHIR.Profile.Hasher
@@ -19,7 +18,7 @@ namespace NoID.FHIR.Profile.Hasher
         HashWriter.ArgonParams argonParams = new HashWriter.ArgonParams(ARGON2_TIME_COST, ARGON2_MEMORY_COST, ARGON2_PARALLEL_LANES);
 
         //TODO: load and use saltList from matching hubs
-        private string hashSalt = "C560325F";
+        public string hashSalt = "C560325F";
 
         public PatientFHIRProfileHasher(string organizationName, Uri fhirAddress) : base(organizationName, fhirAddress)
         {
@@ -56,7 +55,7 @@ namespace NoID.FHIR.Profile.Hasher
             get { return HashWriter.Hash(Gender.ToString(), hashSalt, argonParams); }
         }
 
-        public string BirthDayHash
+        public string BirthDateHash
         {
             get { return HashWriter.Hash(BirthDate, hashSalt, argonParams); }
         }
