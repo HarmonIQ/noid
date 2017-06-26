@@ -21,7 +21,7 @@ namespace NoID.Utilities
         public static readonly string Type_OID = "3.15.750.1.113883.6.40";
 
         private static readonly string FHIRDateExpression = "yyyy-MM-dd";
-        private static readonly string FHIRDateTimeExpression = "yyyy-MM-dd HH:mm:ss'-Z";
+        private static readonly string FHIRDateTimeExpression = "yyyy-MM-dd HH:mm:ss -Z";
 
         //TODO: add right and left feet
         public enum CaptureSiteSnoMedCode : uint
