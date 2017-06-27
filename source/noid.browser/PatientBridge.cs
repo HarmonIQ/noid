@@ -30,7 +30,7 @@ namespace NoID.Browser
         public PatientBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
         {
             _noID = new SourceAFIS.Templates.NoID();
-            _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
+            _noID.SessionID = StringUtilities.GetNewSessionID();
             _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint);
         }
 
@@ -232,7 +232,7 @@ namespace NoID.Browser
             _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
             _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
             _noID = new SourceAFIS.Templates.NoID();
-            _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
+            _noID.SessionID = StringUtilities.GetNewSessionID();
         }
 
         public bool postResetForNewPatient()

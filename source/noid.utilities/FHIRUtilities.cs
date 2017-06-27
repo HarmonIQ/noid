@@ -203,6 +203,31 @@ namespace NoID.Utilities
             address.Country = "USA";
             address.PostalCode = "70112-1202";
             pt.Address.Add(address);
+            Attachment attach = new Attachment();
+            Media media = new Media();
+
+            
+            Extension extFingerPrintMedia = FHIRUtilities.FingerPrintMediaExtension(
+                            "123",
+                            "211",
+                            "43",
+                            "0"
+                        );
+
+            media.Extension.Add(extFingerPrintMedia);
+
+            extFingerPrintMedia = FHIRUtilities.FingerPrintMediaExtension(
+                            "180",
+                            "91",
+                            "211",
+                            "1"
+                        );
+
+            media.Extension.Add(extFingerPrintMedia);
+
+            attach.Data = FhirSerializer.SerializeToJsonBytes(media, summary: Hl7.Fhir.Rest.SummaryType.False);
+
+            pt.Photo.Add(attach);
 
             return pt;
         }
