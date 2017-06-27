@@ -23,13 +23,27 @@ namespace NoID.Browser
         private void buttonSave_Click(object sender, EventArgs e)
         {
             PasswordManager.SavePassword(maskedTextBoxPassword.Text, textBoxUserName.Text);
-            labelStatus.Text = "Status: Password Set";
+            string pwd = PasswordManager.GetPassword(textBoxUserName.Text);
+            if (pwd == maskedTextBoxPassword.Text)
+            {
+                labelStatus.Text = "Status: Password Set";
+            }
+            else
+            {
+                labelStatus.Text = "NoID Password Manager not working.  Password could not be saved in the Windows keystore.";
+            }
         }
 
         private void buttonTestAuthentication_Click(object sender, EventArgs e)
         {
             string username = textBoxUserName.Text;
             string pwd = PasswordManager.GetPassword(textBoxUserName.Text);
+            if (pwd.Length == 0)
+            {
+                labelStatus.Text = "Password in keystore is blank.";
+                return;
+            }
+
             Authentication auth = new Authentication(username, pwd);
             Uri endpoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
 
