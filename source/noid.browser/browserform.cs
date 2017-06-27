@@ -110,12 +110,12 @@ namespace NoID.Browser
             {
                 this.Close();
             }
-#if NAVIGATE
+#if DEBUG_OBJECTS
             toolStripContainer.ContentPanel.Controls.Add(browser);
 #else
             this.Controls.Add(browser);
 #endif
-#if NAVIGATE
+#if DEBUG_OBJECTS
             browser.StatusMessage += OnBrowserStatusMessage;
             browser.TitleChanged += OnBrowserTitleChanged;
 
@@ -135,21 +135,21 @@ namespace NoID.Browser
         {
             if (fBiometricsComplete == true)
             {
-#if NAVIGATE
+#if DEBUG_OBJECTS
                 DisplayOutput("Biometrics already captured and sent to web server. Ignoring this scan.");
 #endif
                 return;
             }
             if (fLoadWebService == true)
             {
-#if NAVIGATE
+#if DEBUG_OBJECTS
                 DisplayOutput("Capture occured while accessing the FHIR web services. Ignoring this scan.");
 #endif
                 return;
             }
             if (_patientBridge.captureSite != FHIRUtilities.CaptureSiteSnoMedCode.Unknown && _patientBridge.laterality != FHIRUtilities.LateralitySnoMedCode.Unknown)
             {
-#if NAVIGATE
+#if DEBUG_OBJECTS
                 DisplayOutput("Captured finger image....");
 #endif
             
@@ -160,7 +160,7 @@ namespace NoID.Browser
                 if ((int)quality != 0)
                 {
                     //call javascript to inform UI that the capture quality was too low to accept.
-#if NAVIGATE
+#if DEBUG_OBJECTS
                     DisplayOutput("Fingerprint quality was too low to accept. Quality = " + quality.ToString());
 
 #endif
@@ -210,7 +210,7 @@ namespace NoID.Browser
                         fLoadWebService = true;
                         dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
                         fLoadWebService = false;
-#if NAVIGATE
+#if DEBUG_OBJECTS
                         string lateralityString = FHIRUtilities.LateralityToString(Laterality);
                         string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);
                         string output = lateralityString + " " + captureSiteString + " fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
@@ -246,7 +246,7 @@ namespace NoID.Browser
                     {
                         // Good fingerprint pairs not found yet.  inform JavaScript to promt the patient to try again.
                         browser.GetMainFrame().ExecuteJavaScriptAsync("showFail('" + Laterality.ToString() + "');");
-#if NAVIGATE
+#if DEBUG_OBJECTS
                         DisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
 #endif
                         return;
@@ -255,13 +255,13 @@ namespace NoID.Browser
             }
             else
             {
-#if NAVIGATE
+#if DEBUG_OBJECTS
                 DisplayOutput("Must be on the correct page to accept a fingerprint scan.");
 #endif
             }
         }
         
-#if NAVIGATE
+#if DEBUG_OBJECTS
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
         {
             this.InvokeOnUiThreadIfRequired(() => statusLabel.Text = args.Value);
