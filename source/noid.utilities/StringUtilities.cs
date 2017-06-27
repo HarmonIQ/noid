@@ -72,5 +72,10 @@ namespace NoID.Utilities
             }
             return hash;
         }
+
+        public static string GetNewSessionID()
+        {
+            return SHA256(Guid.NewGuid().ToString());
+        }
     }
 }
