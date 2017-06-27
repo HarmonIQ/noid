@@ -7,8 +7,11 @@
 
 using System;
 using System.Windows.Forms;
+using Hl7.Fhir.Model;
 using CefSharp;
 using NoID.Security;
+using NoID.Utilities;
+using NoID.Network.Client;
 
 namespace NoID.Browser
 {
@@ -17,9 +20,28 @@ namespace NoID.Browser
         private static readonly string _serviceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
 
         [STAThread]
-        public static void Main()
+        public static void Main(string[] args)
         {
-            if (PasswordManager.GetPassword(_serviceName + "_Status") == "Successful")
+            if (args.Length > 0)
+            {
+                Utilities.Auth = new Authentication(_serviceName, args[0].ToString());
+                Uri endpoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+
+                Patient newPatient = FHIRUtilities.CreateTestFHIRPatientProfile();
+                WebSend ws = new WebSend(endpoint, Utilities.Auth, newPatient);
+                try
+                {
+                    ws.PostHttpWebRequest();
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Status: Authentication Failed " + ex.Message + " Closing NoID.");
+                    return;
+                }
+            }
+
+            if (Utilities.Auth != null || PasswordManager.GetPassword(_serviceName + "_Status") == "Successful")
             {
                 //For Windows 7 and above, best to include relevant app.manifest entries as well
                 Cef.EnableHighDPISupport();

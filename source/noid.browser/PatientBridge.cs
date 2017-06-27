@@ -98,7 +98,15 @@ namespace NoID.Browser
                 _patientFHIRProfile.EmailAddress = emailAddress;
                 _patientFHIRProfile.PhoneCell = phoneCell;
                 // Send FHIR message
-                Authentication auth = SecurityUtilities.GetAuthentication(serviceName);
+                Authentication auth;
+                if (Utilities.Auth == null)
+                {
+                    auth = SecurityUtilities.GetAuthentication(serviceName);
+                }
+                else
+                {
+                    auth = Utilities.Auth;
+                }
                 HttpsClient client = new HttpsClient();
                 Patient pt = _patientFHIRProfile.CreateFHIRPatientProfile();
                 if (client.SendFHIRPatientProfile(endPoint, auth, pt) == false)
