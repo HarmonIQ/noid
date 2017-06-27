@@ -13,6 +13,24 @@
     <script type="text/javascript" src="scripts/noid_enrollment.js"></script>
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+    <style type="text/css">
+        table tbody, table thead {
+            display: block;
+        }
+
+        table tbody {
+            overflow: auto;
+            height: 200px;
+        }
+
+        table {
+            width: 500px; /* can be dynamic */
+        }
+
+        th {
+            width: 75px;
+        }
+    </style>
 </head>
 <body onload="populateApprovalTable();">
     <!--<nav class=" navbar navbar-default transparent navbar-fixed-top navbar-right">
@@ -80,7 +98,7 @@
                                                 <h4><div class="col-md-3" id="currentDateTime"></div></h4>
                                             </div>
                                             <div class="row">
-                                                <div id="divPatientApprovalQueueTable" class="col-md-9 divContentScroll">                                               
+                                                <div id="divPatientApprovalQueueTable" class="col-md-9">                                               
                                                 </div>                                                
                                             </div>
                                             <div class="row">
