@@ -127,6 +127,7 @@
       <DependentUpon>loginform.cs</DependentUpon>
     </Compile>
     <Compile Include="PatientBridge.cs" />
+    <Compile Include="PatientController.cs" />
     <Compile Include="program.cs">
     </Compile>
     <Compile Include="properties\assemblyinfo.cs" />
