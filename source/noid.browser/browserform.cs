@@ -192,14 +192,21 @@ namespace NoID.Browser
                     {
                         // Good pair found.
                         // Query web service for a match.
-                        string NoIDServicePassword = PasswordManager.GetPassword(NoIDServiceName);
-                    
                         FingerPrintMinutias fingerprintMinutia = 
                             new FingerPrintMinutias(SessionID, tmpCurrent, Laterality, CaptureSite); //need to pass session id instead of patient cert id.
 
                         Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
                         HttpsClient dataTransport = new HttpsClient();
-                        Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+                        
+                        Authentication auth;
+                        if (Utilities.Auth == null)
+                        {
+                            auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+                        }
+                        else
+                        {
+                            auth = Utilities.Auth;
+                        }
                         fLoadWebService = true;
                         dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
                         fLoadWebService = false;
