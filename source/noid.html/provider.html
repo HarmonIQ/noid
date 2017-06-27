@@ -14,7 +14,7 @@
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
 </head>
-<body>
+<body onload="populateApprovalTable();">
     <!--<nav class=" navbar navbar-default transparent navbar-fixed-top navbar-right">
         <div class="container">
             <ol class=" navbar-right">
@@ -80,296 +80,11 @@
                                                 <h4><div class="col-md-3" id="currentDateTime"></div></h4>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-9 divContentScroll">
-                                                    <table class="table table-striped  table-bordered">
-                                                        <thead>
-                                                          <tr>
-                                                            <th>In Time</th>
-                                                            <th>NoID Type</th>
-                                                            <th>Firstname</th>
-                                                            <th>Lastname</th>
-                                                            <th>DOB</th>
-                                                            <th>Approve</th>
-                                                            <th>Deny</th>
-                                                          </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                          <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                            <tr>
-                                                            <td>09:14</td>
-                                                            <td>New</td>
-                                                            <td>John</td>
-                                                            <td>Doe</td>
-                                                            <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:20</td>
-                                                              <td>Return</td>
-                                                            <td>Mary</td>
-                                                            <td>Moe</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                          <tr>
-                                                              <td>09:21</td>
-                                                              <td>Return</td>
-                                                            <td>July</td>
-                                                            <td>Dooley</td>
-                                                           <td>03/20/1960</td>
-                                                              <td><a href="javascript:void(0);">Approve</a></td>
-                                                              <td><a href="javascript:void(0);">Deny</a></td>
-                                                          </tr>
-                                                        </tbody>
-                                                      </table>
+                                                <div id="divPatientApprovalQueueTable" class="col-md-9 divContentScroll">                                               
                                                 </div>                                                
                                             </div>
                                             <div class="row">
-                                                <h4><div class="col-md-3" id="rowCount">Row Count: 3</div></h4>
+                                                <h4><div class="col-md-3" id="rowCount">Row Count: <span id="spnApprovalQueueCount"></span></div></h4>
                                             </div>
                                         </div>
                                     </div>
@@ -618,10 +333,28 @@
         function prevTab(elem) {
             $(elem).prev().find('a[data-toggle="tab"]').click();
         }
-        
-        
-        //according menu
-
+        function populateApprovalTable() {
+            document.getElementById('divPatientApprovalQueueTable').innerHTML = NoIDBridge.patientApprovalTable;
+            document.getElementById('spnApprovalQueueCount').innerText = NoIDBridge.patientApprovalTableRowCount;
+        };
+        //function approvePatient(sessionid) {
+        //    alert("approve: " + sessionid);
+        //};
+        //function denyPatient(sessionid) {
+        //    alert("deny: " + sessionid);
+        //};
+        function approvePatient(sessionid, action) {
+            NoIDBridge.postApproveOrDeny(sessionid, action);
+            if (NoIDBridge.errorDescription == '') {
+                //no error continue with new page
+                alert("postApproveOrDeny no error");
+            }
+            else {
+                //error, show user message
+                alert("postApproveOrDeny Error " + NoIDBridge.errorDescription);
+            }
+        }
+        //according menu        
         $(document).ready(function () {
             //Add Inactive Class To All Accordion Headers
             $('.accordion-header').toggleClass('inactive-header');
