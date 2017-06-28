@@ -47,60 +47,70 @@ function setLateralitySite(selectedElementID) {
             document.getElementById('spnLeftHandFinger').innerText = "Left Little Finger";
             document.getElementById('spnLeftHandFinger2').innerText = "Left Little Finger";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Little Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/LeftHandImageMapLittleFinger.jpg";  
             savelateralityCaptureSite("Left", "LittleFinger");
             break;
         case 'selectLeftRing':
             document.getElementById('spnLeftHandFinger').innerText = "Left Ring Finger";
             document.getElementById('spnLeftHandFinger2').innerText = "Left Ring Finger";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Ring Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/LeftHandImageMapRingFinger.jpg";  
             savelateralityCaptureSite("Left", "RingFinger");
             break;
         case 'selectLeftMiddle':
             document.getElementById('spnLeftHandFinger').innerText = "Left Middle Finger";
             document.getElementById('spnLeftHandFinger2').innerText = "Left Middle Finger";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Middle Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/LeftHandImageMapMiddleFinger.jpg";  
             savelateralityCaptureSite("Left", "MiddleFinger");
             break;
         case 'selectLeftIndex':           
             document.getElementById('spnLeftHandFinger').innerText = "Left Index Finger";
             document.getElementById('spnLeftHandFinger2').innerText = "Left Index Finger";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Index Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/LeftHandImageMapIndexFinger.jpg";  
             savelateralityCaptureSite("Left", "IndexFinger");
             break;
         case 'selectLeftThumb':
             document.getElementById('spnLeftHandFinger').innerText = "Left Thumb";
             document.getElementById('spnLeftHandFinger2').innerText = "Left Thumb";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Thumb</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/LeftHandImageMapThumb.jpg";  
             savelateralityCaptureSite("Left", "Thumb");
             break;            
         case 'selectRightLittle':
             document.getElementById('spnRightHandFinger').innerText = "Right Little Finger";
             document.getElementById('spnRightHandFinger2').innerText = "Right Little Finger";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Little Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/RightHandImageMapLittleFinger.jpg";  
             savelateralityCaptureSite("Right", "LittleFinger");
             break;
         case 'selectRightRing':
             document.getElementById('spnRightHandFinger').innerText = "Right Ring Finger";
             document.getElementById('spnRightHandFinger2').innerText = "Right Ring Finger";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Ring Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/RightHandImageMapRingFinger.jpg";  
             savelateralityCaptureSite("Right", "RingFinger");
             break;
         case 'selectRightMiddle':
             document.getElementById('spnRightHandFinger').innerText = "Right Middle Finger";
             document.getElementById('spnRightHandFinger2').innerText = "Right Middle Finger";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Middle Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/RightHandImageMapMiddleFinger.jpg";  
             savelateralityCaptureSite("Right", "MiddleFinger");
             break;
         case 'selectRightIndex':           
             document.getElementById('spnRightHandFinger').innerText = "Right Index Finger";
             document.getElementById('spnRightHandFinger2').innerText = "Right Index Finger";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Index Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/RightHandImageMapIndexFinger.jpg";  
             savelateralityCaptureSite("Right", "IndexFinger");
             break;
         case 'selectRightThumb':
             document.getElementById('spnRightHandFinger').innerText = "Right Thumb";
             document.getElementById('spnRightHandFinger2').innerText = "Right Thumb";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Thumb</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            document.getElementById('leftHandImage').src = "resources/RightHandImageMapThumb.jpg";  
             savelateralityCaptureSite("Right", "Thumb");
             break;
                     
