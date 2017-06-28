@@ -3,9 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
-using System.Collections.Generic;
 using Hl7.Fhir.Model;
-using NoID.FHIR.Profile;
 using NoID.Security;
 using NoID.Utilities;
 using NoID.Network.Transport;
@@ -20,7 +18,7 @@ namespace NoID.Network.Client.Test
         static void Main(string[] args)
         {
             SendJSON();
-            SendProtoBuffer();
+            //SendProtoBuffer();
             Console.ReadLine();
         }
 
@@ -34,6 +32,7 @@ namespace NoID.Network.Client.Test
             Console.WriteLine(client.ResponseText);
         }
 
+        /*
         private static void SendProtoBuffer()
         {
             PatientFHIRProfile payload = CreatePatientFHIRProfile();
@@ -42,15 +41,15 @@ namespace NoID.Network.Client.Test
             WebSend ws = new WebSend(endpoint, auth, payload);
             Console.WriteLine(ws.PostHttpWebRequest());
         }
-
+        
         private static PatientFHIRProfile CreatePatientFHIRProfile()
         {
             PatientFHIRProfile pt = new PatientFHIRProfile("Test Org", new Uri(FHIREndPoint));
             pt.LastName = "Williams";
             pt.FirstName = "Brianna";
             pt.MiddleName = "E.";
-            pt.BirthDay = "20030514";
-            pt.Gender = AdministrativeGender.Female;
+            pt.BirthDate = "20030514";
+            pt.Gender = AdministrativeGender.Female.ToString().Substring(0,1).ToUpper();
             pt.EmailAddress = "Test@gtest.com";
             pt.StreetAddress = "321 Easy St";
             pt.StreetAddress2 = "Unit 4A";
@@ -61,5 +60,6 @@ namespace NoID.Network.Client.Test
             pt.PhoneHome = "12125551212";
             return pt;
         }
+        */
     }
 }

@@ -5,21 +5,26 @@
 using System;
 using System.Net;
 using System.IO;
+using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Utility;
 using Hl7.Fhir.Serialization;
-using NoID.FHIR.Profile;
+//using NoID.FHIR.Profile;
 using NoID.Security;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NoID.Network.Client
 {
+    /// <summary>Sends NoID Message from the client to a NoID webservice
+    /// </summary>
+    
     public class WebSend
     {
         private Uri _enpoint;
         private Authentication _auth;
         private Resource _payloadJSON;
-        private PatientFHIRProfile _payloadProtoBuff;
+        //private PatientFHIRProfile _payloadProtoBuff;
 
         public delegate void EventHandler(object sender, EventArgs args);
 
@@ -34,6 +39,7 @@ namespace NoID.Network.Client
             _payloadJSON = payload;
         }
 
+        /*
         public WebSend(Uri endpoint, Authentication auth, PatientFHIRProfile payload)
         {
             System.Diagnostics.Debug.WriteLine("WebSend Init: {0}: {1}", endpoint.ToString(), payload.ToString());
@@ -41,6 +47,7 @@ namespace NoID.Network.Client
             _auth = auth;
             _payloadProtoBuff = payload;
         }
+        */
 
         public string PostHttpWebRequest()
         {
@@ -55,12 +62,13 @@ namespace NoID.Network.Client
                 if (!(_payloadJSON is null))
                     SetBodyAndContentType(request, _payloadJSON, ResourceFormat.Json, true, out output);
 
+                /*
                 if (!(_payloadProtoBuff is null))
                 {
                     output = _payloadProtoBuff.Serialize();
                     request.ContentType = "Binary";
                 }
-
+                */
                 request.GetRequestStream().Write(output, 0, output.Length);
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 using (Stream stream = response.GetResponseStream())
@@ -75,6 +83,7 @@ namespace NoID.Network.Client
             }
             return html;
         }
+
         private static void SetBodyAndContentType(HttpWebRequest request, Resource payload, ResourceFormat format, bool CompressRequestBody, out byte[] body)
         {
             if (payload == null) throw Error.ArgumentNull(nameof(payload));
@@ -95,6 +104,7 @@ namespace NoID.Network.Client
             }
         }
 
+        /*
         private static void SetBodyAndContentType(HttpWebRequest request, byte[] payload, out byte[] body)
         {
             if (payload == null) throw Error.ArgumentNull(nameof(payload));
@@ -103,5 +113,6 @@ namespace NoID.Network.Client
             body = payload;
             request.ContentType = "Binary";
         }
+        */
     }
 }

@@ -85,6 +85,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="ReceiveFHIR.ashx" />
+    <Content Include="TestList.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -101,8 +102,15 @@
     <Compile Include="ReceiveFHIR.ashx.cs">
       <DependentUpon>ReceiveFHIR.ashx</DependentUpon>
     </Compile>
+    <Compile Include="TestList.ashx.cs">
+      <DependentUpon>TestList.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\biometric.match.database.engine\biometric.match.database.engine.csproj">
+      <Project>{02aa541d-3a2f-4a6a-b85c-86e2066d9cf6}</Project>
+      <Name>biometric.match.database.engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\biometrics.fingerprint.database.client\biometrics.fingerprint.database.client.csproj">
       <Project>{614ee79c-13db-4e8e-bf49-c8efbd836cb0}</Project>
       <Name>biometrics.fingerprint.database.client</Name>

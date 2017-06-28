@@ -31,21 +31,31 @@ namespace NoID.Browser
     {
         private static AfisEngine Afis = new AfisEngine();
         private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
-        private static NoIDBridge bridge;
+        private List<FingerPrintMinutias> _fingerprintMinutias = new List<FingerPrintMinutias>();
+        private PatientFHIRProfile noidFHIRProfile;
+
+        //TODO: Use one object for both bridges.
+        private PatientBridge _patientBridge;
+        private ProviderBridge _providerBridge;
 
         private const float PROBE_MATCH_THRESHOLD = 70;
         private readonly ChromiumWebBrowser browser;
+
         //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
         private DigitalPersona biometricDevice;
-        private PatientFHIRProfile noidFHIRProfile;
+        
         private string organizationName = System.Configuration.ConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
         private Uri healthcareNodeFHIRAddress;
         private string healthcareNodeWebAddress;
         private string healthcareNodeChainVerifyAddress;
-        private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-        private string NoIDServicePassword;
-
-        public BrowserForm()
+		private int maxFingerprintScanAttempts = 1; //accept at least one attempt
+		private int fingerprintScanAttempts = 0;
+		private List<string> attemptedScannedFingers = new List<string>();
+		private bool hasLeftFingerprintScan = true;
+		private bool hasRightFingerprintScan = true;
+		
+		public BrowserForm()
         {
             InitializeComponent();
 
@@ -64,45 +74,39 @@ namespace NoID.Browser
 
             switch (approle)
             {
-                case "enrollment-kiosk":
-                    endPath = healthcareNodeWebAddress + "/enrollment-kiosk.html";
-                    break;
+                case "patient":
                 case "enrollment-pc":
-                    endPath = endPath = healthcareNodeWebAddress + "/enrollment.html";
+                case "enrollment-kiosk":
+                case "patient-pc":
+                case "patient-kiosk":
+                    endPath = endPath = healthcareNodeWebAddress + "/enrollment.html"; //TODO: rename to patient.html
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
+                    _patientBridge = new PatientBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+                    browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     break;
-                case "identity-kiosk":
-                    endPath = endPath = healthcareNodeWebAddress + "/identity-kiosk.html";
-                    break;
-                case "identity-pc":
-                    endPath = healthcareNodeWebAddress + "/identity.html";
-                    break;
-                case "patient-portal-kiosk":
-                    endPath = healthcareNodeWebAddress + "/patient-portal-kiosk.html";
-                    break;
-                case "patient-portal-pc":
-                    endPath = healthcareNodeWebAddress + "patient-portal-pc.html";
+                case "provider":
+                case "provider-pc":
+                case "provider-kiosk":
+                    endPath = healthcareNodeWebAddress + "/provider.html";
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
+                    _providerBridge = new ProviderBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+                    browser.RegisterJsObject("NoIDBridge", _providerBridge);
                     break;
                 case "healthcare-node-admin-kiosk":
-                    endPath = healthcareNodeWebAddress + "/healthcare-node-admin-kiosk.html";
-                    break;
                 case "healthcare-node-admin-pc":
-                    endPath = healthcareNodeWebAddress + "/healthcare-node-admin-pc.html";
+                    endPath = healthcareNodeWebAddress + "/healthcare.admin.html";
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     break;
                 case "match-hub-admin-kiosk":
-                    endPath = healthcareNodeWebAddress + "/match-hub-admin-kiosk.html";
-                    break;
                 case "match-hub-admin-pc":
-                    endPath = healthcareNodeWebAddress + "/match-hub-admin-pc.html";
+                    endPath = healthcareNodeWebAddress + "/hub.admin.html";
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     break;
                 default:
-                    endPath = healthcareNodeWebAddress + "/enrollment.html";
+                    endPath = healthcareNodeWebAddress + "/error.html"; //TODO: We need an HTML error page.
+                    browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     break;
             }
-
-            browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
-            // Handles JavaScripts Events
-            bridge = new NoIDBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
-            browser.RegisterJsObject("NoIDBridge", bridge);
 
             biometricDevice = new DigitalPersona();
             if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
@@ -132,83 +136,174 @@ namespace NoID.Browser
         //TODO: Abstract CaptureResult so it will work with any fingerprint scanner.
         private void OnCaptured(CaptureResult captureResult)
         {
+            try
+            {
+               maxFingerprintScanAttempts = Convert.ToInt16(System.Configuration.ConfigurationManager.AppSettings["maxFingerprintScanAttempts"].ToString());
+               fingerprintScanAttempts++;
+            }
+            catch (Exception ex)
+            {
+              MessageBox.Show(ex.Message);
+              return;
+            }			
+
+            if (_patientBridge.captureSite != FHIRUtilities.CaptureSiteSnoMedCode.Unknown && _patientBridge.laterality != FHIRUtilities.LateralitySnoMedCode.Unknown)
+            {
+              if (fingerprintScanAttempts <= maxFingerprintScanAttempts)
+              {
 #if NAVIGATE
-            DisplayOutput("Captured finger image....");
+                  DisplayOutput("Captured finger image....");
 #endif
-            
-            // Check capture quality and throw an error if poor or incomplete capture.
-            if (!biometricDevice.CheckCaptureResult(captureResult)) return;
+                  // Check capture quality and throw an error if poor or incomplete capture.
+                  if (!biometricDevice.CheckCaptureResult(captureResult)) return;
 
-            Constants.CaptureQuality quality = captureResult.Quality;
-            if ((int)quality != 0)
-            {
-                //call javascript to inform UI that the capture quality was too low to accept.
+                  Constants.CaptureQuality quality = captureResult.Quality;
+                  if ((int)quality != 0)
+                  {
+                    //call javascript to inform UI that the capture quality was too low to accept.
 #if NAVIGATE
-                DisplayOutput("Fingerprint quality was too low to accept. Quality = " + quality.ToString());
-
+                    DisplayOutput("Fingerprint quality was too low to accept. Quality = " + quality.ToString());
 #endif
-                return;
-            }
-            
-            Type captureResultType = captureResult.GetType();
-            string deviceClassName = captureResultType.ToString();
-            string deviceName = "";
-            if (deviceClassName == "DPUruNet.CaptureResult")
-            {
-                deviceName = "DigitalPersona U.Are.U 4500";
-            }
-            
-            SourceAFIS.Simple.Person currentCapture = new SourceAFIS.Simple.Person();
+                    return;
+                  }
 
-            Fingerprint newFingerPrint = new Fingerprint();
-            foreach (Fid.Fiv fiv in captureResult.Data.Views)
-            {
-                newFingerPrint.AsBitmap = ImageUtilities.CreateBitmap(fiv.RawImage, fiv.Width, fiv.Height);
-            }
-            currentCapture.Fingerprints.Add(newFingerPrint);
-            Afis.Extract(currentCapture);
-            Template tmpCurrent = newFingerPrint.GetTemplate();
+                  Type captureResultType = captureResult.GetType();
+                  string deviceClassName = captureResultType.ToString();
+                  string deviceName = "";
+                  if (deviceClassName == "DPUruNet.CaptureResult")
+                  {
+                    deviceName = "DigitalPersona U.Are.U 4500";
+                  }
 
-            if (_minutiaCaptureController.MatchFound == false)
-            {
-                if (_minutiaCaptureController.AddMinutiaTemplateProbe(tmpCurrent) == true)
-                {
-                    // Good pair found.
-                    // Query web service for a match.
-                    NoIDServicePassword = NoID.Security.PasswordManager.GetPassword(NoIDServiceName);
-                    
-                    FingerPrintMinutias fingerprintMinutia = 
+                  SourceAFIS.Simple.Person currentCapture = new SourceAFIS.Simple.Person();
+
+                  Fingerprint newFingerPrint = new Fingerprint();
+                  foreach (Fid.Fiv fiv in captureResult.Data.Views)
+                  {
+                    newFingerPrint.AsBitmap = ImageUtilities.CreateBitmap(fiv.RawImage, fiv.Width, fiv.Height);
+                  }
+                  currentCapture.Fingerprints.Add(newFingerPrint);
+                  Afis.Extract(currentCapture);
+                  Template tmpCurrent = newFingerPrint.GetTemplate();
+
+                  if (_minutiaCaptureController.MatchFound == false)
+                  {
+                    if (_minutiaCaptureController.AddMinutiaTemplateProbe(tmpCurrent) == true)
+                    {
+                      // Good pair found.
+                      // Query web service for a match.
+                      string NoIDServicePassword = PasswordManager.GetPassword(NoIDServiceName);
+
+                      FingerPrintMinutias fingerprintMinutia =
                         new FingerPrintMinutias("", tmpCurrent, Laterality, CaptureSite); //need to pass session id instead of patient cert id.
 
-                    Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
-                    HttpsClient dataTransport = new HttpsClient();
-                    Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
-                    dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
-                    string lateralityString = FHIRUtilities.LateralityToString(Laterality);
-                    string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);
-#if NAVIGATE
-                    string output = lateralityString + " " + captureSiteString + " fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
-                    DisplayOutput(output);
-#endif
-                    // If match found, inform JavaScript that this is an returning patient for identity.
-                    browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
-                    if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left)
-                    {
+                      Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
+                      HttpsClient dataTransport = new HttpsClient();
+                      Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+
+                      dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
+                      string lateralityString = FHIRUtilities.LateralityToString(Laterality);
+                      string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);
+  #if NAVIGATE
+                      string output = lateralityString + " " + captureSiteString + " fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
+                      DisplayOutput(output);
+  #endif
+                      // If match found, inform JavaScript that this is an returning patient for identity.
+                      browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
+
+                      if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left)
+                      {
                         Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
                         _minutiaCaptureController = new MinutiaCaptureController();
-                    }
+                      }
+                      else if (Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
+                      {
+                        Laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
+                        CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
+                      }
 
+                      fingerprintScanAttempts = 0; //reset scan attempt count on successful scan
+                      
                     // If not match found, inform JavaScript that this is an new patient enrollment.  reset _minutiaCaptureController for right side.
-                }
-                else
-                {
+                  }
+                  else
+                  {
                     // Good fingerprint pairs not found yet.  inform JavaScript to promt the patient to try again.
                     browser.GetMainFrame().ExecuteJavaScriptAsync("showFail('" + Laterality.ToString() + "');");
 #if NAVIGATE
                     DisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
 #endif
                     return;
+                  }
                 }
+              }
+              else
+              {
+                //int testy = CaptureSite.ToString().IndexOf("Thumb");
+                if (CaptureSite.ToString().IndexOf("Thumb") == -1) 				
+                {
+                    browser.GetMainFrame().ExecuteJavaScriptAsync("alert('You have exceeded the maximum allowed scan attempts for your " + Laterality.ToString() + " " + CaptureSite + " Lets try another finger.');");
+                }
+                fingerprintScanAttempts = 0; //reset scan attempt count on successful scan
+                //get next laterality and capture site. Order of precedence is left, then right. Index, middle, ring, little, thumb										
+                switch (Laterality.ToString() + CaptureSite.ToString())
+                {
+                    case "LeftIndexFinger":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftMiddle');");
+                        break;
+                    case "LeftMiddleFinger":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftRing');");
+                        break;
+                    case "LeftRingFinger":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftLittle');");
+                        break;
+                    case "LeftLittleFinger":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftThumb');");
+                        break;
+                    case "LeftThumb":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());							
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("moveToRightHandScan();");
+                        hasLeftFingerprintScan = false;
+                        break;
+                    case "RightIndexFinger":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightIndex');");
+                        break;
+                    case "RightMiddleFinger":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightMiddle');");
+                        break;
+                    case "RightRingFinger":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightRing');");
+                        break;
+                    case "RightLittleFinger":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightLittle');");
+                        break;
+                    case "RightThumb":
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());							
+                        if (hasLeftFingerprintScan == false && hasRightFingerprintScan == false)
+                        {
+                          browser.GetMainFrame().ExecuteJavaScriptAsync("alert('No fingerprints were gathered. Redirect to exception pathway.);");
+                        }							
+                        break;
+                    default:							
+                        break;
+                }					
+               //define walk through fingers and ability to override
+              }
+            }
+            else
+            {
+#if NAVIGATE
+                browser.GetMainFrame().ExecuteJavaScriptAsync("alert('Must be on the correct page to accept a fingerprint scan. Please follow the instructions on the screen.');");
+                DisplayOutput("Must be on the correct page to accept a fingerprint scan.");
+#endif
             }
         }
         
@@ -329,31 +424,140 @@ namespace NoID.Browser
 
         FHIRUtilities.LateralitySnoMedCode Laterality
         {
-            get { return bridge.laterality; }
-            set { bridge.laterality = value; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                       return _patientBridge.laterality;
+                }
+                else
+                {
+                    throw new Exception("Tried to access Laterality when _patientBridge is null");
+                }
+            }
+            set
+            {
+                if (_patientBridge != null)
+                {
+
+                    _patientBridge.laterality = value;
+                }
+                else
+                {
+                    throw new Exception("Tried to access Laterality when _patientBridge is null");
+                }
+            }
         }
 
         FHIRUtilities.CaptureSiteSnoMedCode CaptureSite
         {
-            get { return bridge.captureSite; }
-            set { bridge.captureSite = value; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.captureSite;
+                }
+                else
+                {
+                    throw new Exception("Tried to access CaptureSite when _patientBridge is null");
+                }
+            }
+            set
+            {
+                if (_patientBridge != null)
+                {
+
+                    _patientBridge.captureSite = value;
+                }
+                else
+                {
+                    throw new Exception("Tried to access CaptureSite when _patientBridge is null");
+                }
+            }
         }
 
         string SessionID
         {
-            get { return bridge.sessionID; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.sessionID;
+                }
+                else
+                {
+                    throw new Exception("Tried to access SessionID when _patientBridge is null");
+                }
+            }
         }
 
         string LocalNoID
         {
-            get { return bridge.localNoID; }
-            set { bridge.localNoID = value; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.localNoID;
+                }
+                else
+                {
+                    throw new Exception("Tried to access LocalNoID when _patientBridge is null");
+                }
+            }
+            set
+            {
+                if (_patientBridge != null)
+                {
+
+                    _patientBridge.localNoID = value;
+                }
+                else
+                {
+                    throw new Exception("Tried to access LocalNoID when _patientBridge is null");
+                }
+            }
+        }
+
+        string CurrentPage
+        {
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.currentPage;
+                }
+                else
+                {
+                    throw new Exception("Tried to access CurrentPage when _patientBridge is null");
+                }
+            }
         }
 
         string RemoteNoID
         {
-            get { return bridge.remoteNoID; }
-            set { bridge.remoteNoID = value; }
+            get
+            {
+                if (_patientBridge != null)
+                {
+                    return _patientBridge.remoteNoID;
+                }
+                else
+                {
+                    throw new Exception("Tried to access RemoteNoID when _patientBridge is null");
+                }
+            }
+            set
+            {
+                if (_patientBridge != null)
+                {
+
+                    _patientBridge.remoteNoID = value;
+                }
+                else
+                {
+                    throw new Exception("Tried to access RemoteNoID when _patientBridge is null");
+                }
+            }
         }
     }
 }
