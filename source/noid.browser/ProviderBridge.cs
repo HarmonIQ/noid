@@ -57,19 +57,21 @@ namespace NoID.Browser
 			{
 				//_captureSite = FHIRUtilities.StringToCaptureSite(captureSite);
 				//_laterality = FHIRUtilities.StringToLaterality(laterality);
-				htmlTable += "<table class='table table-striped  table-bordered'><thead><tr><th>In Time</th><th>NoID Type</th><th>First Name</th>" +
-							"<th>Last Name</th><th>DOB</th><th>Approve</th><th>Deny</th></tr></thead><tbody>";
+				htmlTable += "<table class='table table-striped  table-bordered'>"
+					 + "<thead><tr><th style='width: 175px'>In Time</th><th style='width: 100px'>NoID Type</th><th style='width: 100px'>First Name</th>"
+					 + "<th style='width: 110px'>Last Name</th><th style='width: 100px'>DOB</th><th style='width: 100px'>Approve</th><th style='width: 80px'>Deny</th></tr></thead><tbody>";
 				foreach (PatientProfile x in _patients)
 				{
 					htmlTable += "<tr>"
-									+ "<td>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
-									+ "<td>" + x.NoIDStatus.ToString() + "</td>"
-									+ "<td>" + x.FirstName.ToString() + "</td>"
-									+ "<td>" + x.LastName.ToString() + "</td>"
-									+ "<td>" + x.BirthDate.ToString() + "</td>"
-									+ "<td>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Approve" + (char)34 + ")'>Approve</a></td>"
-									+ "<td>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Deny" + (char)34 + ")'>Deny</a></td>"
-								+ "</tr>";
+									+ "<td style='width: 175px'>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
+									+ "<td style='width: 100px'>" + x.NoIDStatus.ToString() + "</td>"
+									+ "<td style='width: 100px'>" + x.FirstName.ToString() + "</td>"
+									+ "<td style='width: 110px'>" + x.LastName.ToString() + "</td>"
+									+ "<td style='width: 100px'>" + x.BirthDate.ToString() + "</td>"
+									+ "<td style='width: 100px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Approve" + (char)34 + ")'>Approve</a></td>"
+									+ "<td style='width: 80px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Deny" + (char)34 + ")'>Deny</a></td>"
+								+ "</tr>"
+								;
 					rowCount++;
 				}
 				htmlTable += "</tbody></table>";
