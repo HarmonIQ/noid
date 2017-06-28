@@ -47,6 +47,9 @@ namespace NoID.Browser
                     endPath = healthcareNodeWebAddress + "/enrollment.html"; //TODO: rename to patient.html
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     _patientController = new PatientController(browser);
+#if DEBUG_OBJECTS
+                    _patientController.DisplayOutput += OnDisplayOutput;
+#endif
                     browser.RegisterJsObject("NoIDBridge", _patientController.PatientBridge);
                     break;
                 case "provider":
@@ -86,13 +89,18 @@ namespace NoID.Browser
             browser.AddressChanged += OnBrowserAddressChanged;
 
             var bitness = Environment.Is64BitProcess ? "x64" : "x86";
-            //var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}, Environment: {3}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion, bitness);
-            string initialDisplayText = String.Format(approle.ToString());
+            var version = String.Format("Chromium: {0}, CEF: {1}, CefSharp: {2}, Environment: {3}", Cef.ChromiumVersion, Cef.CefVersion, Cef.CefSharpVersion, bitness);
+            string initialDisplayText = String.Format(approle.ToString() + " running " + version);
             DisplayOutput(initialDisplayText);
 #endif
         }
 
 #if DEBUG_OBJECTS
+        private void OnDisplayOutput(object sender, string message)
+        {
+            DisplayOutput(message);
+        }
+
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)
         {
             this.InvokeOnUiThreadIfRequired(() => statusLabel.Text = args.Value);

@@ -46,6 +46,9 @@ namespace NoID.Browser
         private bool fLoadWebService = false;
         private bool fBiometricsComplete = false;
 
+        public delegate void PatientEventHandler(object sender, string message);
+        public event PatientEventHandler DisplayOutput = delegate { };
+
         public PatientController(ChromiumWebBrowser browser)
         {
             _browser = browser;
@@ -67,27 +70,43 @@ namespace NoID.Browser
             } 
         }
 
+        private void TriggerDisplayOutput(string outMessage)
+        {
+            if (DisplayOutput != null)
+                DisplayOutput(this, outMessage);
+        }
+
         //TODO: Abstract CaptureResult so it will work with any fingerprint scanner.
         private void OnCaptured(CaptureResult captureResult)
         {
             if (fBiometricsComplete == true)
             {
 #if DEBUG_OBJECTS
-                //DisplayOutput("Biometrics already captured and sent to web server. Ignoring this scan.");
+                TriggerDisplayOutput("Biometrics already captured and sent to web server. Ignoring this scan.");
 #endif
                 return;
             }
+
+            if (CurrentPage != "SelectLeftFinger" && CurrentPage != "SelectRightFinger")
+            {
+#if DEBUG_OBJECTS
+                TriggerDisplayOutput("Must be on the correct page to accept a fingerprint scan. Current page code = " + CurrentPage);
+#endif
+                return;
+            }
+
             if (fLoadWebService == true)
             {
 #if DEBUG_OBJECTS
-                //DisplayOutput("Capture occured while accessing the FHIR web services. Ignoring this scan.");
+                TriggerDisplayOutput("Capture occured while accessing the FHIR web services. Ignoring this scan.");
 #endif
                 return;
             }
+
             if (_patientBridge.captureSite != FHIRUtilities.CaptureSiteSnoMedCode.Unknown && _patientBridge.laterality != FHIRUtilities.LateralitySnoMedCode.Unknown)
             {
 #if DEBUG_OBJECTS
-                //DisplayOutput("Captured finger image....");
+                TriggerDisplayOutput("Captured finger image....");
 #endif
                 // Check capture quality and throw an error if poor or incomplete capture.
                 if (!biometricDevice.CheckCaptureResult(captureResult)) return;
@@ -97,7 +116,7 @@ namespace NoID.Browser
                 {
                     //call javascript to inform UI that the capture quality was too low to accept.
 #if DEBUG_OBJECTS
-                    //DisplayOutput("Fingerprint quality was too low to accept. Quality = " + quality.ToString());
+                    TriggerDisplayOutput("Fingerprint quality was too low to accept. Quality = " + quality.ToString());
 #endif
                     return;
                 }
@@ -148,11 +167,11 @@ namespace NoID.Browser
                         string lateralityString = FHIRUtilities.LateralityToString(Laterality);
                         string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);
                         string output = lateralityString + " " + captureSiteString + " fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
-                        //DisplayOutput(output);
+                        TriggerDisplayOutput(output);
 #endif
                         // If match found, inform JavaScript that this is an returning patient for identity.
                         _browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
-                        if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left || Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
+                        if (CurrentPage != "" && Laterality == FHIRUtilities.LateralitySnoMedCode.Left || Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
                         {
                             FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias
                                 (
@@ -181,7 +200,7 @@ namespace NoID.Browser
                         // Good fingerprint pairs not found yet.  inform JavaScript to promt the patient to try again.
                         _browser.GetMainFrame().ExecuteJavaScriptAsync("showFail('" + Laterality.ToString() + "');");
 #if DEBUG_OBJECTS
-                        //DisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
+                        TriggerDisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
 #endif
                         return;
                     }
@@ -190,7 +209,7 @@ namespace NoID.Browser
             else
             {
 #if DEBUG_OBJECTS
-                //DisplayOutput("Must be on the correct page to accept a fingerprint scan.");
+                TriggerDisplayOutput("Must be on the correct page to accept a fingerprint scan.");
 #endif
             }
         }
@@ -202,6 +221,7 @@ namespace NoID.Browser
                 return _patientBridge;
             }
         }
+
 
         FHIRUtilities.LateralitySnoMedCode Laterality
         {
