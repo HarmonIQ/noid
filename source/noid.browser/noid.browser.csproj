@@ -62,6 +62,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
     <DefineConstants>#define NAVIGATE</DefineConstants>
+    <DocumentationFile>bin\x86\Debug\NoID.Browser.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -182,6 +183,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\biometrics.fingerprint.database.client\biometrics.fingerprint.database.client.csproj">
+      <Project>{614ee79c-13db-4e8e-bf49-c8efbd836cb0}</Project>
+      <Name>biometrics.fingerprint.database.client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\biometrics.fingerprint.devices\biometrics.devices.csproj">
       <Project>{ca817c90-afb0-4b29-884c-609c239e1d32}</Project>
       <Name>biometrics.devices</Name>

@@ -1,20 +1,92 @@
+function setLateralitySite(selectedElementID) {
+    switch (selectedElementID) {
+        case 'selectLeftLittle':
+            document.getElementById('spnLeftHandFinger').innerText = "Left Little Finger";
+            document.getElementById('spnLeftHandFinger2').innerText = "Left Little Finger";
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Little Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectLeftRing':
+            document.getElementById('spnLeftHandFinger').innerText = "Left Ring Finger";
+            document.getElementById('spnLeftHandFinger2').innerText = "Left Ring Finger";
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Ring Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectLeftMiddle':
+            document.getElementById('spnLeftHandFinger').innerText = "Left Middle Finger";
+            document.getElementById('spnLeftHandFinger2').innerText = "Left Middle Finger";
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Middle Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectLeftIndex':           
+            document.getElementById('spnLeftHandFinger').innerText = "Left Index Finger";
+            document.getElementById('spnLeftHandFinger2').innerText = "Left Index Finger";
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Index Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            savelateralityCaptureSite("Left", "IndexFinger");
+            break;
+        case 'selectLeftThumb':
+            document.getElementById('spnLeftHandFinger').innerText = "Left Thumb";
+            document.getElementById('spnLeftHandFinger2').innerText = "Left Thumb";
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Thumb</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;            
+        case 'selectRightLittle':
+            document.getElementById('spnRightHandFinger').innerText = "Right Little Finger";
+            document.getElementById('spnRightHandFinger2').innerText = "Right Little Finger";
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Little Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectRightRing':
+            document.getElementById('spnRightHandFinger').innerText = "Right Ring Finger";
+            document.getElementById('spnRightHandFinger2').innerText = "Right Ring Finger";
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Ring Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectRightMiddle':
+            document.getElementById('spnRightHandFinger').innerText = "Right Middle Finger";
+            document.getElementById('spnRightHandFinger2').innerText = "Right Middle Finger";
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Middle Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+        case 'selectRightIndex':           
+            document.getElementById('spnRightHandFinger').innerText = "Right Index Finger";
+            document.getElementById('spnRightHandFinger2').innerText = "Right Index Finger";
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Index Finger</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            savelateralityCaptureSite("Right", "IndexFinger");
+            break;
+        case 'selectRightThumb':
+            document.getElementById('spnRightHandFinger').innerText = "Right Thumb";
+            document.getElementById('spnRightHandFinger2').innerText = "Right Thumb";
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Thumb</h3>If this is correct, please place your finger on the scanner as shown in the image to the right.<br /><br />If this is not correct,<br />please select another finger.</h4>";
+            break;
+                    
+    };
+};
+function savelateralityCaptureSite(laterality, captureSite) {
+    NoIDBridge.postLateralityCaptureSite(laterality, captureSite);
+    if (NoIDBridge.errorDescription != '') {
+       //error, show user message
+        alert("postLateralityCaptureSite Error " + NoIDBridge.errorDescription);
+    }
+};
 function showComplete(whichStep) {
     switch (whichStep) {
-        case 'left':
+        case 'Left':
             document.getElementById('checkLeft').setAttribute('class', 'fa fa-check-square-o fa-5x fa-fw pull-right complete');
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Success!<br />Please click next to scan a finger<br />from your right hand</h4>";
+            document.getElementById('leftFingerNextButton').disabled = false;
             break;
-        case 'right':
+        case 'Right':
             document.getElementById('checkRight').setAttribute('class', 'fa fa-check-square-o fa-5x fa-fw pull-right complete');
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Success!<br />Please click next.</h4>";
+            document.getElementById('rightFingerNextButton').disabled = false;
             break;
     };
 };
 function showFail(whichStep) {
     switch (whichStep) {
-        case 'left':
-            document.getElementById('checkLeft2').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right incomplete');
+        case 'Left':
+            //document.getElementById('checkLeft').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right incomplete');
+            document.getElementById('checkLeft').setAttribute('class', 'fa fa-spinner fa-spin fa-5x fa-fw pull-right incomplete');
+            document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Fingerprint scan attempt<br />was not successful.<br />Please try again</h4>";
             break;
-        case 'right':
-            document.getElementById('checkRight2').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right complete');
+        case 'Right':
+            //document.getElementById('checkRight').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right complete');
+            document.getElementById('checkRight').setAttribute('class', 'fa fa-times fa-5x fa-fw pull-right incomplete');
+            document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Fingerprint scan attempt<br />was not successful.<br />Please try again</h4>";
             break;
     };
 };

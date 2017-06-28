@@ -8,8 +8,10 @@ using System.IO;
 using System.Web.Configuration;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
+using SourceAFIS.Templates;
 using NoID.FHIR.Profile;
 using NoID.Utilities;
+using NoID.Match.Database.Client;
 
 namespace NoID.Network.Services
 {
@@ -47,7 +49,11 @@ namespace NoID.Network.Services
                     case "media":
                         _biometics = (Media)newResource;
                         // TODO send to biometric match engine. If found, add patient reference to FHIR message.
+                        // convert FHIR fingerprint message (_biometics) to AFIS template class
+                        Template template = ConvertFHIR.FHIRToTemplate(_biometics);
+
                         if (!(SendBiometicsToSparkServer()))
+
                         {
                             _responseText = "Error sending Biometric Media FHIR message to the Spark FHIR endpoint. " + ExceptionString;
                         }
