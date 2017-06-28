@@ -25,7 +25,7 @@ namespace NoID.Browser
 
 		private IList<PatientProfile> _patients;
 
-        public ProviderBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
+        public ProviderBridge(string organizationName, string endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
         {
             _patients = TestPatientList.GetTestPatients(organizationName);
 

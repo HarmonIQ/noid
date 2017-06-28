@@ -9,13 +9,13 @@ namespace NoID.Browser
     abstract class CEFBridge
     {
         string _organizationName;
-        Uri _endPoint;
+        string _endPoint;
         string _serviceName;
         string _errorDescription;
         string _alertFunction = "";
         string _currentPage = "";
 
-        public CEFBridge(string organizationName, Uri endPoint, string serviceName)
+        public CEFBridge(string organizationName, string endPoint, string serviceName)
         {
             _organizationName = organizationName;
             _endPoint = endPoint;
@@ -29,7 +29,7 @@ namespace NoID.Browser
             get { return _organizationName; }
         }
 
-        public Uri endPoint
+        public string endPoint
         {
             get { return _endPoint; }
         }

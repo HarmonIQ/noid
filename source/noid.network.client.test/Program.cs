@@ -12,7 +12,7 @@ namespace NoID.Network.Client.Test
 {
     class Program
     {
-        private static readonly string FHIREndPoint = System.Configuration.ConfigurationManager.AppSettings["FHIREndPoint"].ToString();
+        private static readonly string FHIREndPoint = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["FHIREndPoint"].ToString());
         private static readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
         
         static void Main(string[] args)
@@ -26,7 +26,8 @@ namespace NoID.Network.Client.Test
         {
             Patient payload = FHIRUtilities.CreateTestFHIRPatientProfile();
             Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
-            Uri endpoint = new Uri(FHIREndPoint);
+            string endpointAddress = FHIREndPoint + @"/ReceiveFHIR.ashx";
+            Uri endpoint = new Uri(endpointAddress);
             HttpsClient client = new HttpsClient();
             client.SendFHIRPatientProfile(endpoint, auth, payload);
             Console.WriteLine(client.ResponseText);

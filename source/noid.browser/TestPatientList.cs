@@ -18,7 +18,7 @@ namespace NoID.Browser
 
         public static IList<PatientProfile> GetTestPatients(string organizationName)
         {
-            Uri endPoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+            string endPoint = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString());
             List<PatientProfile> newList = new List<PatientProfile>();
 
             Patient testPatient = FHIRUtilities.CreateTestFHIRPatientProfile

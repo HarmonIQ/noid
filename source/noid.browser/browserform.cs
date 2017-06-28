@@ -23,10 +23,10 @@ namespace NoID.Browser
         private PatientController _patientController;
         private ProviderBridge _providerBridge;
         
-        private string organizationName = System.Configuration.ConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private readonly string organizationName = System.Configuration.ConfigurationManager.AppSettings["OrganizationName"].ToString();
         private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-        private string healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
-        private Uri healthcareNodeFHIRAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+        private readonly string healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
+        private readonly string healthcareNodeFHIRAddress =StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString());
 
         public BrowserForm()
         {

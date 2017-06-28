@@ -38,7 +38,9 @@ namespace NoID.Browser
 
         private string organizationName = System.Configuration.ConfigurationManager.AppSettings["OrganizationName"].ToString();
         private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-        private Uri _endPoint;
+        private readonly string _healthcareNodeFHIRAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString());
+
+        //private Uri _endPoint;
         private bool fLoadWebService = false;
         private bool fBiometricsComplete = false;
 
@@ -49,8 +51,7 @@ namespace NoID.Browser
         {
             _browser = browser;
             Afis.Threshold = PROBE_MATCH_THRESHOLD;
-            _endPoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
-            _patientBridge = new PatientBridge(organizationName, _endPoint, NoIDServiceName);
+            _patientBridge = new PatientBridge(organizationName, _healthcareNodeFHIRAddress, NoIDServiceName);
             try
             {
                 biometricDevice = new DigitalPersona();
@@ -156,7 +157,9 @@ namespace NoID.Browser
                             auth = Utilities.Auth;
                         }
                         fLoadWebService = true;
-                        dataTransport.SendFHIRMediaProfile(_endPoint, auth, media);
+                        string webAddress = _healthcareNodeFHIRAddress + @"/ReceiveFHIR.ashx";
+                        Uri endPoint = new Uri(webAddress);
+                        dataTransport.SendFHIRMediaProfile(endPoint, auth, media);
                         fLoadWebService = false;
 #if DEBUG_OBJECTS
                         string lateralityString = FHIRUtilities.LateralityToString(Laterality);

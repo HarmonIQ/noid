@@ -21,7 +21,7 @@ namespace NoID.FHIR.Profile
     {
         private SourceAFIS.Templates.NoID _noID;
         private readonly string _organizationName;
-        private readonly Uri _fhirAddress;
+        private readonly string _fhirAddress;
 
         private string _language = "";
         private string _firstName = "";
@@ -43,14 +43,14 @@ namespace NoID.FHIR.Profile
         private string _noidStatus = ""; //new, return, error or critical
         private string _checkinDateTime = "";
 
-        public PatientProfile(string organizationName, Uri fhirAddress)
+        public PatientProfile(string organizationName, string fhirAddress)
         {
             _organizationName = organizationName;
             _fhirAddress = fhirAddress;
             _noID = new SourceAFIS.Templates.NoID();
         }
 
-        public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient, string noidStatus, DateTime checkinDateTime)
+        public PatientProfile(string organizationName, string fhirAddress, Patient loadPatient, string noidStatus, DateTime checkinDateTime)
         {
             _organizationName = organizationName;
             _fhirAddress = fhirAddress;
@@ -165,7 +165,7 @@ namespace NoID.FHIR.Profile
             _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
         }
 
-        public Uri FHIRAddress
+        public string FHIRAddress
         {
             get { return _fhirAddress; }
         }
@@ -312,11 +312,11 @@ namespace NoID.FHIR.Profile
         public int OriginalHeight;
         public int OriginalWidth;
 
-        public PatientFHIRProfile(string organizationName, Uri endPoint) : base(organizationName, endPoint)
+        public PatientFHIRProfile(string organizationName, string endPoint) : base(organizationName, endPoint)
         {
         }
 
-        public PatientFHIRProfile(string organizationName, Uri endPoint, Patient loadPatient, string noidStatus, DateTime checkinDateTime) : base(organizationName, endPoint, loadPatient, noidStatus, checkinDateTime)
+        public PatientFHIRProfile(string organizationName, string endPoint, Patient loadPatient, string noidStatus, DateTime checkinDateTime) : base(organizationName, endPoint, loadPatient, noidStatus, checkinDateTime)
         {
         }
 
@@ -343,7 +343,8 @@ namespace NoID.FHIR.Profile
             {
                 try
                 {
-                    return FHIRAddress.Host.Substring(FHIRAddress.Host.LastIndexOf('.', FHIRAddress.Host.LastIndexOf('.') - 1) + 1);
+                    Uri fhirURI = new Uri(FHIRAddress);
+                    return fhirURI.Host.Substring(fhirURI.Host.LastIndexOf('.', fhirURI.Host.LastIndexOf('.') - 1) + 1);
                 }
                 catch
                 {
@@ -356,7 +357,8 @@ namespace NoID.FHIR.Profile
         {
             get
             {
-                return FHIRAddress.GetLeftPart(UriPartial.Authority).ToString();
+                Uri fhirURI = new Uri(FHIRAddress);
+                return fhirURI.GetLeftPart(UriPartial.Authority).ToString();
             }
         }
         
@@ -494,13 +496,13 @@ namespace NoID.FHIR.Profile
                     pt.Contact.Add(contact);
                 }
 
-                //TODO: Change location of minutias in Patient FHIR profile.
+                //TODO: Change location of minutias in Patient FHIR profile from attached photo to a more appropriate location.
                 foreach (FingerPrintMinutias minutias in _fingerPrintMinutiasList)
                 {
                     Attachment attach = new Attachment();
-                    Media addFingerprint = new Media();
-                    Media media = FingerPrintFHIRMedia(minutias, DeviceName, OriginalDpi, OriginalHeight, OriginalWidth);
-                    attach.Data = FhirSerializer.SerializeToJsonBytes(addFingerprint, summary: Hl7.Fhir.Rest.SummaryType.False);
+                    Media fingerprintMedia = FingerPrintFHIRMedia(minutias, DeviceName, OriginalDpi, OriginalHeight, OriginalWidth);
+                    byte[] mediaBytes = FhirSerializer.SerializeToJsonBytes(fingerprintMedia, summary: SummaryType.False);
+                    attach.Data = mediaBytes;
                     pt.Photo.Add(attach);
                 }
             }
@@ -599,8 +601,8 @@ namespace NoID.FHIR.Profile
         
         public bool TestEnrollmentSave()
         {
-            Uri endpoint = FHIRAddress;
-            FhirClient client = new FhirClient(endpoint);
+            Uri fhirURI = new Uri(FHIRAddress);
+            FhirClient client = new FhirClient(fhirURI);
             Patient newPatient = CreateFHIRPatientProfile();
             
             if (!(newPatient is null))

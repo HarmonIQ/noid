@@ -21,17 +21,20 @@ namespace NoID.Browser
 
     class PatientBridge : CEFBridge
     {
+        private string _healthcareNodeFHIRAddress;
+
         // default capture site and laterality.
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
         SourceAFIS.Templates.NoID _noID;
         PatientFHIRProfile _patientFHIRProfile;
 
-        public PatientBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
+        public PatientBridge(string organizationName, string nodeFHIRAddress, string serviceName) : base(organizationName, nodeFHIRAddress, serviceName)
         {
             _noID = new SourceAFIS.Templates.NoID();
             _noID.SessionID = StringUtilities.GetNewSessionID();
-            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint);
+            _healthcareNodeFHIRAddress = nodeFHIRAddress;
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, nodeFHIRAddress);
         }
 
         ~PatientBridge() { }
@@ -115,7 +118,8 @@ namespace NoID.Browser
                 }
                 HttpsClient client = new HttpsClient();
                 Patient pt = _patientFHIRProfile.CreateFHIRPatientProfile();
-                if (client.SendFHIRPatientProfile(endPoint, auth, pt) == false)
+                Uri _endPoint = new Uri(endPoint + @"/NewEnrollment.ashx");
+                if (client.SendFHIRPatientProfile(_endPoint, auth, pt) == false)
                 {
                     // Error occured set error description
                     errorDescription = client.ResponseText;
