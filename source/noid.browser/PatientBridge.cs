@@ -24,13 +24,12 @@ namespace NoID.Browser
         // default capture site and laterality.
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
-        SourceAFIS.Templates.NoID _noID;
         PatientFHIRProfile _patientFHIRProfile;
 
         public PatientBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
         {
-            _noID = new SourceAFIS.Templates.NoID();
-            _noID.SessionID = StringUtilities.GetNewSessionID();
+            //_noID = new SourceAFIS.Templates.NoID();
+            //_noID.SessionID = StringUtilities.GetNewSessionID();
             _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint);
         }
 
@@ -245,8 +244,9 @@ namespace NoID.Browser
             alertFunction = "";
             _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
             _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
-            _noID = new SourceAFIS.Templates.NoID();
-            _noID.SessionID = StringUtilities.GetNewSessionID();
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint);
+            //_noID = new SourceAFIS.Templates.NoID();
+            //_noID.SessionID = StringUtilities.GetNewSessionID();
         }
 
         public bool postResetForNewPatient()
@@ -265,19 +265,19 @@ namespace NoID.Browser
 
         public string sessionID
         {
-            get { return _noID.SessionID; }
+            get { return _patientFHIRProfile.NoID.SessionID; }
         }
 
         public string localNoID
         {
-            get { return _noID.LocalNoID; }
-            set { _noID.LocalNoID = value; }
+            get { return _patientFHIRProfile.NoID.LocalNoID; }
+            set { _patientFHIRProfile.NoID.LocalNoID = value; }
         }
 
         public string remoteNoID
         {
-            get { return _noID.RemoteNoID; }
-            set { _noID.RemoteNoID = value; }
+            get { return _patientFHIRProfile.NoID.RemoteNoID; }
+            set { _patientFHIRProfile.NoID.RemoteNoID = value; }
         }
     }
 }

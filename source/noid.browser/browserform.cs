@@ -190,8 +190,7 @@ namespace NoID.Browser
                   {
                     if (_minutiaCaptureController.AddMinutiaTemplateProbe(tmpCurrent) == true)
                     {
-                        // Good pair found.
-                        // Query web service for a match.
+                        // Good pair found.  Query web service for a match.
                         FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias
                                 (SessionID, _minutiaCaptureController.BestTemplate1, Laterality, CaptureSite);
                         PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias);

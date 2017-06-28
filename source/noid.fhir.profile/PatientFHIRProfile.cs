@@ -3,12 +3,15 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using SourceAFIS.Templates;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Serialization;
 using NoID.Utilities;
+using NoID.Match.Database.Client;
 
 namespace NoID.FHIR.Profile
 {
@@ -22,6 +25,8 @@ namespace NoID.FHIR.Profile
         private SourceAFIS.Templates.NoID _noID;
         private readonly string _organizationName;
         private readonly Uri _fhirAddress;
+        private List<FingerPrintMinutias> _fingerPrintMinutiasList = new List<FingerPrintMinutias>();
+        private Exception _exception;
 
         private string _language = "";
         private string _firstName = "";
@@ -47,7 +52,7 @@ namespace NoID.FHIR.Profile
         {
             _organizationName = organizationName;
             _fhirAddress = fhirAddress;
-            _noID = new SourceAFIS.Templates.NoID();
+            NewSession();
         }
 
         public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient, string noidStatus, DateTime checkinDateTime)
@@ -148,6 +153,27 @@ namespace NoID.FHIR.Profile
                                 PhoneCell = telecom.Value.ToString();
                             }
                         }
+                    }
+                }
+
+                if (loadPatient.Photo.Count > 0)
+                {
+                    foreach(var minutia in loadPatient.Photo)
+                    {
+                        Attachment mediaAttachment = loadPatient.Photo[0];
+                        byte[] byteMinutias = mediaAttachment.Data;
+
+                        Stream stream = new MemoryStream(byteMinutias);
+                        Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
+                        
+                        // Get captureSite and laterality from media
+                        string captureSiteCode = media.Extension[1].Value.Extension[1].Value.ToString();
+                        string lateralityCode = media.Extension[1].Value.Extension[2].Value.ToString();
+
+                        Template addMinutia = ConvertFHIR.FHIRToTemplate(media);
+                        FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(SessionID, addMinutia, FHIRUtilities.SnoMedCodeToLaterality(lateralityCode), FHIRUtilities.SnoMedCodeToCaptureSite(captureSiteCode));
+
+                        AddFingerPrint(newFingerPrintMinutias);
                     }
                 }
             }
@@ -300,66 +326,17 @@ namespace NoID.FHIR.Profile
             get { return _checkinDateTime; }
             set { _checkinDateTime = value; }
         }
-    }
 
-    public class PatientFHIRProfile : PatientProfile
-    {
-
-        private Exception _exception;
-
-        private List<FingerPrintMinutias> _fingerPrintMinutiasList = new List<FingerPrintMinutias>();
-
-        public string DeviceName;
-        public int OriginalDpi;
-        public int OriginalHeight;
-        public int OriginalWidth;
-
-        public PatientFHIRProfile(string organizationName, Uri endPoint) : base(organizationName, endPoint)
+        public SourceAFIS.Templates.NoID NoID
         {
+            get { return _noID; }
+            set { _noID = value; }
         }
 
-        public PatientFHIRProfile(string organizationName, Uri endPoint, Patient loadPatient, string noidStatus, DateTime checkinDateTime) : base(organizationName, endPoint, loadPatient, noidStatus, checkinDateTime)
-        {
-        }
-
-        ~PatientFHIRProfile() { }
-
-        private string FingerTipSnoMedCTCode(FHIRUtilities.CaptureSiteSnoMedCode fingerTip)
-        {
-            return fingerTip.ToString();
-        }
-
-        private string SnoMedCTLaterality(FHIRUtilities.LateralitySnoMedCode laterality)
-        {
-            return laterality.ToString();
-        }
-
-        public Exception Exception
+        public Exception BaseException
         {
             get { return _exception; }
-        }
-
-        public string DomainName
-        {
-            get
-            {
-                try
-                {
-                    return FHIRAddress.Host.Substring(FHIRAddress.Host.LastIndexOf('.', FHIRAddress.Host.LastIndexOf('.') - 1) + 1);
-                }
-                catch
-                {
-                    return "localhost";
-                }
-            }
-        }
-
-        public string ServerName
-        {
-            get
-            {
-                return FHIRAddress.GetLeftPart(UriPartial.Authority).ToString();
-            }
+            set { _exception = value; }
         }
 
         public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
@@ -391,6 +368,68 @@ namespace NoID.FHIR.Profile
                 _exception = ex;
             }
             return result;
+        }
+
+        public List<FingerPrintMinutias> FingerPrintMinutiasList
+        {
+            get { return _fingerPrintMinutiasList; }
+            set { _fingerPrintMinutiasList = value; }
+        }
+    }
+
+    public class PatientFHIRProfile : PatientProfile
+    {
+        public string DeviceName;
+        public int OriginalDpi;
+        public int OriginalHeight;
+        public int OriginalWidth;
+
+        public PatientFHIRProfile(string organizationName, Uri endPoint) : base(organizationName, endPoint)
+        {
+        }
+
+        public PatientFHIRProfile(string organizationName, Uri endPoint, Patient loadPatient, string noidStatus, DateTime checkinDateTime) : base(organizationName, endPoint, loadPatient, noidStatus, checkinDateTime)
+        {
+        }
+
+        ~PatientFHIRProfile() { }
+
+        private string FingerTipSnoMedCTCode(FHIRUtilities.CaptureSiteSnoMedCode fingerTip)
+        {
+            return fingerTip.ToString();
+        }
+
+        private string SnoMedCTLaterality(FHIRUtilities.LateralitySnoMedCode laterality)
+        {
+            return laterality.ToString();
+        }
+
+        public Exception Exception
+        {
+            get { return BaseException; }
+        }
+
+        public string DomainName
+        {
+            get
+            {
+                try
+                {
+                    return FHIRAddress.Host.Substring(FHIRAddress.Host.LastIndexOf('.', FHIRAddress.Host.LastIndexOf('.') - 1) + 1);
+                }
+                catch
+                {
+                    return "localhost";
+                }
+            }
+        }
+
+        public string ServerName
+        {
+            get
+            {
+                return FHIRAddress.GetLeftPart(UriPartial.Authority).ToString();
+            }
         }
 
         public Patient CreateFHIRPatientProfile()
@@ -496,7 +535,7 @@ namespace NoID.FHIR.Profile
                     pt.Contact.Add(contact);
                 }
                 //TODO: Change location of minutias in Patient FHIR profile from attached photo to a more appropriate location.
-                foreach (FingerPrintMinutias minutias in _fingerPrintMinutiasList)
+                foreach (FingerPrintMinutias minutias in FingerPrintMinutiasList)
                 {
                     Attachment attach = new Attachment();
                     Media fingerprintMedia = FingerPrintFHIRMedia(minutias, DeviceName, OriginalDpi, OriginalHeight, OriginalWidth);
@@ -507,7 +546,7 @@ namespace NoID.FHIR.Profile
             }
             catch (Exception ex)
             {
-                _exception = new Exception("PatientProfile.CreateFHIRProfile() failed to create a new profile: " + ex.Message);
+                BaseException = new Exception("PatientProfile.CreateFHIRProfile() failed to create a new profile: " + ex.Message);
                 return null;
             }
             return pt;
@@ -593,7 +632,7 @@ namespace NoID.FHIR.Profile
             }
             catch (Exception ex)
             {
-                _exception = ex;
+                BaseException = ex;
             }
             return FingerPrintMedia;
         }
@@ -612,7 +651,7 @@ namespace NoID.FHIR.Profile
                 }
                 catch (Exception ex)
                 {
-                    _exception = ex;
+                    BaseException = ex;
                     return false;
                 }
             }
