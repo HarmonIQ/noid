@@ -53,6 +53,12 @@ namespace NoID.Browser
             return true;
         }
 
+        public PatientFHIRProfile PatientFHIRProfile
+        {
+            get { return _patientFHIRProfile; }
+            set { _patientFHIRProfile = value; }
+        }
+
         //  C# -> Javascript function is NoIDBridge.postDemographics( <params> )
         public bool postDemographics
             (

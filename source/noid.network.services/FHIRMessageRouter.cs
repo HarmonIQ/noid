@@ -45,6 +45,14 @@ namespace NoID.Network.Services
                     case "patient":
                         _patient = (Patient)newResource;
                         //TODO check for existing patient and expire old messages for the patient.
+                        if (_patient.Photo.Count > 0)
+                        {
+                            Attachment mediaAttachment = _patient.Photo[0];
+                            byte[] byteMinutias = mediaAttachment.Data;
+
+                            Stream stream = new MemoryStream(byteMinutias);
+                            Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
+                        }
                         if (!(SendPatientToSparkServer()))
                         {
                             _responseText = "Error sending Patient FHIR message to the Spark FHIR endpoint. " + ExceptionString;
