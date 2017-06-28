@@ -1,8 +1,6 @@
 ﻿// Copyright © 2016-2017 NoID Developers. All rights reserved.
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-// Copyright © 2010-2017 The CefSharp Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
 
 using System;
 using CefSharp;
@@ -30,8 +28,6 @@ namespace NoID.Browser
         private readonly ChromiumWebBrowser _browser;
         private static AfisEngine Afis = new AfisEngine();
         private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
-        private List<FingerPrintMinutias> _fingerprintMinutias = new List<FingerPrintMinutias>();
-        private PatientFHIRProfile noidFHIRProfile;
 
         private PatientBridge _patientBridge;
 
@@ -54,14 +50,13 @@ namespace NoID.Browser
             _browser = browser;
             Afis.Threshold = PROBE_MATCH_THRESHOLD;
             _endPoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
-            noidFHIRProfile = new PatientFHIRProfile(organizationName, _endPoint);
             _patientBridge = new PatientBridge(organizationName, _endPoint, NoIDServiceName);
             try
             {
                 biometricDevice = new DigitalPersona();
                 if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
                 {
-                    throw new Exception("PatientController failed to ");
+                    throw new Exception("PatientController failed to start biometric device.");
                 }
             }
             catch (Exception ex)
@@ -148,7 +143,7 @@ namespace NoID.Browser
                         FingerPrintMinutias fingerprintMinutia =
                             new FingerPrintMinutias(SessionID, tmpCurrent, Laterality, CaptureSite); //need to pass session id instead of patient cert id.
 
-                        Media media = noidFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
+                        Media media = PatientBridge.PatientFHIRProfile.FingerPrintFHIRMedia(fingerprintMinutia, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
                         HttpsClient dataTransport = new HttpsClient();
 
                         Authentication auth;
@@ -171,19 +166,20 @@ namespace NoID.Browser
 #endif
                         // If match found, inform JavaScript that this is an returning patient for identity.
                         _browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
-                        if (CurrentPage != "" && Laterality == FHIRUtilities.LateralitySnoMedCode.Left || Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
+                        if (CurrentPage != "" && (Laterality == FHIRUtilities.LateralitySnoMedCode.Left || Laterality == FHIRUtilities.LateralitySnoMedCode.Right))
                         {
                             FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias
                                 (
                                     SessionID, _minutiaCaptureController.BestTemplate1, Laterality, CaptureSite
                                 );
-                            _fingerprintMinutias.Add(newFingerPrintMinutias);
+                            PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias);
 
                             newFingerPrintMinutias = new FingerPrintMinutias
                                 (
                                     SessionID, _minutiaCaptureController.BestTemplate2, Laterality, CaptureSite
                                 );
-                            _fingerprintMinutias.Add(newFingerPrintMinutias);
+                            PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias);
+
                             if (Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
                             {
                                 fBiometricsComplete = true;

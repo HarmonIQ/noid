@@ -111,25 +111,5 @@ namespace NoID.FHIR.Profile.Hasher
         {
             get { return HashWriter.Hash(MultipleBirth.ToString(), hashSalt, argonParams); }
         }
-
-        public string LeftFingerPrintHash
-        {
-            get { return HashWriter.Hash(LeftFingerPrints.ToString(), hashSalt, argonParams); }
-        }
-
-        public string RightFingerPrintHash
-        {
-            get { return HashWriter.Hash(RightFingerPrints.ToString(), hashSalt, argonParams); }
-        }
-
-        public string LeftAlternateFingerPrintsHash
-        {
-            get { return HashWriter.Hash(LeftAlternateFingerPrints.ToString(), hashSalt, argonParams); }
-        }
-
-        public string RightAlternateFingerPrintsHash
-        {
-            get { return HashWriter.Hash(RightAlternateFingerPrints.ToString(), hashSalt, argonParams); }
-        }
     }
 }

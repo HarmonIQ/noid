@@ -15,7 +15,7 @@ namespace NoID.Browser
     /// <para> Used to handle the Patient UI and briges calls between CEF and .NET.</para>
     /// <para> Uses JavaScript naming because CEF renames them anyways.</para>
     /// <para> Use CEFBridge as a base class and contains</para>
-    /// <para> organizationName, endPoint, serviceName, errorDescription, alertFunction</para>
+    /// <para> organizationName, endPoint, serviceName, errorDescription, alertFunction, currentPage</para>
     /// <seealso cref="CEFBridge"/>
     /// </summary>
 
@@ -35,6 +35,12 @@ namespace NoID.Browser
         }
 
         ~PatientBridge() { }
+
+        public PatientFHIRProfile PatientFHIRProfile
+        {
+            get { return _patientFHIRProfile; }
+            set { _patientFHIRProfile = value; }
+        }
 
         // C# -> Javascript function is NoIDBridge.postLateralityCaptureSite ( <params> )
         public bool postLateralityCaptureSite(string laterality, string captureSite)
