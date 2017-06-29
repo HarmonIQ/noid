@@ -61,6 +61,19 @@ namespace NoID.Utilities
             return returnValue;
         }
 
+        public static byte[] StringToByteArray(string stringToBytes)
+        {
+            byte[] returnValue = null;
+            try
+            {
+                returnValue = Encoding.ASCII.GetBytes(stringToBytes);
+            }
+            catch
+            {
+            }
+            return returnValue;
+        }
+
         public static string SHA256(string hashIt)
         {
             SHA256Managed crypt = new SHA256Managed();

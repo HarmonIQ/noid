@@ -58,10 +58,10 @@ namespace NoID.Utilities
 
         public static string FHIRToString(Resource _fhir)
         {
-            string jsonString;
+            string jsonString = "";
             try
             {
-                jsonString = _fhir.ToString();
+                jsonString = FHIRResourceToString(_fhir);
             }
             catch (Exception ex)
             {
@@ -517,6 +517,61 @@ namespace NoID.Utilities
         public static uint SnoMedLateralityNameToCode(string snoMedCodeName)
         {
             return (uint)Enum.Parse(typeof(LateralitySnoMedCode), snoMedCodeName, true);
+        }
+
+        public static Resource FileToResource(string fullFileName)
+        {
+            Resource returnValue = null;
+            try
+            {
+                FileInfo fileInfo = new FileInfo(fullFileName);
+                FileStream fs = fileInfo.OpenRead();
+                byte[] byteJSON = File.ReadAllBytes(fullFileName);
+                Stream stream = new MemoryStream(byteJSON);
+                returnValue = FHIRUtilities.StreamToFHIR(new StreamReader(stream));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return returnValue;
+        }
+
+        public static string FHIRResourceToString(Resource resource)
+        {
+            return FhirSerializer.SerializeResourceToJson(resource);
+        }
+
+        public static byte[] FHIRResourceToByteArray(Resource resource)
+        {
+            string jsonString = FHIRResourceToString(resource);
+            return StringUtilities.StringToByteArray(jsonString);
+        }
+
+        public static bool SaveJSONFile(Patient pt, string directory)
+        {
+            bool result = false;
+            try
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(directory);
+
+                if (dirInfo.Exists == false)
+                {
+                    dirInfo.Create();
+                }
+                string fileFullName = directory + @"\" + pt.Identifier[0].Value.ToString() + ".json";
+                FileInfo fileInfo = new FileInfo(fileFullName);
+                FileStream fs = fileInfo.Create();
+                byte[] jsonBytes = FHIRResourceToByteArray(pt);
+                fs.Write(jsonBytes, 0, jsonBytes.Length);
+                fs.Flush(true);
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return result;
         }
     }
 }

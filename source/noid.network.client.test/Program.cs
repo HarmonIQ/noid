@@ -17,14 +17,22 @@ namespace NoID.Network.Client.Test
         
         static void Main(string[] args)
         {
+            Patient pt = (Patient)ReadJSONFile();
             SendJSON();
-            //SendProtoBuffer();
+            // SendProtoBuffer();
             Console.ReadLine();
+        }
+
+
+        private static Resource ReadJSONFile()
+        {
+            return FHIRUtilities.FileToResource(@"C:\JSONTest\sample-new-patient.json");
         }
 
         private static void SendJSON()
         {
             Patient payload = FHIRUtilities.CreateTestFHIRPatientProfile();
+            FHIRUtilities.SaveJSONFile(payload, @"C:\JSONTest");
             Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
             Uri endpoint = new Uri(FHIREndPoint);
             HttpsClient client = new HttpsClient();
