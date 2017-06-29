@@ -271,19 +271,19 @@ namespace NoID.Browser
                         break;
                     case "RightIndexFinger":
                         attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
-                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightIndex');");
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightMiddle');");
                         break;
                     case "RightMiddleFinger":
                         attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
-                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightMiddle');");
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightRing');");
                         break;
                     case "RightRingFinger":
                         attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
-                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightRing');");
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightLittle');");
                         break;
                     case "RightLittleFinger":
                         attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
-                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightLittle');");
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightThumb');");
                         break;
                     case "RightThumb":
                         attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());							
@@ -300,9 +300,9 @@ namespace NoID.Browser
             }
             else
             {
+				browser.GetMainFrame().ExecuteJavaScriptAsync("alert('Must be on the correct page to accept a fingerprint scan. Please follow the instructions on the screen.');");
 #if NAVIGATE
-                browser.GetMainFrame().ExecuteJavaScriptAsync("alert('Must be on the correct page to accept a fingerprint scan. Please follow the instructions on the screen.');");
-                DisplayOutput("Must be on the correct page to accept a fingerprint scan.");
+				DisplayOutput("Must be on the correct page to accept a fingerprint scan.");
 #endif
             }
         }
