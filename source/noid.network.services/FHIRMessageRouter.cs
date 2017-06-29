@@ -45,7 +45,7 @@ namespace NoID.Network.Services
                 switch (newResource.TypeName.ToLower())
                 {
                     case "patient":
-                        //if new patient
+                        //if new patient. TODO: check meta for NoID status
 
                         _patient = (Patient)newResource;
                         string sessionID = "";
@@ -72,6 +72,7 @@ namespace NoID.Network.Services
                         //TODO check for existing patient and expire old messages for the patient.
                         if (_patient.Photo.Count > 0)
                         {
+                            dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory);
                             foreach (var minutia in _patient.Photo)
                             {
                                 byte[] byteMinutias = minutia.Data;
@@ -80,22 +81,33 @@ namespace NoID.Network.Services
                                 // Save minutias for matching.
                                 Template fingerprintTemplate = ConvertFHIR.FHIRToTemplate(media);
                                 fingerprintTemplate.NoID.LocalNoID = LocalNoID;
-                                dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory, fingerprintTemplate.NoID.LateralitySnoMedCode.ToString(), fingerprintTemplate.NoID.CaptureSiteSnoMedCode.ToString());
+                                try
+                                {
+                                    dbMinutia.LateralityCode = (FHIRUtilities.LateralitySnoMedCode)fingerprintTemplate.NoID.LateralitySnoMedCode;
+                                    dbMinutia.CaptureSite = (FHIRUtilities.CaptureSiteSnoMedCode)fingerprintTemplate.NoID.CaptureSiteSnoMedCode;
+                                }
+                                catch { }
                                 if (dbMinutia.AddTemplate(fingerprintTemplate) == false)
                                 {
-                                    //TODO: handle error here.
+                                    _responseText = "Error adding a fingerprint to the match database.";
                                 }
-                                dbMinutia.Dispose();
                             }
+                            dbMinutia.Dispose();
+                            _responseText = "Successful.";
                         }
-                        
                         break;
                     case "media":
                         _biometics = (Media)newResource;
                         // TODO send to biometric match engine. If found, add patient reference to FHIR message.
                         // convert FHIR fingerprint message (_biometics) to AFIS template class
                         Template probe = ConvertFHIR.FHIRToTemplate(_biometics);
-                        dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory, probe.NoID.LateralitySnoMedCode.ToString(), probe.NoID.CaptureSiteSnoMedCode.ToString());
+                        dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory);
+                        try
+                        {
+                            dbMinutia.LateralityCode = (FHIRUtilities.LateralitySnoMedCode)probe.NoID.LateralitySnoMedCode;
+                            dbMinutia.CaptureSite = (FHIRUtilities.CaptureSiteSnoMedCode)probe.NoID.CaptureSiteSnoMedCode;
+                        }
+                        catch { }
                         MinutiaResult minutiaResult = dbMinutia.SearchPatients(probe);
                         if (minutiaResult != null)
                         {
@@ -127,23 +139,24 @@ namespace NoID.Network.Services
             }
             catch (Exception ex)
             {
-                _responseText = "Error processing FHIR message: " + ex.Message;
+                _responseText = "Error in FHIRMessageRouter::FHIRMessageRouter: " + ex.Message;
             }
         }
 
         public Resource SendPatientToSparkServer()
         {
             FhirClient client = new FhirClient(_sparkEndpoint);
+   
             Resource response = null;
             if (!(Patient == null))
             {
                 try
                 {
-                    response = client.Create(Patient); 
+                    response = client.Create(Patient);
                 }
                 catch (Exception ex)
                 {
-                    _responseText = ex.Message;
+                    _responseText = "Error in FHIRMessageRouter::SendPatientToSparkServer. " + ex.Message;
                     _exception = ex;
                 }
             }

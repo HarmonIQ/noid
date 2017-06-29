@@ -25,6 +25,7 @@ namespace NoID.Browser
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
         PatientFHIRProfile _patientFHIRProfile;
+        string _reponseString;
 
         public PatientBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
         {
@@ -119,6 +120,11 @@ namespace NoID.Browser
                     // Error occured set error description
                     errorDescription = client.ResponseText;
                     return false;
+                }
+                else
+                {
+                    // No error, return message.
+                    _reponseString = client.ResponseText;
                 }
             }
             catch (Exception ex)

@@ -562,25 +562,25 @@ namespace NoID.FHIR.Profile
                 // Validate phone with UI.
                 Patient.ContactComponent contact = new Patient.ContactComponent();
                 bool addContact = false;
-                if (!(EmailAddress != null) && EmailAddress.Length > 0)
+                if ((EmailAddress != null) && EmailAddress.Length > 0)
                 {
                     ContactPoint emailAddress = new ContactPoint(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, EmailAddress);
                     contact.Telecom.Add(emailAddress);
                     addContact = true;
                 }
-                if (!(PhoneHome != null) && PhoneHome.Length > 0)
+                if ((PhoneHome != null) && PhoneHome.Length > 0)
                 {
                     ContactPoint phoneHome = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Home, PhoneHome);
                     contact.Telecom.Add(phoneHome);
                     addContact = true;
                 }
-                if (!(PhoneCell != null) && PhoneCell.Length > 0)
+                if ((PhoneCell != null) && PhoneCell.Length > 0)
                 {
                     ContactPoint phoneCell = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, PhoneCell);
                     contact.Telecom.Add(phoneCell);
                     addContact = true;
                 }
-                if (!(PhoneWork != null) && PhoneWork.Length > 0)
+                if ((PhoneWork != null) && PhoneWork.Length > 0)
                 {
                     ContactPoint phoneWork = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Work, PhoneWork);
                     contact.Telecom.Add(phoneWork);
