@@ -36,7 +36,7 @@
                         <div class="connecting-line"></div>
                         <ul class="nav nav-tabs nav-tabs2" role="tablist">
                             <li role="presentation" class="active">
-                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Consent">
+                                <a id="consentNav" href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Consent">
                                     <span class="round-tab">
                                         <i class="glyphicon glyphicon-pencil"></i>
                                     </span>
@@ -50,14 +50,14 @@
                                 </a>
                             </li>-->
                             <li role="presentation" class="disabled">
-                                <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Left Hand Fingerprint Scan">
+                                <a id="leftHandScanNav" href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Left Hand Fingerprint Scan">
                                     <span class="round-tab">
                                         <i class="fa fa-hand-o-up fa-flip-horizontal" aria-hidden="true"></i>
                                     </span>
                                 </a>
                             </li>
                             <li role="presentation" class="disabled">
-                                <a href="#step5" data-toggle="tab" aria-controls="step5" role="tab" title="Right Hand Fingerprint Scan">
+                                <a id="rightHandScanNav" href="#step5" data-toggle="tab" aria-controls="step5" role="tab" title="Right Hand Fingerprint Scan">
                                     <span class="round-tab">
                                         <i class="fa fa-hand-o-up" aria-hidden="true"></i>
                                     </span>
@@ -287,11 +287,13 @@
                                             <h1><span id="spnLeftHandFinger"></span> Fingerprint Scan</h1>
                                             <h3>
                                                 Please place the tip of your <span id="spnLeftHandFinger2"></span> on the scanner as shown.
-                                                <br />
-                                                <br />
+                                                <br />                                         
                                                 **It may take 2 or more scan attempts of the same finger.
                                                 <br />
                                                 **If prompted, please re-scan your finger until fingerprint is accepted.
+                                                <br />
+                                                <br />
+                                                <button type="button" id="clickNoLeftHandFingerPrint" class="btn btn-primary">Click Here if you are physically unable to provide a fingerprint from your Left Hand</button>
                                             </h3>
                                             <hr>
                                             <!--<button id="showCompleteLeft" onclick="showComplete('left');" type="button">TESTY REMOVE ME!!</button>-->                                            
@@ -328,17 +330,19 @@
                                         <h1><span id="spnRightHandFinger"></span> Fingerprint Scan</h1>
                                         <h3>
                                             Please place the tip of your <span id="spnRightHandFinger2"></span> on the scanner as shown.
-                                            <br />
-                                            <br />
+                                            <br />                                           
                                             **It may take 2 or more scan attempts of the same finger.
                                             <br />
                                             **If prompted, please re-scan your finger until fingerprint is accepted.
+                                            <br />
+                                            <br />
+                                            <button type="button" id="clickNoRightHandFingerPrint" class="btn btn-primary">Click Here if you are physically unable to provide a fingerprint from your Right Hand</button>
                                         </h3>
                                         <hr>
                                         <!--<button id="showCompleteRight" onclick="showComplete('right');" type="button">TESTY REMOVE ME!!</button>-->
                                         <!--mark schroeder 20170628 disabling image map for v1
                                         <img src="resources/RightHandImageMap.jpg" usemap="#right_image-map">-->
-                                        <img id="leftHandImage" src="resources/RightHandImageMap.jpg" />
+                                        <img id="rightHandImage" src="resources/RightHandImageMap.jpg" />
                                         <div class="pull-left"><img src="resources/ScanInstruction.png" alt="Scan image" class="img-rounded"><h4>Place finger tip on scanner as shown above</h4></div>
                                         <!--from https://www.image-map.net/-->
                                         <!--<map name="right_image-map" id="right_image-map">
@@ -359,7 +363,7 @@
                                 <li><button id="rightFingerprintBackButton" type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button disabled id="rightFingerNextButton" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button disabled id="rightFingerNextButton" onclick="disablePreviousNavMenuItems();" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <!--<div class="tab-pane" role="tabpanel" id="step6">
