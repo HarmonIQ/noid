@@ -12,6 +12,7 @@ using SourceAFIS.Templates;
 using NoID.Biometrics.Managers;
 using NoID.Match.Database.Client;
 using NoID.Match.Database.FingerPrint;
+using NoID.Utilities;
 
 namespace NoID.Match.Database.Tests
 {
@@ -49,7 +50,14 @@ namespace NoID.Match.Database.Tests
 
         public MatchProbesTest(string databaseDirectory, string backupDatabaseDirectory, string lateralityCode, string captureSiteCode)
         {
-            dbMinutia = new FingerPrintMatchDatabase(databaseDirectory, backupDatabaseDirectory, lateralityCode, captureSiteCode);
+            dbMinutia = new FingerPrintMatchDatabase(databaseDirectory, backupDatabaseDirectory);
+            try
+            {
+                dbMinutia.LateralityCode = (FHIRUtilities.LateralitySnoMedCode)Int32.Parse(lateralityCode);
+                dbMinutia.CaptureSite = (FHIRUtilities.CaptureSiteSnoMedCode)Int32.Parse(captureSiteCode);
+            }
+            catch { }
+
             if (!(SetupScanner()))
             {
                 if ((_exception == null))

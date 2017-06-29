@@ -77,11 +77,11 @@ namespace NoID.Match.Database
                 {
                     _configDBreeze.Dispose();
                 }
-                if (_dBreezeEngine != null)
-                {
-                    _dBreezeEngine.Dispose();
-                }
                 if (_backup != null)
+                {
+                    _backup.Dispose();
+                }
+                if (_dBreezeEngine != null)
                 {
                     _dBreezeEngine.Dispose();
                 }

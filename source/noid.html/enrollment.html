@@ -36,7 +36,7 @@
                         <div class="connecting-line"></div>
                         <ul class="nav nav-tabs nav-tabs2" role="tablist">
                             <li role="presentation" class="active">
-                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Consent">
+                                <a id="consentNav" href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Consent">
                                     <span class="round-tab">
                                         <i class="glyphicon glyphicon-pencil"></i>
                                     </span>
@@ -50,14 +50,14 @@
                                 </a>
                             </li>-->
                             <li role="presentation" class="disabled">
-                                <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Left Hand Fingerprint Scan">
+                                <a id="leftHandScanNav" href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Left Hand Fingerprint Scan">
                                     <span class="round-tab">
                                         <i class="fa fa-hand-o-up fa-flip-horizontal" aria-hidden="true"></i>
                                     </span>
                                 </a>
                             </li>
                             <li role="presentation" class="disabled">
-                                <a href="#step5" data-toggle="tab" aria-controls="step5" role="tab" title="Right Hand Fingerprint Scan">
+                                <a id="rightHandScanNav" href="#step5" data-toggle="tab" aria-controls="step5" role="tab" title="Right Hand Fingerprint Scan">
                                     <span class="round-tab">
                                         <i class="fa fa-hand-o-up" aria-hidden="true"></i>
                                     </span>
@@ -287,24 +287,28 @@
                                             <h1><span id="spnLeftHandFinger"></span> Fingerprint Scan</h1>
                                             <h3>
                                                 Please place the tip of your <span id="spnLeftHandFinger2"></span> on the scanner as shown.
-                                                <br />
-                                                <br />
+                                                <br />                                         
                                                 **It may take 2 or more scan attempts of the same finger.
                                                 <br />
                                                 **If prompted, please re-scan your finger until fingerprint is accepted.
+                                                <br />
+                                                <br />
+                                                <button type="button" id="clickNoLeftHandFingerPrint" class="btn btn-primary">Click Here if you are physically unable to provide a fingerprint from your Left Hand</button>
                                             </h3>
                                             <hr>
-                                            <!--<button id="showCompleteLeft" onclick="showComplete('left');" type="button">TESTY REMOVE ME!!</button>-->
-                                            <img src="resources/LeftHandImageMap.jpg" usemap="#left_image-map">
+                                            <!--<button id="showCompleteLeft" onclick="showComplete('left');" type="button">TESTY REMOVE ME!!</button>-->                                            
+                                            <!--mark schroeder 20170628 disabling image map for v1
+                                            <img src="resources/LeftHandImageMap.jpg" usemap="#left_image-map">-->
+                                            <img id="leftHandImage" src="resources/LeftHandImageMap.jpg" />
                                             <img src="resources/ScanInstruction.png" alt="Scan image" class="img-rounded pull-right">
                                             <!--from https://www.image-map.net/-->
-                                            <map name="left_image-map" id="left_image-map">
+                                            <!--<map name="left_image-map" id="left_image-map">
                                                 <area target="_self" id="selectLeftLittle" onclick="alert('Only Index Finger Currently Enabled');" alt="Select Left Little Finger" title="Select Left Little Finger" href="javascript:void(0);" coords="30,89,26,89,17,105,52,132,71,121" shape="poly">
                                                 <area target="_self" id="selectLeftRing" onclick="alert('Only Index Finger Currently Enabled');" alt="Select Left Ring Finger" title="Select Left Ring Finger" href="javascript:void(0);" coords="91,80,60,26,52,45,76,103" shape="poly">
                                                 <area target="_self" id="selectLeftMiddle" onclick="alert('Only Index Finger Currently Enabled');" alt="Select Left Middle Finger" title="Select Left Middle Finger" href="javascript:void(0);" coords="99,10,87,7,99,56,102,73,118,72,110,13" shape="poly">
                                                 <area target="_self" id="selectLeftIndex" onclick="setLateralitySite(this.id);" alt="Select Left Index Finger" title="Select Left Index Finger" href="javascript:void(0);" coords="159,7,163,65,140,60,143,7" shape="poly">
                                                 <area target="_self" id="selectLeftThumb" onclick="alert('Only Index Finger Currently Enabled');" alt="Select Left Thumb" title="Select Left Thumb" href="javascript:void(0);" coords="236,80,253,90,225,125,206,114" shape="poly">
-                                            </map>
+                                            </map>-->
                                             <i id="checkLeft" class="fa fa-spinner fa-spin fa-5x fa-fw pull-right incomplete"></i>
                                             <div style="width: 250px" id="scanStatusMessageLeft" class="pull-right">
                                                 <h4>Please select a finger<br />by clicking a finger in the<br />image to the left<br /><span class="glyphicon glyphicon-arrow-left spanArrow"></span><span class="glyphicon glyphicon-arrow-left spanArrow"></span><span class="glyphicon glyphicon-arrow-left spanArrow"></span><span class="glyphicon glyphicon-arrow-left spanArrow"></span><span class="glyphicon glyphicon-arrow-left spanArrow"></span></h4>
@@ -326,24 +330,28 @@
                                         <h1><span id="spnRightHandFinger"></span> Fingerprint Scan</h1>
                                         <h3>
                                             Please place the tip of your <span id="spnRightHandFinger2"></span> on the scanner as shown.
-                                            <br />
-                                            <br />
+                                            <br />                                           
                                             **It may take 2 or more scan attempts of the same finger.
                                             <br />
                                             **If prompted, please re-scan your finger until fingerprint is accepted.
+                                            <br />
+                                            <br />
+                                            <button type="button" id="clickNoRightHandFingerPrint" class="btn btn-primary">Click Here if you are physically unable to provide a fingerprint from your Right Hand</button>
                                         </h3>
                                         <hr>
                                         <!--<button id="showCompleteRight" onclick="showComplete('right');" type="button">TESTY REMOVE ME!!</button>-->
-                                        <img src="resources/RightHandImageMap.jpg" usemap="#right_image-map">
+                                        <!--mark schroeder 20170628 disabling image map for v1
+                                        <img src="resources/RightHandImageMap.jpg" usemap="#right_image-map">-->
+                                        <img id="rightHandImage" src="resources/RightHandImageMap.jpg" />
                                         <div class="pull-left"><img src="resources/ScanInstruction.png" alt="Scan image" class="img-rounded"><h4>Place finger tip on scanner as shown above</h4></div>
                                         <!--from https://www.image-map.net/-->
-                                        <map name="right_image-map" id="right_image-map">
+                                        <!--<map name="right_image-map" id="right_image-map">
                                             <area target="_self" id="selectRightLittle" onclick="alert('Only Index Finger Currently Enabled');" alt="Select Right Little Finger" title="Select Right Little Finger" href="javascript:void(0);" coords="212,119,254,87,265,97,223,138" shape="poly">
                                             <area target="_self" id="selectRightRing" onclick="alert('Only Index Finger Currently Enabled');" alt="Select Right Ring Finger" title="Select Right Ring Finger" href="javascript:void(0);" coords="221,27,195,79,207,90,231,38" shape="poly">
                                             <area target="_self" id="selectRightMiddle" onclick="alert('Only Index Finger Currently Enabled');" alt="Select Right Middle Finger" title="Select Right Middle Finger" href="javascript:void(0);" coords="177,2,158,63,178,70,196,10" shape="poly">
                                             <area target="_self" id="selectRightIndex" onclick="setLateralitySite(this.id);" alt="Select Right Index Finger" title="Select Right Index Finger" href="javascript:void(0);" coords="121,4,118,67,143,71,142,5" shape="poly">
                                             <area target="_self" id="selectRightThumb" onclick="alert('Only Index Finger Currently Enabled');" alt="Select Right Thumb" title="Select Right Thumb" href="javascript:void(0);" coords="25,86,54,135,77,120,46,79" shape="poly">
-                                        </map>
+                                        </map>-->
                                         <i id="checkRight" class="fa fa-spinner fa-spin fa-5x fa-fw pull-left incomplete"></i>
                                         <div style="width: 250px" id="scanStatusMessageRight" class="pull-left">
                                             <h4>Please select a finger<br />by clicking a finger in the<br />image to the right<br /><span class="glyphicon glyphicon-arrow-right spanArrow"></span><span class="glyphicon glyphicon-arrow-right spanArrow"></span><span class="glyphicon glyphicon-arrow-right spanArrow"></span><span class="glyphicon glyphicon-arrow-right spanArrow"></span><span class="glyphicon glyphicon-arrow-right spanArrow"></span></h4>
@@ -355,7 +363,7 @@
                                 <li><button id="rightFingerprintBackButton" type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button disabled id="rightFingerNextButton" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button disabled id="rightFingerNextButton" onclick="disablePreviousNavMenuItems();" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <!--<div class="tab-pane" role="tabpanel" id="step6">

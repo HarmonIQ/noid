@@ -3,11 +3,15 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using SourceAFIS.Templates;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Serialization;
 using NoID.Utilities;
+using NoID.Match.Database.Client;
 
 namespace NoID.FHIR.Profile
 {
@@ -21,6 +25,8 @@ namespace NoID.FHIR.Profile
         private SourceAFIS.Templates.NoID _noID;
         private readonly string _organizationName;
         private readonly Uri _fhirAddress;
+        private List<FingerPrintMinutias> _fingerPrintMinutiasList = new List<FingerPrintMinutias>();
+        private Exception _exception;
 
         private string _language = "";
         private string _firstName = "";
@@ -41,12 +47,20 @@ namespace NoID.FHIR.Profile
         private string _multipleBirth = ""; //Yes or No
         private string _noidStatus = ""; //new, return, error or critical
         private string _checkinDateTime = "";
+        private string _noidHubName = "";
+        private string _noidHubPassword = "";
+        private string _biometricAlternateReason = "";
+        private string _biometricAlternateQuestion1 = "";
+        private string _biometricAlternateAnswer1 = "";
+        private string _biometricAlternateQuestion2 = "";
+        private string _biometricAlternateAnswer2 = "";
 
-        public PatientProfile(string organizationName, Uri fhirAddress)
+        public PatientProfile(string organizationName, Uri fhirAddress, string noidStatus)
         {
             _organizationName = organizationName;
             _fhirAddress = fhirAddress;
-            _noID = new SourceAFIS.Templates.NoID();
+            _noidStatus = noidStatus;
+            NewSession();
         }
 
         public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient, string noidStatus, DateTime checkinDateTime)
@@ -147,6 +161,27 @@ namespace NoID.FHIR.Profile
                                 PhoneCell = telecom.Value.ToString();
                             }
                         }
+                    }
+                }
+
+                if (loadPatient.Photo.Count > 0)
+                {
+                    foreach(var minutia in loadPatient.Photo)
+                    {
+                        Attachment mediaAttachment = loadPatient.Photo[0];
+                        byte[] byteMinutias = mediaAttachment.Data;
+
+                        Stream stream = new MemoryStream(byteMinutias);
+                        Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
+                        
+                        // Get captureSite and laterality from media
+                        string captureSiteCode = media.Extension[1].Value.Extension[1].Value.ToString();
+                        string lateralityCode = media.Extension[1].Value.Extension[2].Value.ToString();
+
+                        Template addMinutia = ConvertFHIR.FHIRToTemplate(media);
+                        FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(SessionID, addMinutia, FHIRUtilities.SnoMedCodeToLaterality(lateralityCode), FHIRUtilities.SnoMedCodeToCaptureSite(captureSiteCode));
+
+                        AddFingerPrint(newFingerPrintMinutias);
                     }
                 }
             }
@@ -288,6 +323,48 @@ namespace NoID.FHIR.Profile
             set { _multipleBirth = value; }
         }
 
+        public string NoIDHubName
+        {
+            get { return _noidHubName; }
+            set { _noidHubName = value; }
+        }
+
+        public string NoIDHubPassword
+        {
+            get { return _noidHubPassword; }
+            set { _noidHubPassword = value; }
+        }
+
+        public string BiometricAlternateReason
+        {
+            get { return _biometricAlternateReason; }
+            set { _biometricAlternateReason = value; }
+        }
+
+        public string BiometricAlternateQuestion1
+        {
+            get { return _biometricAlternateQuestion1; }
+            set { _biometricAlternateQuestion1 = value; }
+        }
+
+        public string BiometricAlternateAnswer1
+        {
+            get { return _biometricAlternateAnswer1; }
+            set { _biometricAlternateAnswer1 = value; }
+        }
+
+        public string BiometricAlternateQuestion2
+        {
+            get { return _biometricAlternateQuestion2; }
+            set { _biometricAlternateQuestion2 = value; }
+        }
+
+        public string BiometricAlternateAnswer2
+        {
+            get { return _biometricAlternateAnswer2; }
+            set { _biometricAlternateAnswer2 = value; }
+        }
+
         public string NoIDStatus
         {
             get { return _noidStatus; }
@@ -299,23 +376,65 @@ namespace NoID.FHIR.Profile
             get { return _checkinDateTime; }
             set { _checkinDateTime = value; }
         }
+
+        public SourceAFIS.Templates.NoID NoID
+        {
+            get { return _noID; }
+            set { _noID = value; }
+        }
+
+        public Exception BaseException
+        {
+            get { return _exception; }
+            set { _exception = value; }
+        }
+
+        public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
+        {
+            bool result = false;
+            try
+            {
+                FHIRUtilities.LateralitySnoMedCode lateralitySnoMedCode = patientFingerprintMinutia.LateralitySnoMedCode;
+                FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = patientFingerprintMinutia.CaptureSiteSnoMedCode;
+                if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Left || lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Right)
+                {
+                    switch (captureSiteSnoMedCode)
+                    {
+                        case FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger:
+                        case FHIRUtilities.CaptureSiteSnoMedCode.MiddleFinger:
+                        case FHIRUtilities.CaptureSiteSnoMedCode.RingFinger:
+                        case FHIRUtilities.CaptureSiteSnoMedCode.LittleFinger:
+                        case FHIRUtilities.CaptureSiteSnoMedCode.Thumb:
+                            {
+                                result = true;
+                                _fingerPrintMinutiasList.Add(patientFingerprintMinutia);
+                                break;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _exception = ex;
+            }
+            return result;
+        }
+
+        public List<FingerPrintMinutias> FingerPrintMinutiasList
+        {
+            get { return _fingerPrintMinutiasList; }
+            set { _fingerPrintMinutiasList = value; }
+        }
     }
 
     public class PatientFHIRProfile : PatientProfile
     {
-
-        private Exception _exception;
-
-        private FingerPrintMinutias _leftFingerPrints;
-        private FingerPrintMinutias _rightFingerPrints;
-        private FingerPrintMinutias _leftAlternateFingerPrints;
-        private FingerPrintMinutias _rightAlternateFingerPrints;
-
+        public string DeviceName;
         public int OriginalDpi;
         public int OriginalHeight;
         public int OriginalWidth;
 
-        public PatientFHIRProfile(string organizationName, Uri endPoint) : base(organizationName, endPoint)
+        public PatientFHIRProfile(string organizationName, Uri endPoint, string noidStatus) : base(organizationName, endPoint, noidStatus)
         {
         }
 
@@ -337,7 +456,7 @@ namespace NoID.FHIR.Profile
 
         public Exception Exception
         {
-            get { return _exception; }
+            get { return BaseException; }
         }
 
         public string DomainName
@@ -363,85 +482,16 @@ namespace NoID.FHIR.Profile
             }
         }
 
-        public FingerPrintMinutias LeftFingerPrints
-        {
-            get { return _leftFingerPrints; }
-            set { _leftFingerPrints = value; }
-        }
-
-        public FingerPrintMinutias RightFingerPrints
-        {
-            get { return _rightFingerPrints; }
-            set { _rightFingerPrints = value; }
-        }
-        
-        public FingerPrintMinutias LeftAlternateFingerPrints
-        {
-            get { return _leftAlternateFingerPrints; }
-            set { _leftAlternateFingerPrints = value; }
-        }
-
-        public FingerPrintMinutias RightAlternateFingerPrints
-        {
-            get { return _rightAlternateFingerPrints; }
-            set { _rightAlternateFingerPrints = value; }
-        }
-        
-        public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
-        {
-            try   
-            {
-                FHIRUtilities.LateralitySnoMedCode lateralitySnoMedCode = patientFingerprintMinutia.LateralitySnoMedCode;
-                FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = patientFingerprintMinutia.CaptureSiteSnoMedCode;
-
-                switch (captureSiteSnoMedCode)
-                {
-                    case FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger:
-                        {
-                            if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Left)
-                            {
-                                _leftFingerPrints = patientFingerprintMinutia;
-                            }
-                            else if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Right)
-                            {
-                                _rightFingerPrints = patientFingerprintMinutia;
-                            }
-                            break;
-                        }
-                    case FHIRUtilities.CaptureSiteSnoMedCode.MiddleFinger:
-                    case FHIRUtilities.CaptureSiteSnoMedCode.RingFinger:
-                    case FHIRUtilities.CaptureSiteSnoMedCode.LittleFinger:
-                    case FHIRUtilities.CaptureSiteSnoMedCode.Thumb:
-                        {
-                            if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Left)
-                            {
-                                _leftAlternateFingerPrints = patientFingerprintMinutia;
-                            }
-                            else if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Right)
-                            {
-                                _rightAlternateFingerPrints = patientFingerprintMinutia;
-                            }
-                            break;
-                        }
-                    default:
-                        return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                _exception = ex;
-                return false;
-            }
-            return true;
-        }
-
         public Patient CreateFHIRPatientProfile()
         {
             Patient pt;
             try
             {
                 pt = new Patient();
-
+                // Add message status New, Return or Update
+                Meta meta = new Meta();
+                meta.Extension.Add(FHIRUtilities.MessageTypeExtension(NoIDStatus));
+                pt.Meta = meta;
                 // Add patient certificate hash.
                 Identifier idSession;
                 Identifier idPatientCertificate;
@@ -495,39 +545,42 @@ namespace NoID.FHIR.Profile
                 ptName.Given = new string[] { FirstName, MiddleName };
                 ptName.Family = LastName;
                 pt.Name = new List<HumanName> { ptName };
-                // Add patient address
-                Address address = new Address();
-                address.Line = new string[] { StreetAddress, StreetAddress2 };
-                address.City = City;
-                address.State = State;
-                address.Country = Country;
-                address.PostalCode = PostalCode;
-                pt.Address.Add(address);
+                
+                if (StreetAddress.Length > 0 || City.Length > 0 || State.Length > 0 || PostalCode.Length > 0)
+                {
+                    Address address = new Address(); // Add patient address
+                    address.Line = new string[] { StreetAddress, StreetAddress2 };
+                    address.City = City;
+                    address.State = State;
+                    address.Country = Country;
+                    address.PostalCode = PostalCode;
+                    pt.Address.Add(address);
+                }
 
                 // Add patient contact information (phone numbers and email)
                 // TODO: make sure email and phone are valid.
                 // Validate phone with UI.
                 Patient.ContactComponent contact = new Patient.ContactComponent();
                 bool addContact = false;
-                if (!(EmailAddress != null) && EmailAddress.Length > 0)
+                if ((EmailAddress != null) && EmailAddress.Length > 0)
                 {
                     ContactPoint emailAddress = new ContactPoint(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, EmailAddress);
                     contact.Telecom.Add(emailAddress);
                     addContact = true;
                 }
-                if (!(PhoneHome != null) && PhoneHome.Length > 0)
+                if ((PhoneHome != null) && PhoneHome.Length > 0)
                 {
                     ContactPoint phoneHome = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Home, PhoneHome);
                     contact.Telecom.Add(phoneHome);
                     addContact = true;
                 }
-                if (!(PhoneCell != null) && PhoneCell.Length > 0)
+                if ((PhoneCell != null) && PhoneCell.Length > 0)
                 {
                     ContactPoint phoneCell = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, PhoneCell);
                     contact.Telecom.Add(phoneCell);
                     addContact = true;
                 }
-                if (!(PhoneWork != null) && PhoneWork.Length > 0)
+                if ((PhoneWork != null) && PhoneWork.Length > 0)
                 {
                     ContactPoint phoneWork = new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Work, PhoneWork);
                     contact.Telecom.Add(phoneWork);
@@ -537,10 +590,19 @@ namespace NoID.FHIR.Profile
                 {
                     pt.Contact.Add(contact);
                 }
+                //TODO: Change location of minutias in Patient FHIR profile from attached photo to a more appropriate location.
+                foreach (FingerPrintMinutias minutias in FingerPrintMinutiasList)
+                {
+                    Attachment attach = new Attachment();
+                    Media fingerprintMedia = FingerPrintFHIRMedia(minutias, DeviceName, OriginalDpi, OriginalHeight, OriginalWidth);
+                    byte[] mediaBytes = FhirSerializer.SerializeToJsonBytes(fingerprintMedia, summary: SummaryType.Data);
+                    attach.Data = mediaBytes;
+                    pt.Photo.Add(attach);
+                }
             }
             catch (Exception ex)
             {
-                _exception = new Exception("PatientProfile.CreateFHIRProfile() failed to create a new profile: " + ex.Message);
+                BaseException = new Exception("PatientProfile.CreateFHIRProfile() failed to create a new profile: " + ex.Message);
                 return null;
             }
             return pt;
@@ -556,16 +618,21 @@ namespace NoID.FHIR.Profile
             return bodyCaptureSite;
         }
 
-        public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints, string scannerName, int originalDPI, int originalHeight, int originalWidth)
+        public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints, string deviceName, int originalDPI, int originalHeight, int originalWidth)
         {
             Media FingerPrintMedia = null;
+            DeviceName = deviceName;
+            OriginalDpi = originalDPI;
+            OriginalHeight = originalHeight;
+            OriginalWidth = originalWidth;
+
             try
             {
                 if ((fingerPrints != null))
                 {
                     FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
                     FingerPrintMedia.AddExtension("Healthcare Node", FHIRUtilities.OrganizationExtension(OrganizationName, DomainName, ServerName));
-                    FingerPrintMedia.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode, scannerName, originalDPI, originalHeight, originalWidth));
+                    FingerPrintMedia.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode, deviceName, originalDPI, originalHeight, originalWidth));
 
                     FingerPrintMedia.Identifier = new List<Identifier>();
 
@@ -621,7 +688,7 @@ namespace NoID.FHIR.Profile
             }
             catch (Exception ex)
             {
-                _exception = ex;
+                BaseException = ex;
             }
             return FingerPrintMedia;
         }
@@ -640,7 +707,7 @@ namespace NoID.FHIR.Profile
                 }
                 catch (Exception ex)
                 {
-                    _exception = ex;
+                    BaseException = ex;
                     return false;
                 }
             }

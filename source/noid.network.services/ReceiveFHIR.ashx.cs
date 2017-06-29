@@ -17,8 +17,8 @@ namespace NoID.Network.Services
         public void ProcessRequest(HttpContext context)
         {
             string responseText = null;
+            //context.Response.ContentType = "application/json+fhir";
             context.Response.ContentType = "text/plain";
-
             if (!(context.Request.InputStream == null))
             {
                 try

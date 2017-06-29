@@ -71,6 +71,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\biometrics.fingerprint.database.client\biometrics.fingerprint.database.client.csproj">
+      <Project>{614ee79c-13db-4e8e-bf49-c8efbd836cb0}</Project>
+      <Name>biometrics.fingerprint.database.client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\biometrics.fingerprint.match.lib\biometrics.fingerprint.match.lib.csproj">
       <Project>{0f1d6fcb-f813-4e2f-9d6c-de4bd7866233}</Project>
       <Name>biometrics.fingerprint.match.lib</Name>

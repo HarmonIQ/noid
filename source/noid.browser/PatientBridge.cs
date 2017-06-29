@@ -24,14 +24,14 @@ namespace NoID.Browser
         // default capture site and laterality.
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
-        SourceAFIS.Templates.NoID _noID;
         PatientFHIRProfile _patientFHIRProfile;
+        string _reponseString;
 
         public PatientBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
         {
-            _noID = new SourceAFIS.Templates.NoID();
-            _noID.SessionID = StringUtilities.GetNewSessionID();
-            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint);
+            //_noID = new SourceAFIS.Templates.NoID();
+            //_noID.SessionID = StringUtilities.GetNewSessionID();
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "NewPending");
         }
 
         ~PatientBridge() { }
@@ -51,6 +51,12 @@ namespace NoID.Browser
                 return false;
             }
             return true;
+        }
+
+        public PatientFHIRProfile PatientFHIRProfile
+        {
+            get { return _patientFHIRProfile; }
+            set { _patientFHIRProfile = value; }
         }
 
         //  C# -> Javascript function is NoIDBridge.postDemographics( <params> )
@@ -114,6 +120,11 @@ namespace NoID.Browser
                     // Error occured set error description
                     errorDescription = client.ResponseText;
                     return false;
+                }
+                else
+                {
+                    // No error, return message.
+                    _reponseString = client.ResponseText;
                 }
             }
             catch (Exception ex)
@@ -239,8 +250,7 @@ namespace NoID.Browser
             alertFunction = "";
             _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
             _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
-            _noID = new SourceAFIS.Templates.NoID();
-            _noID.SessionID = StringUtilities.GetNewSessionID();
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "New");
         }
 
         public bool postResetForNewPatient()
@@ -259,19 +269,19 @@ namespace NoID.Browser
 
         public string sessionID
         {
-            get { return _noID.SessionID; }
+            get { return _patientFHIRProfile.NoID.SessionID; }
         }
 
         public string localNoID
         {
-            get { return _noID.LocalNoID; }
-            set { _noID.LocalNoID = value; }
+            get { return _patientFHIRProfile.NoID.LocalNoID; }
+            set { _patientFHIRProfile.NoID.LocalNoID = value; }
         }
 
         public string remoteNoID
         {
-            get { return _noID.RemoteNoID; }
-            set { _noID.RemoteNoID = value; }
+            get { return _patientFHIRProfile.NoID.RemoteNoID; }
+            set { _patientFHIRProfile.NoID.RemoteNoID = value; }
         }
     }
 }

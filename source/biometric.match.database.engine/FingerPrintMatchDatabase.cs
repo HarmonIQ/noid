@@ -19,18 +19,25 @@ namespace NoID.Match.Database.FingerPrint
         private readonly static int MATCH_THRESHOLD = 30;
         private readonly static int MAX_CANDIDATE_CAPACITY = 20000;
         private MinutiaMatch _minutiaMatch;
-        private readonly FHIRUtilities.LateralitySnoMedCode _laterality;
-        private readonly FHIRUtilities.CaptureSiteSnoMedCode _captureSite;
+        private FHIRUtilities.LateralitySnoMedCode _laterality;
+        private FHIRUtilities.CaptureSiteSnoMedCode _captureSite;
 
-        public FingerPrintMatchDatabase(string databaseLocation, string datbaseBackupLocation, string lateralityCode, string captureSiteCode)
+        public FingerPrintMatchDatabase(string databaseLocation, string datbaseBackupLocation)
         {
             _minutiaMatch = new MinutiaMatch(databaseLocation, datbaseBackupLocation, MATCH_THRESHOLD);
-            try
+        }
+
+        ~FingerPrintMatchDatabase()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (_minutiaMatch != null)
             {
-                _laterality = FHIRUtilities.SnoMedCodeToLaterality(lateralityCode);
-                _captureSite = FHIRUtilities.SnoMedCodeToCaptureSite(captureSiteCode);
+                _minutiaMatch.Dispose();
             }
-            catch { }
         }
 
         public int CandidateCount
@@ -66,6 +73,18 @@ namespace NoID.Match.Database.FingerPrint
         public MinutiaMatch MinutiaMatch
         {
             get { return _minutiaMatch; }
+        }
+
+        public FHIRUtilities.LateralitySnoMedCode LateralityCode
+        {
+            get { return _laterality; }
+            set { _laterality = value; }
+        }
+
+        public FHIRUtilities.CaptureSiteSnoMedCode CaptureSite
+        {
+            get { return _captureSite; }
+            set { _captureSite = value; }
         }
 
         public bool AddTemplate(Template template)
