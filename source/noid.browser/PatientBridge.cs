@@ -245,8 +245,6 @@ namespace NoID.Browser
             _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
             _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
             _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "New");
-            //_noID = new SourceAFIS.Templates.NoID();
-            //_noID.SessionID = StringUtilities.GetNewSessionID();
         }
 
         public bool postResetForNewPatient()

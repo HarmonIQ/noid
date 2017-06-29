@@ -5,6 +5,7 @@
 using System;
 using System.Web;
 using System.IO;
+using System.Text;
 using System.Web.Configuration;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
@@ -13,6 +14,7 @@ using NoID.FHIR.Profile;
 using NoID.Utilities;
 using NoID.Match.Database.Client;
 using NoID.Match.Database.FingerPrint;
+
 
 namespace NoID.Network.Services
 {
@@ -43,24 +45,50 @@ namespace NoID.Network.Services
                 switch (newResource.TypeName.ToLower())
                 {
                     case "patient":
+                        //if new patient
+
                         _patient = (Patient)newResource;
+                        string sessionID = "";
+                        if (_patient.Identifier.Count > 0)
+                        {
+                            foreach(Identifier id in _patient.Identifier)
+                            {
+                                if (id.System.ToString().ToLower().Contains("session") == true)
+                                {
+                                    sessionID = id.Value.ToString();
+                                }
+                            }
+                        }
+
+                        Patient ptSaved = (Patient)SendPatientToSparkServer();
+                        if (ptSaved == null)
+                        {
+                            _responseText = "Error sending Patient FHIR message to the Spark FHIR endpoint. " + ExceptionString;
+                            return;
+                        }
+
+                        string LocalNoID = ptSaved.Id.ToString();
+
                         //TODO check for existing patient and expire old messages for the patient.
                         if (_patient.Photo.Count > 0)
                         {
                             foreach (var minutia in _patient.Photo)
                             {
-                                Attachment mediaAttachment = _patient.Photo[0];
-                                byte[] byteMinutias = mediaAttachment.Data;
-
+                                byte[] byteMinutias = minutia.Data;
                                 Stream stream = new MemoryStream(byteMinutias);
                                 Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
-
+                                // Save minutias for matching.
+                                Template fingerprintTemplate = ConvertFHIR.FHIRToTemplate(media);
+                                fingerprintTemplate.NoID.LocalNoID = LocalNoID;
+                                dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory, fingerprintTemplate.NoID.LateralitySnoMedCode.ToString(), fingerprintTemplate.NoID.CaptureSiteSnoMedCode.ToString());
+                                if (dbMinutia.AddTemplate(fingerprintTemplate) == false)
+                                {
+                                    //TODO: handle error here.
+                                }
+                                dbMinutia.Dispose();
                             }
                         }
-                        if (!(SendPatientToSparkServer()))
-                        {
-                            _responseText = "Error sending Patient FHIR message to the Spark FHIR endpoint. " + ExceptionString;
-                        }
+                        
                         break;
                     case "media":
                         _biometics = (Media)newResource;
@@ -72,13 +100,13 @@ namespace NoID.Network.Services
                         if (minutiaResult.NoID.Length > 0)
                         {
                             // Fingerprint found in database
-                            //Score = idFound.Score;
                             _responseText = minutiaResult.NoID;
                         }
                         else
                         {
                             _responseText = "No local database match.";
                         }
+                        dbMinutia.Dispose();
 
                         if (!(SendBiometicsToSparkServer()))
                         {
@@ -96,25 +124,23 @@ namespace NoID.Network.Services
             }
         }
 
-        public bool SendPatientToSparkServer()
+        public Resource SendPatientToSparkServer()
         {
             FhirClient client = new FhirClient(_sparkEndpoint);
-
+            Resource response = null;
             if (!(Patient == null))
             {
                 try
                 {
-                    Resource response = client.Create(Patient);
-                    _responseText = FHIRUtilities.FHIRToString(response);
+                    response = client.Create(Patient); 
                 }
                 catch (Exception ex)
                 {
                     _responseText = ex.Message;
                     _exception = ex;
-                    return false;
                 }
             }
-            return true;
+            return response;
         }
 
         public bool SendBiometicsToSparkServer()

@@ -33,6 +33,19 @@ namespace NoID.Match.Database.FingerPrint
             catch { }
         }
 
+        ~FingerPrintMatchDatabase()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (_minutiaMatch != null)
+            {
+                _minutiaMatch.Dispose();
+            }
+        }
+
         public int CandidateCount
         {
             get { return _minutiaMatch.CandidateCount; }
