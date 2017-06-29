@@ -14,17 +14,53 @@ namespace NoID.Network.Client.Test
     {
         private static readonly string FHIREndPoint = System.Configuration.ConfigurationManager.AppSettings["FHIREndPoint"].ToString();
         private static readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-        
+
         static void Main(string[] args)
         {
-            SendJSON();
-            //SendProtoBuffer();
-            Console.ReadLine();
+            string commandLine = "";
+            Console.WriteLine("Enter q to Quit and Enter to try again.");
+            while (commandLine != "q")
+            {
+                Console.WriteLine("Sending test patient FHIR message.");
+                Patient testPt = TestPatient();
+                SendJSON(testPt);
+                Console.WriteLine("Sending FHIR message from file.");
+                Patient readPt = ReadPatient();
+                SendJSON(readPt);
+
+                // SendProtoBuffer();
+                commandLine = "";
+                commandLine = Console.ReadLine();
+                if (commandLine.Length > 0)
+                {
+                    commandLine = commandLine.ToLower().Substring(0, 1);
+                }
+            }
         }
 
-        private static void SendJSON()
+        private static Resource ReadJSONFile()
         {
-            Patient payload = FHIRUtilities.CreateTestFHIRPatientProfile();
+            return FHIRUtilities.FileToResource(@"C:\JSONTest\sample-new-patient.json");
+        }
+
+        private static Patient ReadPatient()
+        {
+            return (Patient)ReadJSONFile();
+        }
+
+        private static Patient TestPatient()
+        {
+            Patient testPatient = FHIRUtilities.CreateTestFHIRPatientProfile
+                (
+                "Test NoID Org", Guid.NewGuid().ToString(), "", "English", "1961-04-22", "F", "No",
+                "Donna", "Marie", "Kasick", "4712 W 3rd St.", "Apt 35", "New York", "NY", "10000-2221",
+                "212-555-3000", "212-555-7400", "212-555-9555", "donnakasick@yandex.com"
+                );
+            return testPatient;
+        }
+
+        private static void SendJSON(Patient payload)
+        {
             Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
             Uri endpoint = new Uri(FHIREndPoint);
             HttpsClient client = new HttpsClient();
@@ -33,6 +69,7 @@ namespace NoID.Network.Client.Test
         }
 
         /*
+        // Example using Google protobuf 
         private static void SendProtoBuffer()
         {
             PatientFHIRProfile payload = CreatePatientFHIRProfile();

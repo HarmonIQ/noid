@@ -10,6 +10,7 @@ using SourceAFIS.Templates;
 using DBreeze.Storage;
 using DBreeze.DataTypes;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 namespace NoID.Match.Database
 {
@@ -36,6 +37,15 @@ namespace NoID.Match.Database
             _databaseDirectory = databaseDirectory;
             _backupDirectoryPath = backupDirectoryPath;
             _backupInterval = backupInterval;
+
+            if (IsDirectoryLocked(databaseDirectory) == true)
+            {
+                throw new Exception("Error in DBreezeWrapper::DBreezeWrapper.  Database directory is locked!");
+            }
+            if (IsDirectoryLocked(backupDirectoryPath) == true)
+            {
+                throw new Exception("Error in DBreezeWrapper::DBreezeWrapper.  Backup database directory is locked!");
+            }
             DirectoryInfo directoryInfo = new DirectoryInfo(databaseDirectory);
 
             if (directoryInfo.Exists == false)
@@ -60,6 +70,7 @@ namespace NoID.Match.Database
             }
             catch (Exception ex)
             {
+                Dispose();
                 throw ex;
             } 
         }
@@ -67,6 +78,35 @@ namespace NoID.Match.Database
         ~DBreezeWrapper()
         {
             Dispose();
+        }
+
+        private bool IsDirectoryLocked(string directoryPath)
+        {
+            bool result = true;
+            try
+            {
+                string testFilePath = directoryPath + @"\test.write.lock";
+                FileInfo testFile = new FileInfo(testFilePath);
+                FileStream fs = testFile.Create();
+                byte[] testBytes = Encoding.ASCII.GetBytes("NoID testing write access for ths directory: " + directoryPath + "/n");
+                fs.Write(testBytes, 0, testBytes.Length);
+                fs.Flush();
+                fs.Close();
+                fs.Dispose();
+                testFile.Delete();
+                testFile = null;
+                result = false;
+            }
+            catch (System.IO.IOException ioEx)
+            {
+                // file used by another process or other IO Exception
+                _exceptionList.Add(ioEx);
+            }
+            catch(Exception ex)
+            {
+                _exceptionList.Add(ex);
+            }
+            return result;
         }
 
         public void Dispose()

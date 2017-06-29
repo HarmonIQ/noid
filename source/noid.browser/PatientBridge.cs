@@ -115,6 +115,10 @@ namespace NoID.Browser
                 }
                 HttpsClient client = new HttpsClient();
                 Patient pt = _patientFHIRProfile.CreateFHIRPatientProfile();
+
+                // TODO: REMOVE THIS LINE!  ONLY FOR TESTING
+                //FHIRUtilities.SaveJSONFile(pt, @"C:\JSONTest");
+
                 if (client.SendFHIRPatientProfile(endPoint, auth, pt) == false)
                 {
                     // Error occured set error description
