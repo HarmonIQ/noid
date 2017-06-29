@@ -3,4 +3,4 @@
 	url = https://github.com/furore-fhir/spark.git
 [submodule "source/blockchain/sequence"]
 	path = source/blockchain/sequence
-	url = https://github.com/silknetwork/silk-core.git
+	url = https://github.com/duality-solutions/Sequence
