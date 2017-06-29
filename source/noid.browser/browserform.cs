@@ -212,27 +212,35 @@ namespace NoID.Browser
                         dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
                         string lateralityString = FHIRUtilities.LateralityToString(Laterality);
                         string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);
-  #if NAVIGATE
+#if NAVIGATE
                         string output = lateralityString + " " + captureSiteString + " fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
                         DisplayOutput(output);
-  #endif
-                        // If match found, inform JavaScript that this is an returning patient for identity.
-                        browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
-
-                        if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left)
+#endif
+                        if (dataTransport.ResponseText.ToLower().Contains("spark") == true)
                         {
-                            Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
-                            _minutiaCaptureController = new MinutiaCaptureController();
+                            // Match found, inform JavaScript that this is an returning patient for Identity.
+                            PatientBridge.PatientFHIRProfile.NoID.LocalNoID = dataTransport.ResponseText;  //save the localNoID
+                            PatientBridge.PatientFHIRProfile.NoIDStatus = "ReturnPending";
+                            string challengeQuestion = "Please enter your date of birth."; //TODO: Dynamically select question.
+                            browser.GetMainFrame().ExecuteJavaScriptAsync("showIdentity('" + challengeQuestion + "');");
                         }
-                        else if (Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
+                        else
                         {
-                            Laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
-                            CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
-                        }
+                            // Match not found, inform JavaScript the capture pair is complete and the patient can move to the next step.
+                            browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
+                            if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left)
+                            {
+                                Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+                                _minutiaCaptureController = new MinutiaCaptureController();
+                            }
+                            else if (Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
+                            {
+                                Laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
+                                CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
+                            }
 
-                        fingerprintScanAttempts = 0; //reset scan attempt count on successful scan
-                      
-                        // If not match found, inform JavaScript that this is an new patient enrollment.  reset _minutiaCaptureController for right side.
+                            fingerprintScanAttempts = 0; //reset scan attempt count on successful scan
+                        }
                   }
                   else
                   {

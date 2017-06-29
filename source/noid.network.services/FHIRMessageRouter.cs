@@ -97,10 +97,17 @@ namespace NoID.Network.Services
                         Template probe = ConvertFHIR.FHIRToTemplate(_biometics);
                         dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory, probe.NoID.LateralitySnoMedCode.ToString(), probe.NoID.CaptureSiteSnoMedCode.ToString());
                         MinutiaResult minutiaResult = dbMinutia.SearchPatients(probe);
-                        if (minutiaResult.NoID.Length > 0)
+                        if (minutiaResult != null)
                         {
-                            // Fingerprint found in database
-                            _responseText = minutiaResult.NoID;
+                            if (minutiaResult.NoID != null && minutiaResult.NoID.Length > 0)
+                            {
+                                // Fingerprint found in database
+                                _responseText = minutiaResult.NoID;  //TODO: for now, it returns the localNoID.  should return a FHIR response.
+                            }
+                            else
+                            {
+                                _responseText = "No local database match.";
+                            }
                         }
                         else
                         {

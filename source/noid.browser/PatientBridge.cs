@@ -30,7 +30,7 @@ namespace NoID.Browser
         {
             //_noID = new SourceAFIS.Templates.NoID();
             //_noID.SessionID = StringUtilities.GetNewSessionID();
-            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "New");
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "NewPending");
         }
 
         ~PatientBridge() { }
