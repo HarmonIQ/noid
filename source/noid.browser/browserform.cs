@@ -32,7 +32,6 @@ namespace NoID.Browser
         private static AfisEngine Afis = new AfisEngine();
         private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
         private List<FingerPrintMinutias> _fingerprintMinutias = new List<FingerPrintMinutias>();
-        private PatientFHIRProfile noidFHIRProfile;
 
         //TODO: Use one object for both bridges.
         private PatientBridge _patientBridge;
@@ -63,7 +62,6 @@ namespace NoID.Browser
             healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
             healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
 
-            noidFHIRProfile = new PatientFHIRProfile(organizationName, healthcareNodeFHIRAddress);
             Afis.Threshold = PROBE_MATCH_THRESHOLD;
 
             Text = "NoID Browser";
@@ -199,7 +197,7 @@ namespace NoID.Browser
                             (SessionID, _minutiaCaptureController.BestTemplate2, Laterality, CaptureSite);
                         PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias);
 
-                        Media media = noidFHIRProfile.FingerPrintFHIRMedia(newFingerPrintMinutias, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
+                        Media media = PatientBridge.PatientFHIRProfile.FingerPrintFHIRMedia(newFingerPrintMinutias, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
                         HttpsClient dataTransport = new HttpsClient();
                         Authentication auth;
                         if (Utilities.Auth == null)

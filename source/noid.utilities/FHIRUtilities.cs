@@ -346,6 +346,25 @@ namespace NoID.Utilities
             return ext;
         }
 
+        public static Extension MessageTypeExtension(string NoIDStatus)
+        {
+            /*
+                Example JSON FHIR Message
+                Organization 
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "Status",                         "valueString": new, return, update              }
+                    ]
+                }
+            */
+
+            Extension ext = new Extension("NoID", new FhirString(NoIDStatus));
+            Extension extNoIDStatus = ext.AddExtension("Status", new FhirString(NoIDStatus));
+            return ext;
+        }
+
         public static string LateralityToString(LateralitySnoMedCode laterality)
         {
             return Enum.GetName(typeof(LateralitySnoMedCode), laterality);

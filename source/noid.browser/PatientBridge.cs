@@ -30,7 +30,7 @@ namespace NoID.Browser
         {
             //_noID = new SourceAFIS.Templates.NoID();
             //_noID.SessionID = StringUtilities.GetNewSessionID();
-            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint);
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "New");
         }
 
         ~PatientBridge() { }
@@ -244,7 +244,7 @@ namespace NoID.Browser
             alertFunction = "";
             _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
             _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
-            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint);
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "New");
             //_noID = new SourceAFIS.Templates.NoID();
             //_noID.SessionID = StringUtilities.GetNewSessionID();
         }

@@ -20,7 +20,7 @@ namespace NoID.FHIR.Profile.Hasher
         //TODO: load and use saltList from matching hubs
         public string hashSalt = "C560325F";
 
-        public PatientFHIRProfileHasher(string organizationName, Uri fhirAddress) : base(organizationName, fhirAddress)
+        public PatientFHIRProfileHasher(string organizationName, Uri fhirAddress, string noidStatus) : base(organizationName, fhirAddress, noidStatus)
         {
 
         }

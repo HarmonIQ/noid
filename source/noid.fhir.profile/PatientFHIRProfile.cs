@@ -47,11 +47,19 @@ namespace NoID.FHIR.Profile
         private string _multipleBirth = ""; //Yes or No
         private string _noidStatus = ""; //new, return, error or critical
         private string _checkinDateTime = "";
+        private string _noidHubName = "";
+        private string _noidHubPassword = "";
+        private string _biometricAlternateReason = "";
+        private string _biometricAlternateQuestion1 = "";
+        private string _biometricAlternateAnswer1 = "";
+        private string _biometricAlternateQuestion2 = "";
+        private string _biometricAlternateAnswer2 = "";
 
-        public PatientProfile(string organizationName, Uri fhirAddress)
+        public PatientProfile(string organizationName, Uri fhirAddress, string noidStatus)
         {
             _organizationName = organizationName;
             _fhirAddress = fhirAddress;
+            _noidStatus = noidStatus;
             NewSession();
         }
 
@@ -315,6 +323,48 @@ namespace NoID.FHIR.Profile
             set { _multipleBirth = value; }
         }
 
+        public string NoIDHubName
+        {
+            get { return _noidHubName; }
+            set { _noidHubName = value; }
+        }
+
+        public string NoIDHubPassword
+        {
+            get { return _noidHubPassword; }
+            set { _noidHubPassword = value; }
+        }
+
+        public string BiometricAlternateReason
+        {
+            get { return _biometricAlternateReason; }
+            set { _biometricAlternateReason = value; }
+        }
+
+        public string BiometricAlternateQuestion1
+        {
+            get { return _biometricAlternateQuestion1; }
+            set { _biometricAlternateQuestion1 = value; }
+        }
+
+        public string BiometricAlternateAnswer1
+        {
+            get { return _biometricAlternateAnswer1; }
+            set { _biometricAlternateAnswer1 = value; }
+        }
+
+        public string BiometricAlternateQuestion2
+        {
+            get { return _biometricAlternateQuestion2; }
+            set { _biometricAlternateQuestion2 = value; }
+        }
+
+        public string BiometricAlternateAnswer2
+        {
+            get { return _biometricAlternateAnswer2; }
+            set { _biometricAlternateAnswer2 = value; }
+        }
+
         public string NoIDStatus
         {
             get { return _noidStatus; }
@@ -384,7 +434,7 @@ namespace NoID.FHIR.Profile
         public int OriginalHeight;
         public int OriginalWidth;
 
-        public PatientFHIRProfile(string organizationName, Uri endPoint) : base(organizationName, endPoint)
+        public PatientFHIRProfile(string organizationName, Uri endPoint, string noidStatus) : base(organizationName, endPoint, noidStatus)
         {
         }
 
@@ -438,7 +488,10 @@ namespace NoID.FHIR.Profile
             try
             {
                 pt = new Patient();
-
+                // Add message status New, Return or Update
+                Meta meta = new Meta();
+                meta.Extension.Add(FHIRUtilities.MessageTypeExtension(NoIDStatus));
+                pt.Meta = meta;
                 // Add patient certificate hash.
                 Identifier idSession;
                 Identifier idPatientCertificate;
@@ -492,14 +545,17 @@ namespace NoID.FHIR.Profile
                 ptName.Given = new string[] { FirstName, MiddleName };
                 ptName.Family = LastName;
                 pt.Name = new List<HumanName> { ptName };
-                // Add patient address
-                Address address = new Address();
-                address.Line = new string[] { StreetAddress, StreetAddress2 };
-                address.City = City;
-                address.State = State;
-                address.Country = Country;
-                address.PostalCode = PostalCode;
-                pt.Address.Add(address);
+                
+                if (StreetAddress.Length > 0 || City.Length > 0 || State.Length > 0 || PostalCode.Length > 0)
+                {
+                    Address address = new Address(); // Add patient address
+                    address.Line = new string[] { StreetAddress, StreetAddress2 };
+                    address.City = City;
+                    address.State = State;
+                    address.Country = Country;
+                    address.PostalCode = PostalCode;
+                    pt.Address.Add(address);
+                }
 
                 // Add patient contact information (phone numbers and email)
                 // TODO: make sure email and phone are valid.
