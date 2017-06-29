@@ -14,6 +14,7 @@
 [Oo]bj/
 [Dd]eploy
 [Mm][Ss][Ii][Ss]
+.vs/
 
 src/nuget/packages
 packages/
