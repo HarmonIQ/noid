@@ -206,7 +206,9 @@ namespace NoID.Utilities
             Attachment attach = new Attachment();
             Media media = new Media();
 
-            
+            media.AddExtension("Healthcare Node", FHIRUtilities.OrganizationExtension("Test NoID FHIR Message", "noidtest.net", "devtest.noidtest.net"));
+            media.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(
+                CaptureSiteSnoMedCode.IndexFinger, LateralitySnoMedCode.Left, "Test Scanner Device", 500, 350, 290));
             Extension extFingerPrintMedia = FHIRUtilities.FingerPrintMediaExtension(
                             "123",
                             "211",
@@ -224,6 +226,25 @@ namespace NoID.Utilities
                         );
 
             media.Extension.Add(extFingerPrintMedia);
+
+            extFingerPrintMedia = FHIRUtilities.FingerPrintMediaExtension(
+                            "201",
+                            "154",
+                            "44",
+                            "1"
+                        );
+
+            media.Extension.Add(extFingerPrintMedia);
+
+            extFingerPrintMedia = FHIRUtilities.FingerPrintMediaExtension(
+                            "21",
+                            "279",
+                            "310",
+                            "0"
+                        );
+
+            media.Extension.Add(extFingerPrintMedia);
+
 
             attach.Data = FhirSerializer.SerializeToJsonBytes(media, summary: Hl7.Fhir.Rest.SummaryType.False);
 
@@ -322,6 +343,25 @@ namespace NoID.Utilities
             Extension ext = new Extension("Organization", new FhirString(organizationName));
             Extension extCodingSystem = ext.AddExtension("Domain", new FhirString(domainName));
             Extension extCaptureSiteDescription = ext.AddExtension("FHIR Server", new FhirString(fhirServerName));
+            return ext;
+        }
+
+        public static Extension MessageTypeExtension(string NoIDStatus)
+        {
+            /*
+                Example JSON FHIR Message
+                Organization 
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "Status",                         "valueString": new, return, update              }
+                    ]
+                }
+            */
+
+            Extension ext = new Extension("NoID", new FhirString(NoIDStatus));
+            Extension extNoIDStatus = ext.AddExtension("Status", new FhirString(NoIDStatus));
             return ext;
         }
 

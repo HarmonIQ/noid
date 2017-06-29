@@ -34,16 +34,27 @@ namespace NoID.Match.Database.FingerPrint
             {
                 _dBreezeWrapper = new DBreezeWrapper(databaseDirectoryPath, databaseBackupPath, DATABASE_BACKUP_INTERVAL);
                 _fingerPrintCandidateList = _dBreezeWrapper.GetMinutiaList();
-                _dBreezeWrapper.Dispose();
             }
             catch(Exception ex)
             {
-                _dBreezeWrapper.Dispose();
+                Dispose();
                 throw ex;
             }
         }
 
-        ~MinutiaMatch(){ }
+        ~MinutiaMatch()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                _dBreezeWrapper.Dispose();
+            }
+            catch { }
+        }
 
         public Exception Exception
         {

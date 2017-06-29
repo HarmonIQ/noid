@@ -20,7 +20,7 @@ namespace NoID.FHIR.Profile.Hasher
         //TODO: load and use saltList from matching hubs
         public string hashSalt = "C560325F";
 
-        public PatientFHIRProfileHasher(string organizationName, Uri fhirAddress) : base(organizationName, fhirAddress)
+        public PatientFHIRProfileHasher(string organizationName, Uri fhirAddress, string noidStatus) : base(organizationName, fhirAddress, noidStatus)
         {
 
         }
@@ -110,26 +110,6 @@ namespace NoID.FHIR.Profile.Hasher
         public string MultipleBirthHash
         {
             get { return HashWriter.Hash(MultipleBirth.ToString(), hashSalt, argonParams); }
-        }
-
-        public string LeftFingerPrintHash
-        {
-            get { return HashWriter.Hash(LeftFingerPrints.ToString(), hashSalt, argonParams); }
-        }
-
-        public string RightFingerPrintHash
-        {
-            get { return HashWriter.Hash(RightFingerPrints.ToString(), hashSalt, argonParams); }
-        }
-
-        public string LeftAlternateFingerPrintsHash
-        {
-            get { return HashWriter.Hash(LeftAlternateFingerPrints.ToString(), hashSalt, argonParams); }
-        }
-
-        public string RightAlternateFingerPrintsHash
-        {
-            get { return HashWriter.Hash(RightAlternateFingerPrints.ToString(), hashSalt, argonParams); }
         }
     }
 }
