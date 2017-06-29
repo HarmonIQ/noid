@@ -17,12 +17,20 @@ namespace NoID.Network.Client.Test
         
         static void Main(string[] args)
         {
-            Patient pt = (Patient)ReadJSONFile();
-            SendJSON();
-            // SendProtoBuffer();
-            Console.ReadLine();
+            string commandLine = "";
+            Console.WriteLine("Enter q to Quit and Enter to try again.");
+            while (commandLine  != "q")
+            { 
+                SendJSON();
+                // SendProtoBuffer();
+                commandLine = "";
+                commandLine = Console.ReadLine();
+                if (commandLine.Length > 0)
+                {
+                    commandLine = commandLine.ToLower().Substring(0, 1);
+                }
+            }
         }
-
 
         private static Resource ReadJSONFile()
         {
@@ -31,8 +39,9 @@ namespace NoID.Network.Client.Test
 
         private static void SendJSON()
         {
-            Patient payload = FHIRUtilities.CreateTestFHIRPatientProfile();
-            FHIRUtilities.SaveJSONFile(payload, @"C:\JSONTest");
+            Patient payload = (Patient)ReadJSONFile();
+            //Patient payload = FHIRUtilities.CreateTestFHIRPatientProfile();
+            //FHIRUtilities.SaveJSONFile(payload, @"C:\JSONTest");
             Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
             Uri endpoint = new Uri(FHIREndPoint);
             HttpsClient client = new HttpsClient();
@@ -41,6 +50,7 @@ namespace NoID.Network.Client.Test
         }
 
         /*
+        // Example using Google protobuf 
         private static void SendProtoBuffer()
         {
             PatientFHIRProfile payload = CreatePatientFHIRProfile();

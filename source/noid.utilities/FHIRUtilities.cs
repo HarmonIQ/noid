@@ -524,8 +524,6 @@ namespace NoID.Utilities
             Resource returnValue = null;
             try
             {
-                FileInfo fileInfo = new FileInfo(fullFileName);
-                FileStream fs = fileInfo.OpenRead();
                 byte[] byteJSON = File.ReadAllBytes(fullFileName);
                 Stream stream = new MemoryStream(byteJSON);
                 returnValue = FHIRUtilities.StreamToFHIR(new StreamReader(stream));
@@ -565,6 +563,8 @@ namespace NoID.Utilities
                 byte[] jsonBytes = FHIRResourceToByteArray(pt);
                 fs.Write(jsonBytes, 0, jsonBytes.Length);
                 fs.Flush(true);
+                fs.Close();
+                fs.Dispose();
                 result = true;
             }
             catch (Exception ex)
