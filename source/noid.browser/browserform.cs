@@ -87,7 +87,7 @@ namespace NoID.Browser
                 case "provider-kiosk":
                     endPath = healthcareNodeWebAddress + "/provider.html";
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
-                    _providerBridge = new ProviderBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+                    _providerBridge = new ProviderBridge(organizationName, NoIDServiceName);
                     browser.RegisterJsObject("NoIDBridge", _providerBridge);
                     break;
                 case "healthcare-node-admin-kiosk":

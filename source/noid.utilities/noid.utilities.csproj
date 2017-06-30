@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ByteUtilities.cs" />
     <Compile Include="FHIRUtilities.cs" />
     <Compile Include="SecurityUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

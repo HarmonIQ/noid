@@ -3,37 +3,53 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.Configuration;
+using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using NoID.Security;
 using NoID.Utilities;
 using NoID.Network.Transport;
+using NoID.FHIR.Profile;
 
 namespace NoID.Network.Client.Test
 {
     class Program
     {
-        private static readonly string FHIREndPoint = System.Configuration.ConfigurationManager.AppSettings["FHIREndPoint"].ToString();
-        private static readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        private static readonly string PatentCheckinUri = ConfigurationManager.AppSettings["PatentCheckinUri"].ToString();
+        private static readonly string PendingPatientsUri = ConfigurationManager.AppSettings["PendingPatientsUri"].ToString();
+        private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
 
         static void Main(string[] args)
         {
             string commandLine = "";
-            Console.WriteLine("Enter q to Quit and Enter to try again.");
+            Console.WriteLine("Enter C for checkin patient, P for pending patient queue and Q to quit");
             while (commandLine != "q")
             {
-                Console.WriteLine("Sending test patient FHIR message.");
-                Patient testPt = TestPatient();
-                SendJSON(testPt);
-                Console.WriteLine("Sending FHIR message from file.");
-                Patient readPt = ReadPatient();
-                SendJSON(readPt);
-
-                // SendProtoBuffer();
-                commandLine = "";
+                if (commandLine == "c")
+                {
+                    // call PatentCheckinUri
+                    Console.WriteLine("Sending test patient FHIR message.");
+                    Patient testPt = TestPatient();
+                    SendJSON(testPt);
+                    Console.WriteLine("Sending FHIR message from file.");
+                    Patient readPt = ReadPatient();
+                    SendJSON(readPt);
+                }
+                else if (commandLine == "p")
+                {
+                    // call PendingPatientsUri
+                    IList<PatientProfile> patientProfiles = GetCheckinList();
+                    Console.WriteLine("Patient profiles received.");
+                }
+                string previousCommand = commandLine;
                 commandLine = Console.ReadLine();
                 if (commandLine.Length > 0)
                 {
                     commandLine = commandLine.ToLower().Substring(0, 1);
+                }
+                else
+                {
+                    commandLine = previousCommand;
                 }
             }
         }
@@ -62,10 +78,22 @@ namespace NoID.Network.Client.Test
         private static void SendJSON(Patient payload)
         {
             Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
-            Uri endpoint = new Uri(FHIREndPoint);
+            Uri endpoint = new Uri(PatentCheckinUri);
             HttpsClient client = new HttpsClient();
             client.SendFHIRPatientProfile(endpoint, auth, payload);
             Console.WriteLine(client.ResponseText);
+        }
+
+        private static IList<PatientProfile> GetCheckinList()
+        {
+            IList<PatientProfile> PatientProfiles = null;
+
+            Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            Uri endpoint = new Uri(PendingPatientsUri);
+            HttpsClient client = new HttpsClient();
+            PatientProfiles = client.RequestPendingQueue(endpoint, auth);
+            Console.WriteLine(client.ResponseText);
+            return PatientProfiles;
         }
 
         /*

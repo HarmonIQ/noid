@@ -73,6 +73,10 @@
       <Project>{c3b41330-4dd4-4872-95a5-f562e50b244f}</Project>
       <Name>noid.security</Name>
     </ProjectReference>
+    <ProjectReference Include="..\noid.utilities\noid.utilities.csproj">
+      <Project>{c0c23c18-5406-4415-8def-3d11eb6a5fce}</Project>
+      <Name>noid.utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

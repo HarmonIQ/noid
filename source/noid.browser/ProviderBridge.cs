@@ -3,8 +3,12 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.Configuration;
 using System.Collections.Generic;
 using NoID.FHIR.Profile;
+using NoID.Security;
+using NoID.Network.Transport;
+using NoID.Utilities;
 
 namespace NoID.Browser
 {
@@ -18,22 +22,33 @@ namespace NoID.Browser
 
     class ProviderBridge : CEFBridge
     {
-		string _patientApprovalTable = "";
+        private static readonly Uri PendingPatientsUri = new Uri(ConfigurationManager.AppSettings["PendingPatientsUri"].ToString());
+        private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        string _patientApprovalTable = "";
 		int _patientApprovalTableRowCount = 0;
 		string _approveDenySession = "";
 		string _approveDenyAction = "";
+        
 
 		private IList<PatientProfile> _patients;
 
-        public ProviderBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
+        public ProviderBridge(string organizationName, string serviceName) : base(organizationName, PendingPatientsUri, serviceName)
         {
-            _patients = TestPatientList.GetTestPatients(organizationName);
-
+            _patients = GetCheckinList();
 			_patientApprovalTable = CreatePatientApprovalQueue();
-
 		}
 
-		 ~ProviderBridge() { }
+        private static IList<PatientProfile> GetCheckinList()
+        {
+            IList<PatientProfile> PatientProfiles = null;
+            Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            HttpsClient client = new HttpsClient();
+            PatientProfiles = client.RequestPendingQueue(PendingPatientsUri, auth);
+            return PatientProfiles;
+        }
+
+        ~ProviderBridge() { }
+
 		public bool postApproveOrDeny(string sessionID, string action)
 		{
 			try

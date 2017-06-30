@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
@@ -54,6 +55,12 @@ namespace NoID.FHIR.Profile
         private string _biometricAlternateAnswer1 = "";
         private string _biometricAlternateQuestion2 = "";
         private string _biometricAlternateAnswer2 = "";
+
+
+        [JsonConstructor]
+        public PatientProfile()
+        {
+        }
 
         public PatientProfile(string organizationName, Uri fhirAddress, string noidStatus)
         {
@@ -191,6 +198,147 @@ namespace NoID.FHIR.Profile
             }
         }
 
+        public PatientProfile(Patient loadPatient, bool loadBiometrics = false)
+        {
+            if (loadPatient != null)
+            {
+                _noID = new SourceAFIS.Templates.NoID();
+                // Gets the identifiers from the patient FHIR resource class
+                if (loadPatient.Identifier.Count > 0)
+                {
+                    Identifier identifier = loadPatient.Identifier[0];
+
+                    if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
+                    {
+                        _noID.SessionID = identifier.Value.ToString();
+                    }
+                    else if (identifier.System.ToString().ToLower().Contains("local") == true)
+                    {
+                        _noID.LocalNoID = identifier.Value.ToString();
+                    }
+                    else if (identifier.System.ToString().ToLower().Contains("remote") == true)
+                    {
+                        _noID.RemoteNoID = identifier.Value.ToString();
+                    }
+
+                    if (loadPatient.Identifier.Count > 1)
+                    {
+                        identifier = loadPatient.Identifier[1];
+                        if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
+                        {
+                            _noID.SessionID = identifier.Value.ToString();
+                        }
+                        else if (identifier.System.ToString().ToLower().Contains("local") == true)
+                        {
+                            _noID.LocalNoID = identifier.Value.ToString();
+                        }
+                        else if (identifier.System.ToString().ToLower().Contains("remote") == true)
+                        {
+                            _noID.RemoteNoID = identifier.Value.ToString();
+                        }
+                    }
+                }
+                if (_noID.LocalNoID.Length == 0)
+                {
+                    _noID.LocalNoID = loadPatient.Id;
+                }
+
+                Meta meta = loadPatient.Meta;
+                if (meta != null)
+                {
+                    if (meta.LastUpdated != null)
+                    {
+                        CheckinDateTime = meta.LastUpdated.ToString();
+                    }
+                    if (meta.Extension.Count > 0)
+                    {
+                        Extension ext = meta.Extension[0];
+                        NoIDStatus = ext.Value.ToString();
+                    }
+                }
+
+                // Gets the demographics from the patient FHIR resource class
+                _lastName = loadPatient.Name[0].Family.ToString();
+                List<string> givenNames = loadPatient.Name[0].Given.ToList();
+                _firstName = givenNames[0].ToString();
+                if (givenNames.Count > 1)
+                {
+                    _middleName = givenNames[1].ToString();
+                }
+                _gender = loadPatient.Gender.ToString().Substring(0, 1).ToUpper();
+                _birthDate = loadPatient.BirthDate.ToString();
+
+                // Gets the address information from the patient FHIR resource class
+                if (loadPatient.Address.Count > 0)
+                {
+                    List<string> addressLines = loadPatient.Address[0].Line.ToList();
+                    _streetAddress = addressLines[0].ToString();
+                    if (addressLines.Count > 1)
+                    {
+                        _streetAddress2 = addressLines[1].ToString();
+                    }
+
+                    _city = loadPatient.Address[0].City.ToString();
+                    _state = loadPatient.Address[0].State.ToString();
+                    _postalCode = loadPatient.Address[0].PostalCode.ToString();
+                    _country = loadPatient.Address[0].Country.ToString();
+                }
+                // Gets the contact information from the patient FHIR resource class
+                if (loadPatient.Contact.Count > 0)
+                {
+                    foreach (var contact in loadPatient.Contact)
+                    {
+                        foreach (var telecom in contact.Telecom)
+                        {
+                            if (telecom.Use.ToString().ToLower() == "home")
+                            {
+                                if (telecom.System.ToString().ToLower() == "email")
+                                {
+                                    EmailAddress = telecom.Value.ToString();
+                                }
+                                else if (telecom.System.ToString().ToLower() == "phone")
+                                {
+                                    PhoneHome = telecom.Value.ToString();
+                                }
+                            }
+                            else if (telecom.Use.ToString().ToLower() == "work")
+                            {
+                                PhoneWork = telecom.Value.ToString();
+                            }
+                            else if (telecom.Use.ToString().ToLower() == "mobile")
+                            {
+                                PhoneCell = telecom.Value.ToString();
+                            }
+                        }
+                    }
+                }
+
+                if (loadBiometrics && loadPatient.Photo.Count > 0)
+                {
+                    foreach (var minutia in loadPatient.Photo)
+                    {
+                        Attachment mediaAttachment = loadPatient.Photo[0];
+                        byte[] byteMinutias = mediaAttachment.Data;
+
+                        Stream stream = new MemoryStream(byteMinutias);
+                        Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
+
+                        // Get captureSite and laterality from media
+                        string captureSiteCode = media.Extension[1].Value.Extension[1].Value.ToString();
+                        string lateralityCode = media.Extension[1].Value.Extension[2].Value.ToString();
+
+                        Template addMinutia = ConvertFHIR.FHIRToTemplate(media);
+                        FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(SessionID, addMinutia, FHIRUtilities.SnoMedCodeToLaterality(lateralityCode), FHIRUtilities.SnoMedCodeToCaptureSite(captureSiteCode));
+
+                        AddFingerPrint(newFingerPrintMinutias);
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Error in PatientProfile constructor.  loadPatient is null.");
+            }
+        }
         ~PatientProfile() { }
 
         public void NewSession()
@@ -199,190 +347,223 @@ namespace NoID.FHIR.Profile
             _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
         }
 
+        [JsonIgnore]
         public Uri FHIRAddress
         {
             get { return _fhirAddress; }
         }
 
+        [JsonProperty("OrganizationName")]
         public string OrganizationName
         {
             get { return _organizationName; }
         }
 
+        [JsonProperty("PatientCertificateID")]
         public string PatientCertificateID
         {
-            get { return _noID.LocalNoID; }
-            set { _noID.LocalNoID = value; }
+            get { if (_noID != null) { return _noID.LocalNoID; } else { return ""; } }
+            set { if (_noID != null) { _noID.LocalNoID = value; } }
         }
 
+        [JsonProperty("SessionID")]
         public string SessionID
         {
-            get { return _noID.SessionID; }
-            private set { _noID.SessionID = value; }
+            get { if (_noID != null) { return _noID.SessionID; } else { return ""; } }
+            private set { if (_noID != null) { _noID.SessionID = value; } }
         }
 
+        [JsonProperty("Language")]
         public string Language
         {
             get { return _language; }
             set { _language = value; }
         }
 
+        [JsonProperty("FirstName")]
         public string FirstName
         {
             get { return _firstName; }
             set { _firstName = value; }
         }
 
+        [JsonProperty("LastName")]
         public string LastName
         {
             get { return _lastName; }
             set { _lastName = value; }
         }
 
+        [JsonProperty("MiddleName")]
         public string MiddleName
         {
             get { return _middleName; }
             set { _middleName = value; }
         }
 
+        [JsonProperty("Gender")]
         public string Gender
         {
             get { return _gender; }
             set { _gender = value; }
         }
 
+        [JsonProperty("BirthDate")]
         public string BirthDate
         {
             get { return _birthDate; }
             set { _birthDate = value; }
         }
 
+        [JsonProperty("StreetAddress")]
         public string StreetAddress
         {
             get { return _streetAddress; }
             set { _streetAddress = value; }
         }
 
+        [JsonProperty("StreetAddress2")]
         public string StreetAddress2
         {
             get { return _streetAddress2; }
             set { _streetAddress2 = value; }
         }
 
+        [JsonProperty("City")]
         public string City
         {
             get { return _city; }
             set { _city = value; }
         }
 
+        [JsonProperty("State")]
         public string State
         {
             get { return _state; }
             set { _state = value; }
         }
 
+        [JsonProperty("PostalCode")]
         public string PostalCode
         {
             get { return _postalCode; }
             set { _postalCode = value; }
         }
 
+        [JsonProperty("Country")]
         public string Country
         {
             get { return _country; }
             set { _country = value; }
         }
 
+        [JsonProperty("PhoneHome")]
         public string PhoneHome
         {
             get { return _phoneHome; }
             set { _phoneHome = value; }
         }
 
+        [JsonProperty("PhoneCell")]
         public string PhoneCell
         {
             get { return _phoneCell; }
             set { _phoneCell = value; }
         }
 
+        [JsonProperty("PhoneWork")]
         public string PhoneWork
         {
             get { return _phoneWork; }
             set { _phoneWork = value; }
         }
 
+        [JsonProperty("EmailAddress")]
         public string EmailAddress
         {
             get { return _emailAddress; }
             set { _emailAddress = value; }
         }
 
+        [JsonProperty("MultipleBirth")]
         public string MultipleBirth
         {
             get { return _multipleBirth; }
             set { _multipleBirth = value; }
         }
 
+        [JsonProperty("NoIDHubName")]
         public string NoIDHubName
         {
             get { return _noidHubName; }
             set { _noidHubName = value; }
         }
 
+        [JsonProperty("NoIDHubPassword")]
         public string NoIDHubPassword
         {
             get { return _noidHubPassword; }
             set { _noidHubPassword = value; }
         }
 
+        [JsonProperty("BiometricAlternateReason")]
         public string BiometricAlternateReason
         {
             get { return _biometricAlternateReason; }
             set { _biometricAlternateReason = value; }
         }
 
+        [JsonProperty("BiometricAlternateQuestion1")]
         public string BiometricAlternateQuestion1
         {
             get { return _biometricAlternateQuestion1; }
             set { _biometricAlternateQuestion1 = value; }
         }
 
+        [JsonProperty("BiometricAlternateAnswer1")]
         public string BiometricAlternateAnswer1
         {
             get { return _biometricAlternateAnswer1; }
             set { _biometricAlternateAnswer1 = value; }
         }
 
+        [JsonProperty("BiometricAlternateQuestion2")]
         public string BiometricAlternateQuestion2
         {
             get { return _biometricAlternateQuestion2; }
             set { _biometricAlternateQuestion2 = value; }
         }
 
+        [JsonProperty("BiometricAlternateAnswer2")]
         public string BiometricAlternateAnswer2
         {
             get { return _biometricAlternateAnswer2; }
             set { _biometricAlternateAnswer2 = value; }
         }
 
+        [JsonProperty("NoIDStatus")]
         public string NoIDStatus
         {
             get { return _noidStatus; }
             set { _noidStatus = value; }
         }
 
+        [JsonProperty("CheckinDateTime")]
         public string CheckinDateTime
         {
             get { return _checkinDateTime; }
             set { _checkinDateTime = value; }
         }
 
+
+        [JsonIgnore]
         public SourceAFIS.Templates.NoID NoID
         {
             get { return _noID; }
             set { _noID = value; }
         }
 
+        [JsonIgnore]
         public Exception BaseException
         {
             get { return _exception; }
@@ -420,6 +601,7 @@ namespace NoID.FHIR.Profile
             return result;
         }
 
+        [JsonIgnore]
         public List<FingerPrintMinutias> FingerPrintMinutiasList
         {
             get { return _fingerPrintMinutiasList; }
