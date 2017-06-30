@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -172,7 +172,7 @@
                                 </div>
                                 <ul class="list-inline pull-right pull-right2">
                                      <!--hardcoded click to select left index finger!!!!!!!REMOVE FOR PROD-->
-                                    <li><buttonn onclick="setLateralitySite('selectLeftIndex');" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</buttonn></li>
+                                    <li><button onclick="setLateralitySite('selectLeftIndex');" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>
                             <!--<div class="tab-pane" role="tabpanel" id="step2">
@@ -213,7 +213,7 @@
                                     <li><button type="button" onclick="setLateralitySite('selectLeftIndex');" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
                             </div>-->
-                            <div class="tab-pane hidden" role="tabpanel" id="exceptions">
+                            <!--<div class="tab-pane hidden" role="tabpanel" id="exceptions">
                                 <div class="step99">
                                     <div class="row">
                                         <div class="jumbotron">
@@ -279,7 +279,7 @@
                                 <ul class="list-inline pull-right pull-right2">
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
-                            </div>
+                            </div>-->
                             <div class="tab-pane" role="tabpanel" id="step4">
                                 <div class="step4">
                                     <div class="row">
@@ -293,7 +293,7 @@
                                                 **If prompted, please re-scan your finger until fingerprint is accepted.
                                                 <br />
                                                 <br />
-                                                <button type="button" id="clickNoLeftHandFingerPrint" class="btn btn-primary">Click Here if you are physically unable to provide a fingerprint from your Left Hand</button>
+                                                <button onclick="setLateralitySite('selectRightIndex');" type="button" id="clickNoLeftHandFingerPrint" class="btn btn-primary next-step">Click Here if you are physically unable to provide a fingerprint from your Left Hand</button>
                                             </h3>
                                             <hr>
                                             <!--<button id="showCompleteLeft" onclick="showComplete('left');" type="button">TESTY REMOVE ME!!</button>-->                                            
@@ -336,7 +336,7 @@
                                             **If prompted, please re-scan your finger until fingerprint is accepted.
                                             <br />
                                             <br />
-                                            <button type="button" id="clickNoRightHandFingerPrint" class="btn btn-primary">Click Here if you are physically unable to provide a fingerprint from your Right Hand</button>
+                                            <button type="button" onclick="logNoRightHandFingerPrint();" id="clickNoRightHandFingerPrint" class="btn btn-primary next-step">>Click Here if you are physically unable to provide a fingerprint from your Right Hand</button>
                                         </h3>
                                         <hr>
                                         <!--<button id="showCompleteRight" onclick="showComplete('right');" type="button">TESTY REMOVE ME!!</button>-->
@@ -976,6 +976,77 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+        <div id="biometricExceptionsModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog" style="width: 1000px;" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Please fill out the below information about why we could not gather your fingerprints</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="jumbotron">
+                                <h2>Missing Biometric Information</h2>
+                                <p></p>
+                                <p></p>
+                                <div class="row mar_ned">
+                                    <div class="col-md-4 col-xs-3">
+                                        <p align="right"><strong>Reason For Missing Biometric:</strong></p>
+                                    </div>
+                                    <div class="col-md-8 col-xs-9">
+                                        <select id="exceptionMissingReason" class="form-control">
+                                            <option value="permanent">I am permanently physically unable to provide fingerprints</option>
+                                            <option value="temporary">I am temporarily physically unable to provide fingerprints</option>
+                                            <option value="unableToScan">I attempted the fingerprint scan process, but I could not get a successful scan on either hand</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mar_ned">
+                                    <div class="col-md-4 col-xs-3">
+                                        <p align="right"><strong>Select Secret Question 1:</strong></p>
+                                    </div>
+                                    <div class="col-md-8 col-xs-9">
+                                        <ul class="list-group">
+                                            <li class="list-group-item">
+                                                <select id="exceptionSecretQuestion1" class="form-control">
+                                                    <option value="mothersMaiden">What is your mother’s maiden name?</option>
+                                                    <option value="streetGrewUpOn">What street did you grow up on?</option>
+                                                </select>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <input type="text" class="form-control" id="secretAnswer1" placeholder="Your Answer">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row mar_ned">
+                                    <div class="col-md-4 col-xs-3">
+                                        <p align="right"><strong>Select Secret Question 2:</strong></p>
+                                    </div>
+                                    <div class="col-md-8 col-xs-9">
+                                        <ul class="list-group">
+                                            <li class="list-group-item">
+                                                <select id="exceptionSecretQuestion2" class="form-control">
+                                                    <option value="cityBorn">What city were you born in?</option>
+                                                    <option value="elementarySchoolName">What was the name of your elementary school?</option>
+                                                </select>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <input type="text" class="form-control" id="secretAnswer2" placeholder="Your Answer">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="saveMissingBiometricInfo" onclick="saveMissingBiometricInfo();" type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
     </div>
     <script type="text/javascript">
         $(document).ready(function () {

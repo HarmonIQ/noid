@@ -144,7 +144,7 @@ namespace NoID.Browser
               MessageBox.Show(ex.Message);
               return;
             }			
-
+			
             if (_patientBridge.captureSite != FHIRUtilities.CaptureSiteSnoMedCode.Unknown && _patientBridge.laterality != FHIRUtilities.LateralitySnoMedCode.Unknown)
             {
               if (fingerprintScanAttempts <= maxFingerprintScanAttempts)
@@ -232,11 +232,13 @@ namespace NoID.Browser
                             {
                                 Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
                                 _minutiaCaptureController = new MinutiaCaptureController();
-                            }
+								PatientBridge.hasValidLeftFingerprint = true;
+							}
                             else if (Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
                             {
                                 Laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
                                 CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
+								PatientBridge.hasValidRightFingerprint = true;
                             }
 
                             fingerprintScanAttempts = 0; //reset scan attempt count on successful scan
@@ -286,6 +288,7 @@ namespace NoID.Browser
                         hasLeftFingerprintScan = false;
                         break;
                     case "RightIndexFinger":
+						hasLeftFingerprintScan = _patientBridge.hasValidLeftFingerprint;
                         attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
                         browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightMiddle');");
                         break;
@@ -302,11 +305,8 @@ namespace NoID.Browser
                         browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightThumb');");
                         break;
                     case "RightThumb":
-                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());							
-                        if (hasLeftFingerprintScan == false && hasRightFingerprintScan == false)
-                        {
-                          browser.GetMainFrame().ExecuteJavaScriptAsync("alert('No fingerprints were gathered. Redirect to exception pathway.);");
-                        }							
+                        attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
+						hasRightFingerprintScan = false;									
                         break;
                     default:							
                         break;
@@ -321,7 +321,11 @@ namespace NoID.Browser
 				DisplayOutput("Must be on the correct page to accept a fingerprint scan.");
 #endif
             }
-        }
+			if (hasLeftFingerprintScan == false && hasRightFingerprintScan == false)
+			{
+				browser.GetMainFrame().ExecuteJavaScriptAsync("clickNoRightHandFingerPrint();");
+			}
+		}
         
 #if NAVIGATE
         private void OnBrowserStatusMessage(object sender, StatusMessageEventArgs args)

@@ -14,8 +14,10 @@ namespace NoID.Browser
         string _errorDescription;
         string _alertFunction = "";
         string _currentPage = "";
+		string _showExceptionModal = "";
 
-        public CEFBridge(string organizationName, Uri endPoint, string serviceName)
+
+		public CEFBridge(string organizationName, Uri endPoint, string serviceName)
         {
             _organizationName = organizationName;
             _endPoint = endPoint;
@@ -55,5 +57,10 @@ namespace NoID.Browser
             get { return _currentPage; }
             set { _currentPage = value; }
         }
-    }
+		public string showExceptionModal
+		{
+			get { return _showExceptionModal; }
+			set { _showExceptionModal = value; }
+		}
+	}
 }
