@@ -18,16 +18,15 @@ namespace NoID.Network.Transport
         private Exception _exception;
         private string _responseText;
 
-        public List<PatientProfile> RequestPendingQueue(Uri endpoint, Authentication auth, Patient patient = null)
+        public IList<PatientProfile> RequestPendingQueue(Uri endpoint, Authentication auth, Patient patient = null)
         {
-            List<PatientProfile> pendingProfiles = null;
+            IList<PatientProfile> pendingProfiles = null;
             try
             {
                 string pendingPatientJSON = null;
                 WebSend clientWebSend = new WebSend(endpoint, auth);
                 pendingPatientJSON = clientWebSend.GetPatientList("pending");
-                pendingProfiles = (List<PatientProfile>)JsonConvert.DeserializeObject(pendingPatientJSON);
-
+                pendingProfiles = JsonConvert.DeserializeObject<IList<PatientProfile>>(pendingPatientJSON);
             }
             catch (Exception ex)
             {

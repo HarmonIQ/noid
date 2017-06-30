@@ -3,6 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.Configuration;
 using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using NoID.Security;
@@ -14,9 +15,9 @@ namespace NoID.Network.Client.Test
 {
     class Program
     {
-        private static readonly string PatentCheckinUri = System.Configuration.ConfigurationManager.AppSettings["PatentCheckinUri"].ToString();
-        private static readonly string PendingPatientsUri = System.Configuration.ConfigurationManager.AppSettings["PendingPatientsUri"].ToString();
-        private static readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        private static readonly string PatentCheckinUri = ConfigurationManager.AppSettings["PatentCheckinUri"].ToString();
+        private static readonly string PendingPatientsUri = ConfigurationManager.AppSettings["PendingPatientsUri"].ToString();
+        private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
 
         static void Main(string[] args)
         {
@@ -37,7 +38,8 @@ namespace NoID.Network.Client.Test
                 else if (commandLine == "p")
                 {
                     // call PendingPatientsUri
-                    List<PatientProfile> patientProfiles = GetCheckinList();
+                    IList<PatientProfile> patientProfiles = GetCheckinList();
+                    Console.WriteLine("Patient profiles received.");
                 }
                 string previousCommand = commandLine;
                 commandLine = Console.ReadLine();
@@ -82,9 +84,9 @@ namespace NoID.Network.Client.Test
             Console.WriteLine(client.ResponseText);
         }
 
-        private static List<PatientProfile> GetCheckinList()
+        private static IList<PatientProfile> GetCheckinList()
         {
-            List<PatientProfile> PatientProfiles = null;
+            IList<PatientProfile> PatientProfiles = null;
 
             Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
             Uri endpoint = new Uri(PendingPatientsUri);

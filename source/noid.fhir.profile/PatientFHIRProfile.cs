@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Model;
@@ -54,6 +55,12 @@ namespace NoID.FHIR.Profile
         private string _biometricAlternateAnswer1 = "";
         private string _biometricAlternateQuestion2 = "";
         private string _biometricAlternateAnswer2 = "";
+
+
+        [JsonConstructor]
+        public PatientProfile()
+        {
+        }
 
         public PatientProfile(string organizationName, Uri fhirAddress, string noidStatus)
         {
@@ -199,190 +206,223 @@ namespace NoID.FHIR.Profile
             _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
         }
 
+        [JsonIgnore]
         public Uri FHIRAddress
         {
             get { return _fhirAddress; }
         }
 
+        [JsonProperty("OrganizationName")]
         public string OrganizationName
         {
             get { return _organizationName; }
         }
 
+        [JsonProperty("PatientCertificateID")]
         public string PatientCertificateID
         {
-            get { return _noID.LocalNoID; }
-            set { _noID.LocalNoID = value; }
+            get { if (_noID != null) { return _noID.LocalNoID; } else { return ""; } }
+            set { if (_noID != null) { _noID.LocalNoID = value; } }
         }
 
+        [JsonProperty("SessionID")]
         public string SessionID
         {
-            get { return _noID.SessionID; }
-            private set { _noID.SessionID = value; }
+            get { if (_noID != null) { return _noID.SessionID; } else { return ""; } }
+            private set { if (_noID != null) { _noID.SessionID = value; } }
         }
 
+        [JsonProperty("Language")]
         public string Language
         {
             get { return _language; }
             set { _language = value; }
         }
 
+        [JsonProperty("FirstName")]
         public string FirstName
         {
             get { return _firstName; }
             set { _firstName = value; }
         }
 
+        [JsonProperty("LastName")]
         public string LastName
         {
             get { return _lastName; }
             set { _lastName = value; }
         }
 
+        [JsonProperty("MiddleName")]
         public string MiddleName
         {
             get { return _middleName; }
             set { _middleName = value; }
         }
 
+        [JsonProperty("Gender")]
         public string Gender
         {
             get { return _gender; }
             set { _gender = value; }
         }
 
+        [JsonProperty("BirthDate")]
         public string BirthDate
         {
             get { return _birthDate; }
             set { _birthDate = value; }
         }
 
+        [JsonProperty("StreetAddress")]
         public string StreetAddress
         {
             get { return _streetAddress; }
             set { _streetAddress = value; }
         }
 
+        [JsonProperty("StreetAddress2")]
         public string StreetAddress2
         {
             get { return _streetAddress2; }
             set { _streetAddress2 = value; }
         }
 
+        [JsonProperty("City")]
         public string City
         {
             get { return _city; }
             set { _city = value; }
         }
 
+        [JsonProperty("State")]
         public string State
         {
             get { return _state; }
             set { _state = value; }
         }
 
+        [JsonProperty("PostalCode")]
         public string PostalCode
         {
             get { return _postalCode; }
             set { _postalCode = value; }
         }
 
+        [JsonProperty("Country")]
         public string Country
         {
             get { return _country; }
             set { _country = value; }
         }
 
+        [JsonProperty("PhoneHome")]
         public string PhoneHome
         {
             get { return _phoneHome; }
             set { _phoneHome = value; }
         }
 
+        [JsonProperty("PhoneCell")]
         public string PhoneCell
         {
             get { return _phoneCell; }
             set { _phoneCell = value; }
         }
 
+        [JsonProperty("PhoneWork")]
         public string PhoneWork
         {
             get { return _phoneWork; }
             set { _phoneWork = value; }
         }
 
+        [JsonProperty("EmailAddress")]
         public string EmailAddress
         {
             get { return _emailAddress; }
             set { _emailAddress = value; }
         }
 
+        [JsonProperty("MultipleBirth")]
         public string MultipleBirth
         {
             get { return _multipleBirth; }
             set { _multipleBirth = value; }
         }
 
+        [JsonProperty("NoIDHubName")]
         public string NoIDHubName
         {
             get { return _noidHubName; }
             set { _noidHubName = value; }
         }
 
+        [JsonProperty("NoIDHubPassword")]
         public string NoIDHubPassword
         {
             get { return _noidHubPassword; }
             set { _noidHubPassword = value; }
         }
 
+        [JsonProperty("BiometricAlternateReason")]
         public string BiometricAlternateReason
         {
             get { return _biometricAlternateReason; }
             set { _biometricAlternateReason = value; }
         }
 
+        [JsonProperty("BiometricAlternateQuestion1")]
         public string BiometricAlternateQuestion1
         {
             get { return _biometricAlternateQuestion1; }
             set { _biometricAlternateQuestion1 = value; }
         }
 
+        [JsonProperty("BiometricAlternateAnswer1")]
         public string BiometricAlternateAnswer1
         {
             get { return _biometricAlternateAnswer1; }
             set { _biometricAlternateAnswer1 = value; }
         }
 
+        [JsonProperty("BiometricAlternateQuestion2")]
         public string BiometricAlternateQuestion2
         {
             get { return _biometricAlternateQuestion2; }
             set { _biometricAlternateQuestion2 = value; }
         }
 
+        [JsonProperty("BiometricAlternateAnswer2")]
         public string BiometricAlternateAnswer2
         {
             get { return _biometricAlternateAnswer2; }
             set { _biometricAlternateAnswer2 = value; }
         }
 
+        [JsonProperty("NoIDStatus")]
         public string NoIDStatus
         {
             get { return _noidStatus; }
             set { _noidStatus = value; }
         }
 
+        [JsonProperty("CheckinDateTime")]
         public string CheckinDateTime
         {
             get { return _checkinDateTime; }
             set { _checkinDateTime = value; }
         }
 
+
+        [JsonIgnore]
         public SourceAFIS.Templates.NoID NoID
         {
             get { return _noID; }
             set { _noID = value; }
         }
 
+        [JsonIgnore]
         public Exception BaseException
         {
             get { return _exception; }
@@ -420,6 +460,7 @@ namespace NoID.FHIR.Profile
             return result;
         }
 
+        [JsonIgnore]
         public List<FingerPrintMinutias> FingerPrintMinutiasList
         {
             get { return _fingerPrintMinutiasList; }

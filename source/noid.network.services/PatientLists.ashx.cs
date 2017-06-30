@@ -51,7 +51,6 @@ namespace NoID.Network.Services
             else
             {
                 jsonResponse = JsonConvert.SerializeObject("Error. No query string.");
-                
             }
             context.Response.Write(jsonResponse);
         }
@@ -73,9 +72,10 @@ namespace NoID.Network.Services
 
         public static IList<PatientProfile> GetTestPatients(string organizationName)
         {
-            Uri endPoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
-            List<PatientProfile> newList = new List<PatientProfile>();
+            string addressPending = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["SparkEndpointAddress"].ToString());
+            Uri endPoint = new Uri(addressPending);
 
+            List<PatientProfile> newList = new List<PatientProfile>();
             Patient testPatient = FHIRUtilities.CreateTestFHIRPatientProfile
                 (
                 organizationName, Guid.NewGuid().ToString(), "", "English", "1961-04-22", "F", "No",
