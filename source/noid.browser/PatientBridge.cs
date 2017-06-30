@@ -26,8 +26,14 @@ namespace NoID.Browser
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
         PatientFHIRProfile _patientFHIRProfile;
         string _reponseString;
+		bool _hasValidLeftFingerprint = true;
+		bool _hasValidRightFingerprint = true;
+		string _exceptionMissingReason = "";
+		string _secretAnswer1 = "";
+		string _secretAnswer2 = "";
 
-        public PatientBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
+
+		public PatientBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
         {
             //_noID = new SourceAFIS.Templates.NoID();
             //_noID.SessionID = StringUtilities.GetNewSessionID();
@@ -35,6 +41,50 @@ namespace NoID.Browser
         }
 
         ~PatientBridge() { }
+
+		public bool postMissingBiometricInfo(string exceptionMissingReason,	string secretAnswer1, string secretAnswer2)
+		{
+			try
+			{
+				_exceptionMissingReason = exceptionMissingReason;
+				_secretAnswer1 = secretAnswer1;
+				_secretAnswer2 = secretAnswer2;
+			}
+			catch (Exception ex)
+			{
+				errorDescription = ex.Message;
+				return false;
+			}
+			return true;
+		}
+
+		public bool postDoNotHaveValidBiometricButtonclick(string laterality) {
+			try
+			{
+				if (laterality == "Left")
+				{
+					_hasValidLeftFingerprint = false;					
+				}				
+				if (laterality == "Right")
+				{
+					_hasValidRightFingerprint = false;
+				}
+				if (_hasValidLeftFingerprint == false && _hasValidRightFingerprint == false)
+				{
+					showExceptionModal = "yes";
+				}
+				else
+				{
+					errorDescription = "";
+				}
+			}
+			catch (Exception ex)
+			{
+				errorDescription = ex.Message;
+				return false;
+			}
+			return true;
+		}
 
         // C# -> Javascript function is NoIDBridge.postLateralityCaptureSite ( <params> )
         public bool postLateralityCaptureSite(string laterality, string captureSite)
@@ -287,5 +337,30 @@ namespace NoID.Browser
             get { return _patientFHIRProfile.NoID.RemoteNoID; }
             set { _patientFHIRProfile.NoID.RemoteNoID = value; }
         }
-    }
+		public bool hasValidLeftFingerprint
+		{
+			get { return _hasValidLeftFingerprint; }
+			set { _hasValidLeftFingerprint = value; }
+		}
+		public bool hasValidRightFingerprint
+		{
+			get { return _hasValidRightFingerprint; }
+			set { _hasValidRightFingerprint = value; }
+		}
+		public string exceptionMissingReason
+		{
+			get { return _exceptionMissingReason; }
+			set { _exceptionMissingReason = value; }
+		}
+		public string secretAnswer1
+		{
+			get { return _secretAnswer1; }
+			set { _secretAnswer1 = value; }
+		}
+		public string secretAnswer2
+		{
+			get { return _secretAnswer2; }
+			set { _secretAnswer2 = value; }
+		}
+	}
 }
