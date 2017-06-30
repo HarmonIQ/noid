@@ -5,14 +5,11 @@
 using System;
 using System.Net;
 using System.IO;
-using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Utility;
 using Hl7.Fhir.Serialization;
-//using NoID.FHIR.Profile;
 using NoID.Security;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NoID.Network.Client
 {
@@ -21,9 +18,9 @@ namespace NoID.Network.Client
     
     public class WebSend
     {
-        private Uri _enpoint;
-        private Authentication _auth;
-        private Resource _payloadJSON;
+        private Uri _enpoint = null;
+        private Authentication _auth = null;
+        private Resource _payloadJSON = null;
         //private PatientFHIRProfile _payloadProtoBuff;
 
         public delegate void EventHandler(object sender, EventArgs args);
@@ -38,16 +35,12 @@ namespace NoID.Network.Client
             _auth = auth;
             _payloadJSON = payload;
         }
-
-        /*
-        public WebSend(Uri endpoint, Authentication auth, PatientFHIRProfile payload)
+        public WebSend(Uri endpoint, Authentication auth)
         {
-            System.Diagnostics.Debug.WriteLine("WebSend Init: {0}: {1}", endpoint.ToString(), payload.ToString());
+            System.Diagnostics.Debug.WriteLine("WebSend Init: {0}", endpoint.ToString());
             _enpoint = endpoint;
             _auth = auth;
-            _payloadProtoBuff = payload;
         }
-        */
 
         public string PostHttpWebRequest()
         {
@@ -60,28 +53,52 @@ namespace NoID.Network.Client
                 //request.AutomaticDecompression = DecompressionMethods.GZip;
                 request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
                 if (!(_payloadJSON is null))
-                    SetBodyAndContentType(request, _payloadJSON, ResourceFormat.Json, true, out output);
-
-                /*
-                if (!(_payloadProtoBuff is null))
                 {
-                    output = _payloadProtoBuff.Serialize();
-                    request.ContentType = "Binary";
+                    SetBodyAndContentType(request, _payloadJSON, ResourceFormat.Json, true, out output);
                 }
-                */
+                 
                 request.GetRequestStream().Write(output, 0, output.Length);
+                // call BeforeHttpRequest event
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 using (Stream stream = response.GetResponseStream())
                 using (StreamReader reader = new StreamReader(stream))
                 {
                     html = reader.ReadToEnd();
                 }
+                // call AfterHttpResponse event
             }
             catch (Exception ex)
             {
                 throw ex;
             }
             return html;
+        }
+
+        public string GetPatientList(string listType)
+        {
+            string jsonResponse = null;
+            try
+            {
+                string UriWithQueryString = _enpoint.ToString() + "?type=" + listType; //types = pending, approved, denied, or holding
+                Uri uriQueryString = new Uri(UriWithQueryString);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriQueryString);
+                request.Method = "GET";
+                //request.AutomaticDecompression = DecompressionMethods.GZip;
+                request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
+                // call BeforeHttpRequest event
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (Stream stream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    jsonResponse = reader.ReadToEnd();
+                }
+                // call AfterHttpResponse event
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return jsonResponse;
         }
 
         private static void SetBodyAndContentType(HttpWebRequest request, Resource payload, ResourceFormat format, bool CompressRequestBody, out byte[] body)

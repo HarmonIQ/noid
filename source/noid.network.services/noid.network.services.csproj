@@ -86,6 +86,7 @@
     <Content Include="packages.config" />
     <Content Include="ReceiveFHIR.ashx" />
     <Content Include="TestList.ashx" />
+    <Content Include="PatientLists.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -98,6 +99,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FHIRMessageRouter.cs" />
+    <Compile Include="PatientLists.ashx.cs">
+      <DependentUpon>PatientLists.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiveFHIR.ashx.cs">
       <DependentUpon>ReceiveFHIR.ashx</DependentUpon>

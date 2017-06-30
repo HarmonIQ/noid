@@ -68,6 +68,8 @@ namespace NoID.Network.Services
                         }
 
                         string LocalNoID = ptSaved.Id.ToString();
+                        //TODO: make this an atomic transaction.  
+                        //          delete the FHIR message from Spark if there is an error in the minutia.
 
                         //TODO check for existing patient and expire old messages for the patient.
                         if (_patient.Photo.Count > 0)

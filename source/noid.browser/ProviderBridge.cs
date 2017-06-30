@@ -18,10 +18,12 @@ namespace NoID.Browser
 
     class ProviderBridge : CEFBridge
     {
-		string _patientApprovalTable = "";
+        readonly Uri _getProviderFHIRAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["ProviderFHIRAddress"].ToString());
+        string _patientApprovalTable = "";
 		int _patientApprovalTableRowCount = 0;
 		string _approveDenySession = "";
 		string _approveDenyAction = "";
+        
 
 		private IList<PatientProfile> _patients;
 
@@ -34,6 +36,7 @@ namespace NoID.Browser
 		}
 
 		 ~ProviderBridge() { }
+
 		public bool postApproveOrDeny(string sessionID, string action)
 		{
 			try
