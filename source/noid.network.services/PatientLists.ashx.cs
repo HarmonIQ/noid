@@ -75,8 +75,15 @@ namespace NoID.Network.Services
                 {
                     string ptURL = entry.FullUrl.ToString().Replace("http://localhost:49911/fhir", sparkEndpointAddress.ToString());
                     Patient pt = (Patient)client.Get(ptURL);
-                    PatientProfile patientProfile = new PatientProfile(pt, false);
-                    listPending.Add(patientProfile);
+                    if (pt.Meta.Extension.Count > 0)
+                    {
+                        Extension ext = pt.Meta.Extension[0];
+                        if (ext.Value.ToString().ToLower().Contains("pending") == true)
+                        {
+                            PatientProfile patientProfile = new PatientProfile(pt, false);
+                            listPending.Add(patientProfile);
+                        }
+                    }
                 }
             }
             catch(Exception ex)

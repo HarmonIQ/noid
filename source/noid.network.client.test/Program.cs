@@ -91,7 +91,6 @@ namespace NoID.Network.Client.Test
             Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
             Uri endpoint = new Uri(PendingPatientsUri);
             HttpsClient client = new HttpsClient();
-            //client.SendFHIRPatientProfile(endpoint, auth, payload);
             PatientProfiles = client.RequestPendingQueue(endpoint, auth);
             Console.WriteLine(client.ResponseText);
             return PatientProfiles;

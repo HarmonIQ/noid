@@ -6,6 +6,9 @@ using System;
 using System.Configuration;
 using System.Collections.Generic;
 using NoID.FHIR.Profile;
+using NoID.Security;
+using NoID.Network.Transport;
+using NoID.Utilities;
 
 namespace NoID.Browser
 {
@@ -19,7 +22,8 @@ namespace NoID.Browser
 
     class ProviderBridge : CEFBridge
     {
-        private static readonly Uri PendingPatientsUri = new Uri(ConfigurationManager.AppSettings["PendingPatientsUri"].ToString());  
+        private static readonly Uri PendingPatientsUri = new Uri(ConfigurationManager.AppSettings["PendingPatientsUri"].ToString());
+        private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
         string _patientApprovalTable = "";
 		int _patientApprovalTableRowCount = 0;
 		string _approveDenySession = "";
@@ -30,13 +34,20 @@ namespace NoID.Browser
 
         public ProviderBridge(string organizationName, string serviceName) : base(organizationName, PendingPatientsUri, serviceName)
         {
-            _patients = TestPatientList.GetTestPatients(organizationName);
-
+            _patients = GetCheckinList();
 			_patientApprovalTable = CreatePatientApprovalQueue();
-
 		}
 
-		 ~ProviderBridge() { }
+        private static IList<PatientProfile> GetCheckinList()
+        {
+            IList<PatientProfile> PatientProfiles = null;
+            Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            HttpsClient client = new HttpsClient();
+            PatientProfiles = client.RequestPendingQueue(PendingPatientsUri, auth);
+            return PatientProfiles;
+        }
+
+        ~ProviderBridge() { }
 
 		public bool postApproveOrDeny(string sessionID, string action)
 		{

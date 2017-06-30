@@ -238,6 +238,25 @@ namespace NoID.FHIR.Profile
                         }
                     }
                 }
+                if (_noID.LocalNoID.Length == 0)
+                {
+                    _noID.LocalNoID = loadPatient.Id;
+                }
+
+                Meta meta = loadPatient.Meta;
+                if (meta != null)
+                {
+                    if (meta.LastUpdated != null)
+                    {
+                        CheckinDateTime = meta.LastUpdated.ToString();
+                    }
+                    if (meta.Extension.Count > 0)
+                    {
+                        Extension ext = meta.Extension[0];
+                        NoIDStatus = ext.Value.ToString();
+                    }
+                }
+
                 // Gets the demographics from the patient FHIR resource class
                 _lastName = loadPatient.Name[0].Family.ToString();
                 List<string> givenNames = loadPatient.Name[0].Given.ToList();
