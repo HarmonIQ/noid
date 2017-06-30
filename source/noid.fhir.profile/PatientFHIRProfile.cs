@@ -198,6 +198,128 @@ namespace NoID.FHIR.Profile
             }
         }
 
+        public PatientProfile(Patient loadPatient, bool loadBiometrics = false)
+        {
+            if (loadPatient != null)
+            {
+                _noID = new SourceAFIS.Templates.NoID();
+                // Gets the identifiers from the patient FHIR resource class
+                if (loadPatient.Identifier.Count > 0)
+                {
+                    Identifier identifier = loadPatient.Identifier[0];
+
+                    if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
+                    {
+                        _noID.SessionID = identifier.Value.ToString();
+                    }
+                    else if (identifier.System.ToString().ToLower().Contains("local") == true)
+                    {
+                        _noID.LocalNoID = identifier.Value.ToString();
+                    }
+                    else if (identifier.System.ToString().ToLower().Contains("remote") == true)
+                    {
+                        _noID.RemoteNoID = identifier.Value.ToString();
+                    }
+
+                    if (loadPatient.Identifier.Count > 1)
+                    {
+                        identifier = loadPatient.Identifier[1];
+                        if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
+                        {
+                            _noID.SessionID = identifier.Value.ToString();
+                        }
+                        else if (identifier.System.ToString().ToLower().Contains("local") == true)
+                        {
+                            _noID.LocalNoID = identifier.Value.ToString();
+                        }
+                        else if (identifier.System.ToString().ToLower().Contains("remote") == true)
+                        {
+                            _noID.RemoteNoID = identifier.Value.ToString();
+                        }
+                    }
+                }
+                // Gets the demographics from the patient FHIR resource class
+                _lastName = loadPatient.Name[0].Family.ToString();
+                List<string> givenNames = loadPatient.Name[0].Given.ToList();
+                _firstName = givenNames[0].ToString();
+                if (givenNames.Count > 1)
+                {
+                    _middleName = givenNames[1].ToString();
+                }
+                _gender = loadPatient.Gender.ToString().Substring(0, 1).ToUpper();
+                _birthDate = loadPatient.BirthDate.ToString();
+
+                // Gets the address information from the patient FHIR resource class
+                if (loadPatient.Address.Count > 0)
+                {
+                    List<string> addressLines = loadPatient.Address[0].Line.ToList();
+                    _streetAddress = addressLines[0].ToString();
+                    if (addressLines.Count > 1)
+                    {
+                        _streetAddress2 = addressLines[1].ToString();
+                    }
+
+                    _city = loadPatient.Address[0].City.ToString();
+                    _state = loadPatient.Address[0].State.ToString();
+                    _postalCode = loadPatient.Address[0].PostalCode.ToString();
+                    _country = loadPatient.Address[0].Country.ToString();
+                }
+                // Gets the contact information from the patient FHIR resource class
+                if (loadPatient.Contact.Count > 0)
+                {
+                    foreach (var contact in loadPatient.Contact)
+                    {
+                        foreach (var telecom in contact.Telecom)
+                        {
+                            if (telecom.Use.ToString().ToLower() == "home")
+                            {
+                                if (telecom.System.ToString().ToLower() == "email")
+                                {
+                                    EmailAddress = telecom.Value.ToString();
+                                }
+                                else if (telecom.System.ToString().ToLower() == "phone")
+                                {
+                                    PhoneHome = telecom.Value.ToString();
+                                }
+                            }
+                            else if (telecom.Use.ToString().ToLower() == "work")
+                            {
+                                PhoneWork = telecom.Value.ToString();
+                            }
+                            else if (telecom.Use.ToString().ToLower() == "mobile")
+                            {
+                                PhoneCell = telecom.Value.ToString();
+                            }
+                        }
+                    }
+                }
+
+                if (loadBiometrics && loadPatient.Photo.Count > 0)
+                {
+                    foreach (var minutia in loadPatient.Photo)
+                    {
+                        Attachment mediaAttachment = loadPatient.Photo[0];
+                        byte[] byteMinutias = mediaAttachment.Data;
+
+                        Stream stream = new MemoryStream(byteMinutias);
+                        Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
+
+                        // Get captureSite and laterality from media
+                        string captureSiteCode = media.Extension[1].Value.Extension[1].Value.ToString();
+                        string lateralityCode = media.Extension[1].Value.Extension[2].Value.ToString();
+
+                        Template addMinutia = ConvertFHIR.FHIRToTemplate(media);
+                        FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(SessionID, addMinutia, FHIRUtilities.SnoMedCodeToLaterality(lateralityCode), FHIRUtilities.SnoMedCodeToCaptureSite(captureSiteCode));
+
+                        AddFingerPrint(newFingerPrintMinutias);
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Error in PatientProfile constructor.  loadPatient is null.");
+            }
+        }
         ~PatientProfile() { }
 
         public void NewSession()

@@ -41,7 +41,6 @@ namespace NoID.Network.Services
             try
             {
                 Resource newResource = FHIRUtilities.StreamToFHIR(new StreamReader(context.Request.InputStream));
-                
                 switch (newResource.TypeName.ToLower())
                 {
                     case "patient":

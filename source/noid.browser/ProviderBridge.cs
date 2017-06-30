@@ -3,6 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.Configuration;
 using System.Collections.Generic;
 using NoID.FHIR.Profile;
 
@@ -18,7 +19,7 @@ namespace NoID.Browser
 
     class ProviderBridge : CEFBridge
     {
-        readonly Uri _getProviderFHIRAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["ProviderFHIRAddress"].ToString());
+        private static readonly Uri PendingPatientsUri = new Uri(ConfigurationManager.AppSettings["PendingPatientsUri"].ToString());  
         string _patientApprovalTable = "";
 		int _patientApprovalTableRowCount = 0;
 		string _approveDenySession = "";
@@ -27,7 +28,7 @@ namespace NoID.Browser
 
 		private IList<PatientProfile> _patients;
 
-        public ProviderBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
+        public ProviderBridge(string organizationName, string serviceName) : base(organizationName, PendingPatientsUri, serviceName)
         {
             _patients = TestPatientList.GetTestPatients(organizationName);
 

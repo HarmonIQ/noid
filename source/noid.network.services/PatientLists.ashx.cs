@@ -4,9 +4,11 @@
 
 using System;
 using System.Web;
+using System.Configuration;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Hl7.Fhir.Model;
+using Hl7.Fhir.Rest;
 using NoID.FHIR.Profile;
 using NoID.Utilities;
 
@@ -17,18 +19,21 @@ namespace NoID.Network.Services
     /// </summary>
     public class PatientLists : IHttpHandler
     {
+        private readonly Uri sparkEndpointAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(ConfigurationManager.AppSettings["SparkEndpointAddress"].ToString()));
+        private readonly string organizationName = ConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private readonly string domainName = ConfigurationManager.AppSettings["DomainName"].ToString();
+        private List<Exception> _exceptions = new List<Exception>();
 
         public void ProcessRequest(HttpContext context)
         {
-            IList<PatientProfile> _pendingPatients = TestPatientList.GetTestPatients("NoID Test");
             string jsonResponse = null;
             context.Response.ContentType = "application/json"; // streaming JSON text
             if (context.Request.QueryString.Count > 0)
             {
                 string queryStringOne = context.Request.QueryString[0].ToLower();
-
                 if (queryStringOne == "pending")
                 {
+                    IList<PatientProfile> _pendingPatients = GetPendingPatients();
                     jsonResponse = JsonConvert.SerializeObject(_pendingPatients); // Pending patient list
                 }
                 else if (queryStringOne == "approved")
@@ -45,7 +50,7 @@ namespace NoID.Network.Services
                 }
                 else
                 {
-                    jsonResponse = JsonConvert.SerializeObject(_pendingPatients);
+                    jsonResponse = JsonConvert.SerializeObject("Error. " + queryStringOne + " not implemented yet.");
                 }
             }
             else
@@ -53,6 +58,32 @@ namespace NoID.Network.Services
                 jsonResponse = JsonConvert.SerializeObject("Error. No query string.");
             }
             context.Response.Write(jsonResponse);
+        }
+
+        //TODO: Add
+        private IList<PatientProfile> GetPendingPatients()
+        {
+            List<PatientProfile> listPending = new List<PatientProfile>();
+            try
+            {
+                FhirClient client = new FhirClient(sparkEndpointAddress);
+                string gtDateFormat = "gt" + FHIRUtilities.DateToFHIRString(DateTime.UtcNow.AddDays(-2));
+                client.PreferredFormat = ResourceFormat.Json;
+                Uri uriTwoDays = new Uri(sparkEndpointAddress.ToString() + "/Patient?_lastUpdated=" + gtDateFormat);
+                Bundle patientBundle = (Bundle)client.Get(uriTwoDays);
+                foreach (Bundle.EntryComponent entry in patientBundle.Entry)
+                {
+                    string ptURL = entry.FullUrl.ToString().Replace("http://localhost:49911/fhir", sparkEndpointAddress.ToString());
+                    Patient pt = (Patient)client.Get(ptURL);
+                    PatientProfile patientProfile = new PatientProfile(pt, false);
+                    listPending.Add(patientProfile);
+                }
+            }
+            catch(Exception ex)
+            {
+                _exceptions.Add(ex);
+            }
+            return listPending;
         }
 
         public bool IsReusable
