@@ -1,6 +1,65 @@
 var doesLeftBiometricExist = "";
 var doesRightBiometricExist = "";
 
+window.oncontextmenu = function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+};
+function validateBasicDemographics() {
+    var firstName = document.getElementById("FirstName").value;
+    var lastName = document.getElementById("LastName").value;
+    var birthYear = document.getElementById('BirthYear');
+    var selectedBirthYear = birthYear.options[birthYear.selectedIndex].text;
+    var birthMonth = document.getElementById('BirthMonth');
+    var selectedBirthMonth = birthMonth.options[birthMonth.selectedIndex].text;
+    var birthDay = document.getElementById('BirthDay');
+    var selectedBirthDay = birthDay.options[birthDay.selectedIndex].text;
+    var gender = '';
+    if (document.getElementById("GenderMale").checked) {
+        var gender = document.getElementById("GenderMale").value;
+    };
+    if (document.getElementById("GenderFemale").checked) {
+        var gender = document.getElementById("GenderFemale").value;
+    };
+
+    if (firstName == "") {
+        alert("First Name must be filled out");
+        return false;
+    }
+    if (lastName == "") {
+        alert("Last Name must be filled out");
+        return false;
+    }
+    if (selectedBirthDay == "Date" || selectedBirthMonth == "Month" || selectedBirthYear == "Year") {
+        alert("Please select your date of brith");
+        return false;
+    }
+    if (gender.length == 0) {
+        alert("Please select your genger");
+        return false;
+    }
+    document.getElementById('demographics1Next').disabled = false;
+}
+function validateMissingBiometricsReasons() {
+    var secretAnswer1 = document.getElementById("secretAnswer1").value;
+    var secretAnswer2 = document.getElementById("secretAnswer2").value;
+    var missingReason = document.getElementById('exceptionMissingReason');
+    var exceptionMissingReason = missingReason.options[missingReason.selectedIndex].text;
+       
+    if (exceptionMissingReason == "") {
+        alert("Reason For Missing Biometric is a required field.");
+        return false;
+    }
+    if (secretAnswer1 == "") {
+        alert("Secret Question 1 is a required field.");
+        return false;
+    }
+    if (secretAnswer2 == "") {
+        alert("Secret Question 2 is a required field.");
+        return false;
+    }    
+}
 function populateReviewPage() {
     var firstName = document.getElementById("FirstName").value;
     var middleName = document.getElementById("MiddleName").value;
@@ -131,6 +190,16 @@ function setLateralitySite(selectedElementID) {
             break;
                     
     };
+};
+function showPleaseWait() {
+    document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please wait. Processing....</h4>";
+    document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please wait. Processing....</h4>";
+};
+function showIdentity() {
+    alert("You EXIST!!");
+};
+function pageRefresh() {
+    location.reload();
 };
 function logNoRightHandFingerPrint() {
     if (doesRightBiometricExist != "yes") {
