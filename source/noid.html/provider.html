@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -20,11 +20,11 @@
 
         table tbody {
             overflow: auto;
-            height: 200px;
+            height: 275px;
         }
 
         table {
-            width: 500px; /* can be dynamic */
+            width: 800px; /* can be dynamic */
         }
 
         th {
@@ -95,11 +95,40 @@
                                             <h1>Patient Approval Queue</h1>
                                             <hr>
                                             <div class="row">
-                                                <h4><div class="col-md-3" id="currentDateTime"></div></h4>
+                                                <h4><div class="col-md-3" id="currentDateTime"></div><div class="col-md-9">Click a patient's name in the below table to view patient details</div></h4>
                                             </div>
                                             <div class="row">
                                                 <div id="divPatientApprovalQueueTable" class="col-md-9">                                               
-                                                </div>                                                
+                                                </div>
+                                                <div class="col-md-3 pull-right">
+                                                    <table class="table" style="padding:0; margin:0; border-collapse: collapse;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width: 300px; padding:0; margin:0;text-align: center;">Patient Details</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Name: </strong><span id="patientFullName">Mark A Schroeder</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>DOB: </strong><span id="patientDOB">1961-10-30</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Gender: </strong><span id="patientGender">Male</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Phone: </strong><span id="patientPhone1">555-555-5555</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Email: </strong><span id="patientEmail">mrlongemailname@longernaemailaddres</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Address: </strong><br /><span id="patientAddress1">11111 MyWayHwy</span><br /><span id="patientAddress2">apt 1.5</span><br /><span id="patientCity">New Orleans</span>, <span id="patientState">LA </span><span id="patientPostalCode">75238</span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Biometric Status:</strong><br />Left Index, Right Middle fingerprints on file</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                             <div class="row">
                                                 <h4><div class="col-md-3" id="rowCount">Row Count: <span id="spnApprovalQueueCount"></span></div></h4>
@@ -110,201 +139,7 @@
                                 <ul class="list-inline pull-right pull-right2">
                                     <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="wait('left', 'success')"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                                 </ul>
-                            </div>
-                            <!--<div class="tab-pane" role="tabpanel" id="step2">
-                                <div class="step2">
-                                    <div class="row">
-                                        <div class="col-md-12 jumbotron">
-                                            <div class="row">
-                                                <div class="col-md-12 ">
-                                                    <h2>Collect Primary Patient Biometric</h2>
-                                                </div>
-                                                <h3 class="col-md-12 center" id="patientInfo">
-                                                    <label>Name:&nbsp;</label>John Doe
-                                                </h3>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <h3>
-                                                        Please Direct Patient to Scan left index finger
-                                                        <small>
-                                                            <p></p>
-                                                            <label>
-                                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="showExceptions()">
-                                                                Unable to scan left index finger. Use alternate finger.
-                                                            </label>
-                                                        </small>
-                                                    </h3>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <img src="resources/ScanInstruction.png" alt="Scan image" class="img-rounded">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <img src="resources/LeftHand.png" alt="left hand" class="img-rounded">
-                                                </div>
-                                                <div class="col-md-6 push-down">
-                                                    <i id="checkLeft" class="fa fa-spinner fa-spin fa-5x fa-fw pull-right incomplete"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <ul class="list-inline">
-                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
-                                </ul>
-                                <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
-                                </ul>
-                            </div>
-                            <div class="tab-pane hidden" role="tabpanel" id="exceptions">
-                                <div class="step99">
-                                    <div class="row">
-                                        <div class="jumbotron">
-                                            <h1>Missing Biometric Information</h1>
-                                            <p></p>
-                                            <p></p>
-                                            <div class="row mar_ned">
-                                                <div class="col-md-4 col-xs-3">
-                                                    <p align="right"><stong>Reason For Missing Biometric:</stong></p>
-                                                </div>
-                                                <div class="col-md-8 col-xs-9">
-                                                    <select id="exceptionMissingReason" class="form-control">
-                                                        <option value="disfigurement">Permanent Disfigurement Such As Burn</option>
-                                                        <option value="reason2">Amputated Limbs</option>
-                                                        <option value="reason3">Reason 3</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="row mar_ned">
-                                                <div class="col-md-4 col-xs-3">
-                                                    <p align="right"><stong>Select Secret Question 1:</stong></p>
-                                                </div>
-                                                <div class="col-md-8 col-xs-9">
-                                                    <ul class="list-group">
-                                                        <li class="list-group-item">
-                                                            <select id="exceptionMissingReason1" class="form-control">
-                                                                <option value="cityBorn">What is my mother’s maiden name?</option>
-                                                                <option value="question1Answer2">Question 2</option>
-                                                                <option value="question1Answer3">Question 3</option>
-                                                            </select>
-                                                        </li>
-                                                        <li class="list-group-item">
-                                                            <input type="text" class="form-control" id="secretAnswer1" placeholder="Your Answer">
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="row mar_ned">
-                                                <div class="col-md-4 col-xs-3">
-                                                    <p align="right"><stong>Select Secret Question 2:</stong></p>
-                                                </div>
-                                                <div class="col-md-8 col-xs-9">
-                                                    <ul class="list-group">
-                                                        <li class="list-group-item">
-                                                            <select id="exceptionMissingReason2" class="form-control">
-                                                                <option value="cityBorn">What city were you born in?</option>
-                                                                <option value="question2Answer2">Question 2</option>
-                                                                <option value="question2Answer3">Question 3</option>
-                                                            </select>
-                                                        </li>
-                                                        <li class="list-group-item">
-                                                            <input type="text" class="form-control" id="secretAnswer2" placeholder="Your Answer">
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <ul class="list-inline">
-                                    <li><button type="button" class="btn btn-primary btn-lg pull-down" onclick="hideExceptions()"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
-                                </ul>
-                                <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
-                                </ul>
-                            </div>
-                            <div class="tab-pane" role="tabpanel" id="step4">
-                                <div class="step4">
-                                    <div class="row">
-                                        <div class="jumbotron">
-                                            <h2>Identify Confirmed and Linked with NoID</h2>
-                                            <hr>
-                                            <h3 id="patientConfirm">
-                                                Steve Jones has been positively identified and linked to your local NoID system.
-                                            </h3>
-                                        </div>
-                                    </div>
-                                </div>
-                                <ul class="list-inline">
-                                    <li><button type="button" class="btn btn-primary btn-lg pull-down" onclick="showFailure();wait('left', 'fail')"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
-                                </ul>
-                                <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-default btn-lg btn-block maxWidth pull-down2">Click here to view other NoID nodes with existing relationships with this patient</button></li>
-                                </ul>
-                            </div>
-                            <div class="tab-pane" role="tabpanel" id="step5">
-                                <div class="step5">
-                                    <div class="row">
-                                        <div class="col-md-12 jumbotron">
-                                            <div class="row">
-                                                <div class="col-md-12 ">
-                                                    <h2>Collect Primary Patient Biometric</h2>
-                                                </div>
-                                                <h3 class="col-md-12 center" id="patientInfo">
-                                                    <label>Name:</label>
-                                                    John Doe
-                                                </h3>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <h3>
-                                                        Please Direct Patient to Scan left index finger
-                                                        <small>
-                                                            <label>
-                                                                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="showExceptions()">
-                                                                Unable to scan left index finger. Use alternate finger.
-                                                            </label>
-                                                        </small>
-                                                    </h3>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <img src="resources/ScanInstruction.png" alt="Scan image" class="img-rounded">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <img src="resources/LeftHand.png" alt="left hand" class="img-rounded">
-                                                </div>
-                                                <div class="col-md-6 push-down">
-                                                    <i id="checkLeft2" class="fa fa-spinner fa-spin fa-5x fa-fw pull-right incomplete"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <ul class="list-inline">
-                                    <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
-                                </ul>
-                                <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg pull-down" onclick="confirmFailure()"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
-                                </ul>
-                            </div>
-                            <div class="tab-pane" role="tabpanel" id="step6">
-                                <div class="step6">
-                                    <div class="row">
-                                        <div class="jumbotron">
-                                            <h2>NoID Identity Unable to be Confirmed</h2>
-                                            <hr>
-                                            <h3 id="patientFail">
-                                                The patient fingerprint does not match the NoID patient profile.
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <ul class="list-inline">
-                                        <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
-                                    </ul>
-                                </div>
-                            </div>-->
+                            </div>                         
                             <div class="clearfix"></div>
                         </div>
                     </form>
@@ -347,10 +182,10 @@
 
         function nextTab(elem) {
             $(elem).next().find('a[data-toggle="tab"]').click();
-        }
+        };
         function prevTab(elem) {
             $(elem).prev().find('a[data-toggle="tab"]').click();
-        }
+        };
         function populateApprovalTable() {
             document.getElementById('divPatientApprovalQueueTable').innerHTML = NoIDBridge.patientApprovalTable;
             document.getElementById('spnApprovalQueueCount').innerText = NoIDBridge.patientApprovalTableRowCount;
@@ -371,7 +206,14 @@
                 //error, show user message
                 alert("postApproveOrDeny Error " + NoIDBridge.errorDescription);
             }
-        }
+        };
+        function showtPatientDetailsProviderView(sessionid) {
+            NoIDBridge.getPatientDetailsProviderView(sessionid);
+            if (NoIDBridge.errorDescription != '') {
+                //no error continue with new page
+                alert(NoIDBridge.errorDescription);
+            }
+        };
         //according menu        
         $(document).ready(function () {
             //Add Inactive Class To All Accordion Headers
