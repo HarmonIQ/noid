@@ -49,6 +49,11 @@ namespace NoID.Database.Wrappers
             catch { }
         }
 
+        public List<Exception> Exceptions
+        {
+            get { return _exceptions; }
+        }
+
         void CreateUnCappedCollection()
         {
             _database.CreateCollectionAsync("SessionQueue", new CreateCollectionOptions
@@ -57,15 +62,21 @@ namespace NoID.Database.Wrappers
             });
         }
 
-        public bool UpdateSessionQueueRecord(string _id, string newPatientStatusType)
+        public bool UpdateSessionQueueRecord(string _id, string newPatientStatusType, string reviewUser)
         {
             bool successful = false;
             try
             {
+                //TODO: Update document with one line.
                 IMongoCollection<SessionQueue> collection = _database.GetCollection<SessionQueue>("SessionQueue");
+                // Update PatientStatusType
                 var update = Builders<SessionQueue>.Update.Set(a => a.PatientStatusType, newPatientStatusType);
                 var result = collection.UpdateOneAsync(model => model._id == _id, update);
+                // Update AcceptDenyDate
                 update = Builders<SessionQueue>.Update.Set(a => a.AcceptDenyDate, DateTime.UtcNow);
+                result = collection.UpdateOneAsync(model => model._id == _id, update);
+                // Update ReviewUser
+                update = Builders<SessionQueue>.Update.Set(a => a.ReviewUser, reviewUser);
                 result = collection.UpdateOneAsync(model => model._id == _id, update);
                 successful = true;
             }

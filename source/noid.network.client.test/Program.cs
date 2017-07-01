@@ -51,7 +51,6 @@ namespace NoID.Network.Client.Test
                     seq._id = Guid.NewGuid().ToString();
                     seq.ClinicArea = "Test Clinic";
                     seq.LocalReference = "123456";
-                    seq.ReviewUser = "TestUser";
                     seq.SparkReference = "spark5";
                     seq.PatientStatusType = "pending";
                     seq.PatientStatus = "new";
@@ -62,7 +61,7 @@ namespace NoID.Network.Client.Test
                     Console.WriteLine(seq.Serialize());
                     dbwrapper.AddPendingPatients(seq);
                     List<SessionQueue> PendingPatients  = dbwrapper.GetPendingPatients();
-                    dbwrapper.UpdateSessionQueueRecord(seq._id, "approved");
+                    dbwrapper.UpdateSessionQueueRecord(seq._id, "approved", "TestUser");
                 }
                 string previousCommand = commandLine;
                 commandLine = Console.ReadLine();
