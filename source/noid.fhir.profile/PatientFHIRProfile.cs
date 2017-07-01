@@ -339,6 +339,7 @@ namespace NoID.FHIR.Profile
                 throw new Exception("Error in PatientProfile constructor.  loadPatient is null.");
             }
         }
+
         ~PatientProfile() { }
 
         public void NewSession()
