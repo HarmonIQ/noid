@@ -47,7 +47,6 @@ namespace NoID.Browser
         
         private string organizationName = ConfigurationManager.AppSettings["OrganizationName"].ToString();
         private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-        private Uri healthcareNodeFHIRAddress;
         private string healthcareNodeWebAddress;
         private string healthcareNodeChainVerifyAddress;
 		private int maxFingerprintScanAttempts = 1; //accept at least one attempt
@@ -60,7 +59,6 @@ namespace NoID.Browser
         {
             InitializeComponent();
 
-            healthcareNodeFHIRAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
             healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
             healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
 
@@ -212,8 +210,8 @@ namespace NoID.Browser
                         {
                             auth = Utilities.Auth;
                         }
-
-                        dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
+                        
+                        dataTransport.SendFHIRMediaProfile(PatientBridge.fhirAddress, auth, media);
                         string lateralityString = FHIRUtilities.LateralityToString(Laterality);
                         string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);
 #if NAVIGATE

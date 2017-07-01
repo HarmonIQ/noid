@@ -71,7 +71,10 @@ namespace NoID.Network.Services
             catch(Exception ex)
             {
                 _exception = ex;
+                _responseText = ex.Message;
             }
+            context.Response.Write(_responseText);
+            context.Response.End();
         }
 
         public bool IsReusable
