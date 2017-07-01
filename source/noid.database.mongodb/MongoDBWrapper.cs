@@ -62,7 +62,7 @@ namespace NoID.Database.Wrappers
             });
         }
 
-        public bool UpdateSessionQueueRecord(string _id, string newPatientStatusType, string reviewUser)
+        public bool UpdateSessionQueueRecord(string _id, string approvalStatus, string reviewUser)
         {
             bool successful = false;
             try
@@ -70,7 +70,7 @@ namespace NoID.Database.Wrappers
                 //TODO: Update document with one line.
                 IMongoCollection<SessionQueue> collection = _database.GetCollection<SessionQueue>("SessionQueue");
                 // Update PatientStatusType
-                var update = Builders<SessionQueue>.Update.Set(a => a.PatientStatusType, newPatientStatusType);
+                var update = Builders<SessionQueue>.Update.Set(a => a.ApprovalStatus, approvalStatus);
                 var result = collection.UpdateOneAsync(model => model._id == _id, update);
                 // Update AcceptDenyDate
                 update = Builders<SessionQueue>.Update.Set(a => a.AcceptDenyDate, DateTime.UtcNow);
@@ -78,6 +78,7 @@ namespace NoID.Database.Wrappers
                 // Update ReviewUser
                 update = Builders<SessionQueue>.Update.Set(a => a.ReviewUser, reviewUser);
                 result = collection.UpdateOneAsync(model => model._id == _id, update);
+
                 successful = true;
             }
             catch (Exception ex)
@@ -88,7 +89,7 @@ namespace NoID.Database.Wrappers
         }
 
 
-        public bool AddPendingPatients(SessionQueue seq)
+        public bool AddPendingPatient(SessionQueue seq)
         {
             bool successful = false;
             try
@@ -111,7 +112,7 @@ namespace NoID.Database.Wrappers
             try 
             {
                 var _collection = _database.GetCollection<SessionQueue>("SessionQueue");
-                var filter = Builders<SessionQueue>.Filter.Eq("PatientStatusType", "pending");
+                var filter = Builders<SessionQueue>.Filter.Eq("ApprovalStatus", "pending");
                 listSessionQueue = _collection.Find(filter).ToList();
             }
             catch (Exception ex)

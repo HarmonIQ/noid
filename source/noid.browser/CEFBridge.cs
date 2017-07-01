@@ -9,7 +9,6 @@ namespace NoID.Browser
     abstract class CEFBridge
     {
         string _organizationName;
-        Uri _endPoint;
         string _serviceName;
         string _errorDescription;
         string _alertFunction = "";
@@ -17,10 +16,9 @@ namespace NoID.Browser
 		string _showExceptionModal = "";
 
 
-		public CEFBridge(string organizationName, Uri endPoint, string serviceName)
+		public CEFBridge(string organizationName, string serviceName)
         {
             _organizationName = organizationName;
-            _endPoint = endPoint;
             _serviceName = serviceName;
         }
 
@@ -29,11 +27,6 @@ namespace NoID.Browser
         public string organizationName
         {
             get { return _organizationName; }
-        }
-
-        public Uri endPoint
-        {
-            get { return _endPoint; }
         }
 
         public string serviceName

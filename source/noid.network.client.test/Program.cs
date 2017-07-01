@@ -52,14 +52,14 @@ namespace NoID.Network.Client.Test
                     seq.ClinicArea = "Test Clinic";
                     seq.LocalReference = "123456";
                     seq.SparkReference = "spark5";
-                    seq.PatientStatusType = "pending";
+                    seq.ApprovalStatus = "pending";
                     seq.PatientStatus = "new";
                     seq.RemoteHubReference = "rem440403";
                     seq.SessionComputerName = "Prototype Computer 1";
                     seq.SubmitDate = DateTime.UtcNow.AddMinutes(-15);
                     seq.PatientBeginDate = DateTime.UtcNow.AddMinutes(-19);
                     Console.WriteLine(seq.Serialize());
-                    dbwrapper.AddPendingPatients(seq);
+                    dbwrapper.AddPendingPatient(seq);
                     List<SessionQueue> PendingPatients  = dbwrapper.GetPendingPatients();
                     dbwrapper.UpdateSessionQueueRecord(seq._id, "approved", "TestUser");
                 }

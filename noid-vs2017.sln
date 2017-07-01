@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "biometric.match.test.ui", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "noid.fhir.profile.hasher", "source\noid.fhir.profile.hasher\noid.fhir.profile.hasher.csproj", "{CEF4839E-4C50-41F5-9799-7B0D62A4502A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "noid.database.mongodb", "noid.database.mongodb\noid.database.mongodb.csproj", "{561ABBE8-E26C-4895-AB77-2DBA3C90E377}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "noid.database.mongodb", "source\noid.database.mongodb\noid.database.mongodb.csproj", "{561ABBE8-E26C-4895-AB77-2DBA3C90E377}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -36,10 +36,10 @@ namespace NoID.Database.Wrappers
         public string RemoteHubReference { get; set; }
 
         [JsonProperty("PatientStatusType")]
-        public string PatientStatusType { get; set; } //new, returning
+        public string PatientStatus { get; set; } //new, returning
 
         [JsonProperty("PatientStatus")]
-        public string PatientStatus { get; set; } //pending, denied, approved, hold.
+        public string ApprovalStatus { get; set; } //pending, denied, approved, hold.
 
         [JsonProperty("ClinicArea")]
         public string ClinicArea { get; set; }

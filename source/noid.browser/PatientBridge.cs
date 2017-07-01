@@ -8,6 +8,7 @@ using NoID.FHIR.Profile;
 using NoID.Security;
 using NoID.Utilities;
 using NoID.Network.Transport;
+using System.Configuration;
 
 namespace NoID.Browser
 {
@@ -21,9 +22,12 @@ namespace NoID.Browser
 
     class PatientBridge : CEFBridge
     {
-        // default capture site and laterality.
+        private static readonly string AddNewPatientUri = ConfigurationManager.AppSettings["AddNewPatientUri"].ToString();
+        private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
+
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
+
         PatientFHIRProfile _patientFHIRProfile;
         string _reponseString;
 		bool _hasValidLeftFingerprint = true;
@@ -32,12 +36,9 @@ namespace NoID.Browser
 		string _secretAnswer1 = "";
 		string _secretAnswer2 = "";
 
-
-		public PatientBridge(string organizationName, Uri endPoint, string serviceName) : base(organizationName, endPoint, serviceName)
+		public PatientBridge(string organizationName,  string serviceName) : base(organizationName, serviceName)
         {
-            //_noID = new SourceAFIS.Templates.NoID();
-            //_noID.SessionID = StringUtilities.GetNewSessionID();
-            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "NewPending");
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, "NewPending");
         }
 
         ~PatientBridge() { }
@@ -109,6 +110,12 @@ namespace NoID.Browser
             set { _patientFHIRProfile = value; }
         }
 
+        public Uri fhirAddress
+        {
+            get { return _patientFHIRProfile.FHIRAddress; }
+            set { _patientFHIRProfile.FHIRAddress = value; }
+        }
+
         //  C# -> Javascript function is NoIDBridge.postDemographics( <params> )
         public bool postDemographics
             (
@@ -168,8 +175,8 @@ namespace NoID.Browser
 
                 // TODO: REMOVE THIS LINE!  ONLY FOR TESTING
                 //FHIRUtilities.SaveJSONFile(pt, @"C:\JSONTest");
-
-                if (client.SendFHIRPatientProfile(endPoint, auth, pt) == false)
+                fhirAddress = new Uri(AddNewPatientUri);
+                if (client.SendFHIRPatientProfile(fhirAddress, auth, pt) == false)
                 {
                     // Error occured set error description
                     errorDescription = client.ResponseText;
@@ -304,7 +311,8 @@ namespace NoID.Browser
             alertFunction = "";
             _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
             _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
-            _patientFHIRProfile = new PatientFHIRProfile(organizationName, endPoint, "New");
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, "New");
+            _patientFHIRProfile.FHIRAddress = null;
         }
 
         public bool postResetForNewPatient()

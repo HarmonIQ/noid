@@ -68,7 +68,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\noid.database.mongodb\noid.database.mongodb.csproj">
+    <ProjectReference Include="..\noid.database.mongodb\noid.database.mongodb.csproj">
       <Project>{561abbe8-e26c-4895-ab77-2dba3c90e377}</Project>
       <Name>noid.database.mongodb</Name>
     </ProjectReference>

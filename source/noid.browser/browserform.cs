@@ -6,6 +6,8 @@
 
 using System;
 using System.Windows.Forms;
+using System.Configuration;
+using System.Collections.Generic;
 using CefSharp;
 using CefSharp.WinForms;
 using CefSharp.WinForms.Internals;
@@ -19,7 +21,6 @@ using NoID.FHIR.Profile;
 using NoID.Biometrics.Managers;
 using NoID.Network.Transport;
 using NoID.Match.Database.Client;
-using System.Collections.Generic;
 
 namespace NoID.Browser
 {
@@ -29,6 +30,7 @@ namespace NoID.Browser
 
     public partial class BrowserForm : Form
     {
+        private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
         private static AfisEngine Afis = new AfisEngine();
         private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
         private List<FingerPrintMinutias> _fingerprintMinutias = new List<FingerPrintMinutias>();
@@ -43,7 +45,7 @@ namespace NoID.Browser
         //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
         private DigitalPersona biometricDevice;
         
-        private string organizationName = System.Configuration.ConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private string organizationName = ConfigurationManager.AppSettings["OrganizationName"].ToString();
         private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
         private Uri healthcareNodeFHIRAddress;
         private string healthcareNodeWebAddress;
@@ -79,7 +81,7 @@ namespace NoID.Browser
                 case "patient-kiosk":
                     endPath = endPath = healthcareNodeWebAddress + "/enrollment.html"; //TODO: rename to patient.html
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
-                    _patientBridge = new PatientBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+                    _patientBridge = new PatientBridge(organizationName, NoIDServiceName);
                     browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     break;
                 case "provider":
@@ -88,6 +90,7 @@ namespace NoID.Browser
                     endPath = healthcareNodeWebAddress + "/provider.html";
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     _providerBridge = new ProviderBridge(organizationName, NoIDServiceName);
+                    _providerBridge.endPoint = new Uri(SearchBiometricsUri);
                     browser.RegisterJsObject("NoIDBridge", _providerBridge);
                     break;
                 case "healthcare-node-admin-kiosk":
@@ -147,45 +150,46 @@ namespace NoID.Browser
 			
             if (_patientBridge.captureSite != FHIRUtilities.CaptureSiteSnoMedCode.Unknown && _patientBridge.laterality != FHIRUtilities.LateralitySnoMedCode.Unknown)
             {
-              if (fingerprintScanAttempts <= maxFingerprintScanAttempts)
-              {
+                if (fingerprintScanAttempts <= maxFingerprintScanAttempts)
+                {
 #if NAVIGATE
-                  DisplayOutput("Captured finger image....");
+                    DisplayOutput("Captured finger image....");
 #endif
-                  // Check capture quality and throw an error if poor or incomplete capture.
-                  if (!biometricDevice.CheckCaptureResult(captureResult)) return;
+                    // Check capture quality and throw an error if poor or incomplete capture.
+                    if (!biometricDevice.CheckCaptureResult(captureResult)) return;
 
-                  Constants.CaptureQuality quality = captureResult.Quality;
-                  if ((int)quality != 0)
-                  {
+                    Constants.CaptureQuality quality = captureResult.Quality;
+                    if ((int)quality != 0)
+                    {
                     //call javascript to inform UI that the capture quality was too low to accept.
 #if NAVIGATE
                     DisplayOutput("Fingerprint quality was too low to accept. Quality = " + quality.ToString());
 #endif
                     return;
-                  }
+                    }
 
-                  Type captureResultType = captureResult.GetType();
-                  string deviceClassName = captureResultType.ToString();
-                  string deviceName = "";
-                  if (deviceClassName == "DPUruNet.CaptureResult")
-                  {
+                    Type captureResultType = captureResult.GetType();
+                    string deviceClassName = captureResultType.ToString();
+                    string deviceName = "";
+                    if (deviceClassName == "DPUruNet.CaptureResult")
+                    {
                     deviceName = "DigitalPersona U.Are.U 4500";
-                  }
+                    }
 
-                  SourceAFIS.Simple.Person currentCapture = new SourceAFIS.Simple.Person();
+                    SourceAFIS.Simple.Person currentCapture = new SourceAFIS.Simple.Person();
 
-                  Fingerprint newFingerPrint = new Fingerprint();
-                  foreach (Fid.Fiv fiv in captureResult.Data.Views)
-                  {
+                    Fingerprint newFingerPrint = new Fingerprint();
+                    foreach (Fid.Fiv fiv in captureResult.Data.Views)
+                    {
                     newFingerPrint.AsBitmap = ImageUtilities.CreateBitmap(fiv.RawImage, fiv.Width, fiv.Height);
-                  }
-                  currentCapture.Fingerprints.Add(newFingerPrint);
-                  Afis.Extract(currentCapture);
-                  Template tmpCurrent = newFingerPrint.GetTemplate();
+                    }
+                    currentCapture.Fingerprints.Add(newFingerPrint);
+                    Afis.Extract(currentCapture);
+                    Template tmpCurrent = newFingerPrint.GetTemplate();
+                    PatientBridge.fhirAddress = new Uri(SearchBiometricsUri);
 
-                  if (_minutiaCaptureController.MatchFound == false)
-                  {
+                    if (_minutiaCaptureController.MatchFound == false)
+                    {
                     if (_minutiaCaptureController.AddMinutiaTemplateProbe(tmpCurrent) == true)
                     {
                         // Good pair found.  Query web service for a match.
@@ -232,26 +236,26 @@ namespace NoID.Browser
                             {
                                 Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
                                 _minutiaCaptureController = new MinutiaCaptureController();
-								PatientBridge.hasValidLeftFingerprint = true;
-							}
+							    PatientBridge.hasValidLeftFingerprint = true;
+						    }
                             else if (Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
                             {
                                 Laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
                                 CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
-								PatientBridge.hasValidRightFingerprint = true;
+							    PatientBridge.hasValidRightFingerprint = true;
                             }
 
                             fingerprintScanAttempts = 0; //reset scan attempt count on successful scan
                         }
-                  }
-                  else
-                  {
-                    // Good fingerprint pairs not found yet.  inform JavaScript to promt the patient to try again.
-                    browser.GetMainFrame().ExecuteJavaScriptAsync("showFail('" + Laterality.ToString() + "');");
+                    }
+                    else
+                    {
+                        // Good fingerprint pairs not found yet.  inform JavaScript to promt the patient to try again.
+                        browser.GetMainFrame().ExecuteJavaScriptAsync("showFail('" + Laterality.ToString() + "');");
 #if NAVIGATE
-                    DisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
+                        DisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
 #endif
-                    return;
+                        return;
                   }
                 }
               }

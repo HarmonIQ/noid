@@ -87,6 +87,8 @@
     <Content Include="ReceiveFHIR.ashx" />
     <Content Include="TestList.ashx" />
     <Content Include="PatientLists.ashx" />
+    <Content Include="AddNewPatient.ashx" />
+    <Content Include="SearchBiometrics.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -98,6 +100,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddNewPatient.ashx.cs">
+      <DependentUpon>AddNewPatient.ashx</DependentUpon>
+    </Compile>
     <Compile Include="FHIRMessageRouter.cs" />
     <Compile Include="PatientLists.ashx.cs">
       <DependentUpon>PatientLists.ashx</DependentUpon>
@@ -105,6 +110,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiveFHIR.ashx.cs">
       <DependentUpon>ReceiveFHIR.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchBiometrics.ashx.cs">
+      <DependentUpon>SearchBiometrics.ashx</DependentUpon>
     </Compile>
     <Compile Include="TestList.ashx.cs">
       <DependentUpon>TestList.ashx</DependentUpon>
@@ -122,6 +130,10 @@
     <ProjectReference Include="..\biometrics.fingerprint.match.lib\biometrics.fingerprint.match.lib.csproj">
       <Project>{0f1d6fcb-f813-4e2f-9d6c-de4bd7866233}</Project>
       <Name>biometrics.fingerprint.match.lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\noid.database.mongodb\noid.database.mongodb.csproj">
+      <Project>{561abbe8-e26c-4895-ab77-2dba3c90e377}</Project>
+      <Name>noid.database.mongodb</Name>
     </ProjectReference>
     <ProjectReference Include="..\noid.fhir.profile\noid.fhir.profile.csproj">
       <Project>{8af257d1-3bd7-4709-b5ba-b42bd07a45fb}</Project>

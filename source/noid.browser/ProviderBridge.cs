@@ -28,15 +28,21 @@ namespace NoID.Browser
 		int _patientApprovalTableRowCount = 0;
 		string _approveDenySession = "";
 		string _approveDenyAction = "";
-        
+        Uri _endPoint = null;
 
 		private IList<PatientProfile> _patients;
 
-        public ProviderBridge(string organizationName, string serviceName) : base(organizationName, PendingPatientsUri, serviceName)
+        public ProviderBridge(string organizationName, string serviceName) : base(organizationName, serviceName)
         {
             _patients = GetCheckinList();
 			_patientApprovalTable = CreatePatientApprovalQueue();
 		}
+
+        public Uri endPoint
+        {
+            get { return _endPoint; }
+            set { _endPoint = value; }
+        }
 
         private static IList<PatientProfile> GetCheckinList()
         {
