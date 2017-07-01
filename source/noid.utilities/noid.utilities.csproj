@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="ByteUtilities.cs" />
     <Compile Include="FHIRUtilities.cs" />
+    <Compile Include="LogUtilities.cs" />
     <Compile Include="SecurityUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringUtilities.cs" />

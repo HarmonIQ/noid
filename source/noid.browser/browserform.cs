@@ -210,7 +210,7 @@ namespace NoID.Browser
                         {
                             auth = Utilities.Auth;
                         }
-                        
+                        //TODO: if error, inform JavaScript and end session.
                         dataTransport.SendFHIRMediaProfile(PatientBridge.fhirAddress, auth, media);
                         string lateralityString = FHIRUtilities.LateralityToString(Laterality);
                         string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);

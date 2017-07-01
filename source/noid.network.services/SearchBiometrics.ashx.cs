@@ -56,17 +56,21 @@ namespace NoID.Network.Services
                     {
                         // Fingerprint found in database
                         _responseText = minutiaResult.NoID;  //TODO: for now, it returns the localNoID.  should return a FHIR response.
+                        LogUtilities.LogEvent(_responseText);
                     }
                     else
                     {
                         _responseText = "No local database match.";
+                        LogUtilities.LogEvent(_responseText);
                     }
                 }
                 else
                 {
                     _responseText = "No local database match.";
+                    LogUtilities.LogEvent(_responseText);
                 }
                 dbMinutia.Dispose();
+                LogUtilities.LogEvent("After dbMinutia.Dispose();");
             }
             catch(Exception ex)
             {
