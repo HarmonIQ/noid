@@ -244,7 +244,7 @@ namespace NoID.Browser
                                         MessageBox.Show("Critical Identity Error Occured In Fingerprint Capture method. Please contact your adminstrator: " + dataTransport.ResponseText + " Error code = 909");
                                         return;
                                     }
-									if (dataTransport.ResponseText.ToLower().Contains("spark") == true)
+									if (dataTransport.ResponseText.ToLower().Contains(@"noid://") == true)
 									{
 										// Match found, inform JavaScript that this is an returning patient for Identity.
 										PatientBridge.PatientFHIRProfile.NoID.LocalNoID = dataTransport.ResponseText;  //save the localNoID

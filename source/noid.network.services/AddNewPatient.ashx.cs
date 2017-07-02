@@ -23,11 +23,15 @@ namespace NoID.Network.Services
     /// </summary>
     public class AddNewPatient : IHttpHandler
     {
-        private Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
-        private string _databaseDirectory = WebConfigurationManager.AppSettings["DatabaseLocation"];
-        private string _backupDatabaseDirectory = WebConfigurationManager.AppSettings["BackupLocation"];
+        private static readonly Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
+        private static readonly string DatabaseDirectory = WebConfigurationManager.AppSettings["DatabaseLocation"];
+        private static readonly string BackupDatabaseDirectory = WebConfigurationManager.AppSettings["BackupLocation"];
         private static readonly string NoIDMongoDBAddress = WebConfigurationManager.AppSettings["NoIDMongoDBAddress"].ToString();
         private static readonly string SparkMongoDBAddress = WebConfigurationManager.AppSettings["SparkMongoDBAddress"].ToString();
+        private static readonly string OrganizationName = WebConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private static readonly string DomainName = WebConfigurationManager.AppSettings["DomainName"].ToString();
+        private static readonly string NodeSalt = WebConfigurationManager.AppSettings["NodeSalt"].ToString();
+        
         private FingerPrintMatchDatabase dbMinutia;
         private string _responseText;
         private Patient _patient = null;
@@ -51,10 +55,16 @@ namespace NoID.Network.Services
                     _responseText = "Error sending Patient FHIR message to the Spark FHIR endpoint. " + ExceptionString;
                     return;
                 }
-                SessionQueue seq = PatientToSessionQueue(_patient, ptSaved.Id.ToString());
+
+                SourceAFIS.Templates.NoID noID = new SourceAFIS.Templates.NoID();
+                noID.SessionID = ptSaved.Id.ToString();
+                noID.LocalNoID = "noid://" + DomainName + "/" + StringUtilities.SHA256(DomainName + noID.SessionID + NodeSalt);
+                SessionQueue seq = PatientToSessionQueue(_patient, ptSaved.Id.ToString(), noID.LocalNoID);
+                //TODO: send to selected match hub and get the remote hub ID.
+                // Hub ID in the same format: noid://domain/LocalID
                 if (_patient.Photo.Count > 0)
                 {
-                    dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory);
+                    dbMinutia = new FingerPrintMatchDatabase(DatabaseDirectory, BackupDatabaseDirectory);
                     foreach (var minutia in _patient.Photo)
                     {
                         byte[] byteMinutias = minutia.Data;
@@ -62,7 +72,7 @@ namespace NoID.Network.Services
                         Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
                         // Save minutias for matching.
                         Template fingerprintTemplate = ConvertFHIR.FHIRToTemplate(media);
-                        fingerprintTemplate.NoID.LocalNoID = seq.LocalReference;
+                        fingerprintTemplate.NoID = noID;
                         try
                         {
                             dbMinutia.LateralityCode = (FHIRUtilities.LateralitySnoMedCode)fingerprintTemplate.NoID.LateralitySnoMedCode;
@@ -91,7 +101,7 @@ namespace NoID.Network.Services
             }
         }
 
-        SessionQueue PatientToSessionQueue(Patient pt, string SparkReference)
+        SessionQueue PatientToSessionQueue(Patient pt, string sparkReference, string localNoID)
         {
             SessionQueue seq = null;
             try
@@ -107,25 +117,14 @@ namespace NoID.Network.Services
                             {
                                 seq._id = id.Value.ToString();
                             }
-                            else if (id.System.ToString().ToLower().Contains("remote") == true)
-                            {
-                                seq.RemoteHubReference = id.Value.ToString();
-                            }
-                            else if (id.System.ToString().ToLower().Contains("local") == true)
-                            {
-                                seq.LocalReference = id.Value.ToString();
-                            }
                         }
                         //TODO get last update datetime
-                        seq.SparkReference = SparkReference;
+                        seq.LocalReference = localNoID;
+                        seq.SparkReference = sparkReference;
                         seq.PatientStatus = "new";
                         seq.ApprovalStatus = "pending";
                         seq.SessionComputerName = ""; //TODO: get from browser patient object.  browser needs to add it.
                         seq.ClinicArea = ""; //TODO: get from browser patient object.  browser needs to add it.
-                        if (seq.LocalReference == "")
-                        {
-                            seq.LocalReference = StringUtilities.SHA256(seq._id); // LocalReference is always a hash of the first patient SessionID
-                        }
                     }
                 }
             }
