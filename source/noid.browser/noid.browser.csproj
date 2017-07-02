@@ -61,7 +61,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
-    <DefineConstants>#define NAVIGATE</DefineConstants>
+    <DefineConstants>NAVIGATE</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
   </PropertyGroup>

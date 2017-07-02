@@ -40,7 +40,7 @@ namespace NoID.Network.Services
                 Resource newResource = FHIRUtilities.StreamToFHIR(new StreamReader(context.Request.InputStream));
                 _patient = (Patient)newResource;
                 //TODO: make sure this FHIR message has a new pending status.
-                SessionQueue seq = PatientToSessionQueue(_patient);
+                
                 //TODO: make this an atomic transaction.  
                 //          delete the FHIR message from Spark if there is an error in the minutia.
                 Patient ptSaved = (Patient)SendPatientToSparkServer();
@@ -49,7 +49,7 @@ namespace NoID.Network.Services
                     _responseText = "Error sending Patient FHIR message to the Spark FHIR endpoint. " + ExceptionString;
                     return;
                 }
-                seq.SparkReference = ptSaved.Id.ToString();
+                SessionQueue seq = PatientToSessionQueue(_patient, ptSaved.Id.ToString());
                 if (_patient.Photo.Count > 0)
                 {
                     dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory);
@@ -77,8 +77,8 @@ namespace NoID.Network.Services
                     MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
                     dbwrapper.AddPendingPatient(seq);
                     //TODO: end atomic transaction.  
-                    _responseText = "Successful.";      
                 }
+                _responseText = "Successful.";
             }
             catch (Exception ex)
             {
@@ -86,7 +86,7 @@ namespace NoID.Network.Services
             }
         }
 
-        SessionQueue PatientToSessionQueue(Patient pt)
+        SessionQueue PatientToSessionQueue(Patient pt, string SparkReference)
         {
             SessionQueue seq = null;
             try
@@ -102,16 +102,25 @@ namespace NoID.Network.Services
                             {
                                 seq._id = id.Value.ToString();
                             }
-                            else if (id.System.ToString().ToLower().Contains("session") == true)
+                            else if (id.System.ToString().ToLower().Contains("remote") == true)
                             {
-
+                                seq.RemoteHubReference = id.Value.ToString();
+                            }
+                            else if (id.System.ToString().ToLower().Contains("local") == true)
+                            {
+                                seq.LocalReference = id.Value.ToString();
                             }
                         }
+                        //TODO get last update datetime
+                        seq.SparkReference = SparkReference;
                         seq.PatientStatus = "new";
                         seq.ApprovalStatus = "pending";
                         seq.SessionComputerName = ""; //TODO: get from browser patient object.  browser needs to add it.
                         seq.ClinicArea = ""; //TODO: get from browser patient object.  browser needs to add it.
-                        seq.LocalReference = StringUtilities.SHA256(seq._id); // LocalReference is always a hash of the first patient SessionID
+                        if (seq.LocalReference == "")
+                        {
+                            seq.LocalReference = StringUtilities.SHA256(seq._id); // LocalReference is always a hash of the first patient SessionID
+                        }
                     }
                 }
             }

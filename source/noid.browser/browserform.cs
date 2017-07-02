@@ -10,7 +10,6 @@ using System.Configuration;
 using System.Collections.Generic;
 using CefSharp;
 using CefSharp.WinForms;
-using CefSharp.WinForms.Internals;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.Templates;
@@ -217,7 +216,11 @@ namespace NoID.Browser
 									PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias);
 
 									Media media = PatientBridge.PatientFHIRProfile.FingerPrintFHIRMedia(newFingerPrintMinutias, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
-									HttpsClient dataTransport = new HttpsClient();
+
+                                    // TODO: REMOVE THIS LINE!  ONLY FOR TESTING
+                                    //FHIRUtilities.SaveJSONFile(media, @"C:\JSONTest");
+
+                                    HttpsClient dataTransport = new HttpsClient();
 									Authentication auth;
 									if (Utilities.Auth == null)
 									{
@@ -276,10 +279,9 @@ namespace NoID.Browser
 									browser.GetMainFrame().ExecuteJavaScriptAsync("showFail('" + Laterality.ToString() + "');");
 #if NAVIGATE
 									DisplayOutput("Fingerprint NOT accepted. Score = " + _minutiaCaptureController.BestScore);
-
-									currentCaptureInProcess = false;
 #endif
-									return;
+                                    currentCaptureInProcess = false;
+                                    return;
 								}
 							}
 						}

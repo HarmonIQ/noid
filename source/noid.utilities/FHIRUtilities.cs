@@ -546,7 +546,7 @@ namespace NoID.Utilities
             return StringUtilities.StringToByteArray(jsonString);
         }
 
-        public static bool SaveJSONFile(Patient pt, string directory)
+        public static bool SaveJSONFile(Resource fhirResource, string directory)
         {
             bool result = false;
             try
@@ -557,10 +557,10 @@ namespace NoID.Utilities
                 {
                     dirInfo.Create();
                 }
-                string fileFullName = directory + @"\" + pt.Identifier[0].Value.ToString() + ".json";
+                string fileFullName = directory + @"\" + fhirResource.TypeName.ToString() + "_" + DateToFHIRString(DateTime.UtcNow) + ".json";
                 FileInfo fileInfo = new FileInfo(fileFullName);
                 FileStream fs = fileInfo.Create();
-                byte[] jsonBytes = FHIRResourceToByteArray(pt);
+                byte[] jsonBytes = FHIRResourceToByteArray(fhirResource);
                 fs.Write(jsonBytes, 0, jsonBytes.Length);
                 fs.Flush(true);
                 fs.Close();

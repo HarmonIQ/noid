@@ -62,7 +62,8 @@ namespace NoID.Network.Transport
             }
             catch (Exception ex)
             {
-                _exception = new Exception("DataTransport.SendFHIRMediaProfile() failed to send to FHIR server: " + ex.Message);
+                _responseText = "Error in DataTransport.SendFHIRMediaProfile() failed to send to FHIR server: " + ex.Message;
+                _exception = new Exception(_responseText);
                 return false;
             }
             return true;
