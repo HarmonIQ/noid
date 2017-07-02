@@ -46,44 +46,7 @@
                 <div><h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NoID: The Patient Identification System</h2></div>
                 <div class="wizard">
                     <div class="wizard-inner">
-                        <div class="connecting-line"></div>
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active">
-                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Patient Approval Queue">
-                                    <span class="round-tab">
-                                         <i class="fa fa-users" aria-hidden="true"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <!--<li role="presentation" class="disabled">
-                                <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Step 2">
-                                    <span class="round-tab">
-                                        <i class="fa fa-hand-o-up fa-flip-horizontal" aria-hidden="true"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li role="presentation" class="disabled">
-                                <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Step 4">
-                                    <span class="round-tab">
-                                        <i class="glyphicon glyphicon-ok" aria-hidden="true"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li role="presentation" class="disabled hidden">
-                                <a href="#step5" data-toggle="tab" aria-controls="step5" role="tab" title="Step 5">
-                                    <span class="round-tab hidden">
-                                        <i class="fa fa-hand-o-up" aria-hidden="true"></i>
-                                    </span>
-                                </a>
-                            </li>
-                            <li role="presentation" class="disabled hidden">
-                                <a href="#step6" data-toggle="tab" aria-controls="step6" role="tab" title="Step 6">
-                                    <span class="round-tab hidden">
-                                        <i class="fa fa-id-card-o" aria-hidden="true"></i>
-                                    </span>
-                                </a>
-                            </li>-->
-                        </ul>
+                        
                     </div>
 
                     <form role="form">
@@ -100,8 +63,8 @@
                                             <div class="row">
                                                 <div id="divPatientApprovalQueueTable" class="col-md-9">                                               
                                                 </div>
-                                                <div class="col-md-3 pull-right">
-                                                    <table class="table" style="padding:0; margin:0; border-collapse: collapse;">
+                                                <div id="divPatientApprovalQueueDetailView"class="col-md-3 pull-right">
+                                                    <!--<table class="table" style="padding:0; margin:0; border-collapse: collapse;">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width: 300px; padding:0; margin:0;text-align: center;">Patient Details</th>
@@ -124,10 +87,10 @@
                                                                 <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Address: </strong><br /><span id="patientAddress1">11111 MyWayHwy</span><br /><span id="patientAddress2">apt 1.5</span><br /><span id="patientCity">New Orleans</span>, <span id="patientState">LA </span><span id="patientPostalCode">75238</span></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Biometric Status:</strong><br />Left Index, Right Middle fingerprints on file</td>
+                                                                <td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br />Left Index, Right Middle fingerprints on file</td>
                                                             </tr>
                                                         </tbody>
-                                                    </table>
+                                                    </table>-->-
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -135,10 +98,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <ul class="list-inline pull-right pull-right2">
-                                    <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" onclick="wait('left', 'success')"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
-                                </ul>
+                                </div>                                
                             </div>                         
                             <div class="clearfix"></div>
                         </div>
@@ -208,7 +168,7 @@
             }
         };
         function showtPatientDetailsProviderView(sessionid) {
-            NoIDBridge.getPatientDetailsProviderView(sessionid);
+            document.getElementById('divPatientApprovalQueueDetailView').innerHTML = NoIDBridge.getPatientDetailsProviderView(sessionid);
             if (NoIDBridge.errorDescription != '') {
                 //no error continue with new page
                 alert(NoIDBridge.errorDescription);
