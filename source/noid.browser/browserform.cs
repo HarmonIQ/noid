@@ -31,6 +31,7 @@ namespace NoID.Browser
     public partial class BrowserForm : Form
     {
         private static AfisEngine Afis = new AfisEngine();
+        private MinutiaCaptureController _firstMinutiaCaptureController;
         private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
         private List<FingerPrintMinutias> _fingerprintMinutias = new List<FingerPrintMinutias>();
 
@@ -47,6 +48,8 @@ namespace NoID.Browser
         private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
         private static readonly string organizationName = ConfigurationManager.AppSettings["OrganizationName"].ToString();
         private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        private static readonly string approle = ConfigurationManager.AppSettings["approle"].ToString();
+
         //private Uri healthcareNodeFHIRAddress;
         private string healthcareNodeWebAddress;
         private string healthcareNodeChainVerifyAddress;
@@ -63,9 +66,8 @@ namespace NoID.Browser
             this.MinimizeBox = false;
             this.MaximizeBox = false;
 
-            //healthcareNodeFHIRAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
-            healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
-            healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
+            healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
+            healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
 
             Afis.Threshold = PROBE_MATCH_THRESHOLD;
 
@@ -73,7 +75,7 @@ namespace NoID.Browser
             WindowState = FormWindowState.Maximized;
             
             string endPath = "";
-            string approle = System.Configuration.ConfigurationManager.AppSettings["approle"].ToString();
+            
 
             switch (approle)
             {
@@ -86,6 +88,7 @@ namespace NoID.Browser
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
 
                     _patientBridge = new PatientBridge(organizationName, NoIDServiceName);
+                    _patientBridge.ResetSession += ResetSessions;
                     browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     break;
                 case "provider":
@@ -247,30 +250,35 @@ namespace NoID.Browser
 									if (dataTransport.ResponseText.ToLower().Contains(@"noid://") == true)
 									{
 										// Match found, inform JavaScript that this is an returning patient for Identity.
-										PatientBridge.PatientFHIRProfile.NoID.LocalNoID = dataTransport.ResponseText;  //save the localNoID
+										PatientBridge.PatientFHIRProfile.LocalNoID = dataTransport.ResponseText;  //save the localNoID
 										PatientBridge.PatientFHIRProfile.NoIDStatus = "ReturnPending";
 										string challengeQuestion = "Please enter your date of birth."; //TODO: Dynamically select question.
 										browser.GetMainFrame().ExecuteJavaScriptAsync("showIdentity('" + challengeQuestion + "');");
 									}
 									else
 									{
-										// Match not found, inform JavaScript the capture pair is complete and the patient can move to the next step.
-										browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
-										if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left)
+                                        if (MatchLeftAndRight() == true)
+                                        {
+                                            MessageBox.Show("Both right and left capture sites match.  Error, we need to start over.");
+                                            return;
+                                        }
+                                        // Match not found, inform JavaScript the capture pair is complete and the patient can move to the next step.
+                                        browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
+                                        if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left)
 										{
 											//mark schroeder 201707014 commenting out hardcode switch to right. Gui should be handling
 											//Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
 											Laterality = _patientBridge.laterality;
-											_minutiaCaptureController = new MinutiaCaptureController();
-											PatientBridge.hasValidLeftFingerprint = true;
+                                            _firstMinutiaCaptureController = _minutiaCaptureController;
+                                            _minutiaCaptureController = new MinutiaCaptureController();
+                                            PatientBridge.hasValidLeftFingerprint = true;
 										}
 										else if (Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
 										{
 											Laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
 											CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
 											PatientBridge.hasValidRightFingerprint = true;
-										}
-
+                                        }
 										fingerprintScanAttempts = 0; //reset scan attempt count on successful scan
 									}
 								}
@@ -487,6 +495,52 @@ namespace NoID.Browser
             }
         }
 #endif
+
+        bool MatchLeftAndRight()
+        {
+            bool result = false;
+            if (_firstMinutiaCaptureController != null && _minutiaCaptureController != null)
+            {
+                if (_firstMinutiaCaptureController.BestTemplate1 != null && _minutiaCaptureController.BestTemplate1 != null && _firstMinutiaCaptureController.BestTemplate2 != null && _minutiaCaptureController.BestTemplate2 != null)
+                {
+                    result = _firstMinutiaCaptureController.MatchBest(_minutiaCaptureController.BestTemplate1);
+                    if (result == false)
+                    {
+                        result = _firstMinutiaCaptureController.MatchBest(_minutiaCaptureController.BestTemplate2);
+                    }
+                }
+            }
+            return result;
+        }
+
+        void ResetSessions(object sender, string trigger)
+        {
+            switch (approle)
+            {
+                case "patient":
+                case "enrollment-pc":
+                case "enrollment-kiosk":
+                case "patient-pc":
+                case "patient-kiosk":
+                    _patientBridge = new PatientBridge(organizationName, NoIDServiceName);
+                    fingerprintScanAttempts = 0;
+                    attemptedScannedFingers = new List<string>();
+                    hasLeftFingerprintScan = true;
+                    hasRightFingerprintScan = true;
+                    currentCaptureInProcess = false;
+                    _firstMinutiaCaptureController = null;
+                    _minutiaCaptureController = new MinutiaCaptureController();
+                    //browser.RegisterJsObject("NoIDBridge", _patientBridge);
+                    break;
+                case "provider":
+                case "provider-pc":
+                case "provider-kiosk":
+                    _providerBridge = new ProviderBridge(organizationName, NoIDServiceName);
+                    //browser.RegisterJsObject("NoIDBridge", _providerBridge);
+                    break;
+            }
+        }
+
 
         PatientBridge PatientBridge
         {

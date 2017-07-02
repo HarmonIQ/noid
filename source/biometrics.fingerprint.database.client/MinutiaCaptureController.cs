@@ -16,7 +16,7 @@ namespace NoID.Match.Database.Client
     
     public class MinutiaCaptureController
     {
-        private const uint CAPTURE_ACCEPT_THRESHOLD = 70;
+        private const uint CAPTURE_ACCEPT_THRESHOLD = 75;
         private static List<Template> _capturedFingerPrintMinutias = new List<Template>();
         private static AfisEngine _afis = new AfisEngine();
         private Template _bestTemplate1;
@@ -63,6 +63,36 @@ namespace NoID.Match.Database.Client
 
             return fTemplatePairFound;
         }
+
+        public bool MatchBest(Template probe)
+        {
+            bool result = false;
+
+            if (BestTemplate1 != null && BestTemplate2 != null)
+            {
+                List<Template> bestFingerprints = new List<Template>();
+                bestFingerprints.Add(BestTemplate1);
+                bestFingerprints.Add(BestTemplate2);
+
+                float[] scores = _afis.IdentifyFingers(probe, bestFingerprints);
+                if (scores.Length > 0)
+                {
+                    for (int i = 0; i < scores.Count(); i++)
+                    {
+                        Template temp = _capturedFingerPrintMinutias[i];
+                        float score = scores[i];
+                        _lastScore = score;
+                        if (score > 30)
+                        {
+                            result = true;
+                            i = scores.Count() + 1;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
 
         public List<Template> CapturedFingerPrintMinutias
         {
