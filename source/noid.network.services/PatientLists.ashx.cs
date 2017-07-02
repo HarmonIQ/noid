@@ -4,13 +4,14 @@
 
 using System;
 using System.Web;
-using System.Configuration;
+using System.Web.Configuration;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using NoID.FHIR.Profile;
 using NoID.Utilities;
+using NoID.Database.Wrappers;
 
 namespace NoID.Network.Services
 {
@@ -19,9 +20,11 @@ namespace NoID.Network.Services
     /// </summary>
     public class PatientLists : IHttpHandler
     {
-        private readonly Uri sparkEndpointAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(ConfigurationManager.AppSettings["SparkEndpointAddress"].ToString()));
-        private readonly string organizationName = ConfigurationManager.AppSettings["OrganizationName"].ToString();
-        private readonly string domainName = ConfigurationManager.AppSettings["DomainName"].ToString();
+        private readonly Uri sparkEndpointAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(WebConfigurationManager.AppSettings["SparkEndpointAddress"].ToString()));
+        private static readonly string NoIDMongoDBAddress = WebConfigurationManager.AppSettings["NoIDMongoDBAddress"].ToString();
+        private static readonly string SparkMongoDBAddress = WebConfigurationManager.AppSettings["SparkMongoDBAddress"].ToString();
+        private readonly string OrganizationName = WebConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private readonly string DomainName = WebConfigurationManager.AppSettings["DomainName"].ToString();
         private List<Exception> _exceptions = new List<Exception>();
 
         public void ProcessRequest(HttpContext context)
@@ -66,7 +69,21 @@ namespace NoID.Network.Services
             List<PatientProfile> listPending = new List<PatientProfile>();
             try
             {
+                MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
+                List<SessionQueue> pendingSessionList = dbwrapper.GetPendingPatients();
                 FhirClient client = new FhirClient(sparkEndpointAddress);
+
+                foreach (var pending in pendingSessionList)
+                {
+                    string sparkAddress = sparkEndpointAddress.ToString() + "/Patient/" + pending.SparkReference;
+                    Patient pendingPatient = (Patient)client.Get(sparkAddress);
+                    PatientProfile patientProfile = new PatientProfile(pendingPatient, true);
+                    patientProfile.SessionID = pending.SparkReference;
+                    patientProfile.LocalNoID = pending.LocalReference;
+                    listPending.Add(patientProfile);
+                }
+
+                /*
                 string gtDateFormat = "gt" + FHIRUtilities.DateToFHIRString(DateTime.UtcNow.AddDays(-2));
                 client.PreferredFormat = ResourceFormat.Json;
                 Uri uriTwoDays = new Uri(sparkEndpointAddress.ToString() + "/Patient?_lastUpdated=" + gtDateFormat);
@@ -85,6 +102,7 @@ namespace NoID.Network.Services
                         }
                     }
                 }
+                */
             }
             catch(Exception ex)
             {

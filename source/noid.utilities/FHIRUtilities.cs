@@ -372,7 +372,6 @@ namespace NoID.Utilities
 
         public static LateralitySnoMedCode StringToLaterality(string laterality)
         {
-            Type latType = typeof(LateralitySnoMedCode);
             if (laterality.ToLower() == "left")
             {
                 return LateralitySnoMedCode.Left;
@@ -389,7 +388,6 @@ namespace NoID.Utilities
 
         public static CaptureSiteSnoMedCode StringToCaptureSite(string captureSite)
         {
-            Type latType = typeof(LateralitySnoMedCode);
             if (captureSite.ToLower() == "indexfinger")
             {
                 return CaptureSiteSnoMedCode.IndexFinger;

@@ -27,7 +27,7 @@ namespace NoID.FHIR.Profile.Hasher
 
         public string PatientCertificateIDHash
         {
-            get { return HashWriter.Hash(PatientCertificateID, hashSalt, argonParams); }
+            get { return HashWriter.Hash(LocalNoID, hashSalt, argonParams); }
         }
 
         public string LanguageHash
