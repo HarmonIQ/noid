@@ -16,7 +16,7 @@ namespace NoID.Utilities
                 using (EventLog eventLog = new EventLog("Application"))
                 {
                     eventLog.Source = "Application";
-                    eventLog.WriteEntry(message, EventLogEntryType.Information, 101, 1);
+                    eventLog.WriteEntry(message, EventLogEntryType.Information);
                 }
                 resultLogEvent = true;
             }
