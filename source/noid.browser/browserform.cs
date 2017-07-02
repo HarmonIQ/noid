@@ -86,10 +86,9 @@ namespace NoID.Browser
                 case "patient-kiosk":
                     endPath = endPath = healthcareNodeWebAddress + "/enrollment.html"; //TODO: rename to patient.html
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
-
                     _patientBridge = new PatientBridge(organizationName, NoIDServiceName);
-                    _patientBridge.ResetSession += ResetSessions;
                     browser.RegisterJsObject("NoIDBridge", _patientBridge);
+                    _patientBridge.ResetSession += ResetSessions;
                     break;
                 case "provider":
                 case "provider-pc":
@@ -98,6 +97,7 @@ namespace NoID.Browser
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     _providerBridge = new ProviderBridge(organizationName, NoIDServiceName);
                     browser.RegisterJsObject("NoIDBridge", _providerBridge);
+                    _providerBridge.JavaScriptAsync += ExecuteJavaScriptAsync;
                     break;
                 case "healthcare-node-admin-kiosk":
                 case "healthcare-node-admin-pc":
@@ -511,6 +511,11 @@ namespace NoID.Browser
                 }
             }
             return result;
+        }
+
+        void ExecuteJavaScriptAsync(object sender, string javaScriptToExecute)
+        {
+            browser.GetMainFrame().ExecuteJavaScriptAsync(javaScriptToExecute);
         }
 
         void ResetSessions(object sender, string trigger)

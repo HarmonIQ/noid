@@ -30,9 +30,16 @@ namespace NoID.Browser
 		string _approveDenyAction = "";
         Uri _endPoint = null;
 
-	
+        public delegate void ProviderEventHandler(object sender, string javaScriptToExecute);
+        public event ProviderEventHandler JavaScriptAsync = delegate { };
 
-		private IList<PatientProfile> _patients;
+        private IList<PatientProfile> _patients;
+
+        public void ExecuteJavaScriptAsync(string javaScriptToExecute)
+        {
+            if (JavaScriptAsync != null)
+                JavaScriptAsync(this, javaScriptToExecute);
+        }
 
         public ProviderBridge(string organizationName, string serviceName) : base(organizationName, serviceName)
         {
@@ -80,19 +87,19 @@ namespace NoID.Browser
 						string email = "";
 						string biometricStatus = "";					
 
-						name = x.FirstName + (x.MiddleName.Length > 0 ? (" " + x.MiddleName.ToString()) : "") + " " + x.LastName;
-						patientAddress1 = x.StreetAddress.ToString();
-						patientAddress2 = x.StreetAddress2.ToString();
-						patientCity = x.City.ToString();
-						patientState = x.State.ToString();
-						patientPostalCode = x.PostalCode.ToString();
-						dob = x.BirthDate.ToString();
-						gender = x.Gender.ToString();
-						phone = x.PhoneCell.ToString();
-						email = x.EmailAddress.ToString();
-						biometricStatus = "Need to get this passed back in patient profile class";
+						name = HandleNullString(x.FirstName) + (x.MiddleName.Length > 0 ? (" " + HandleNullString(x.MiddleName)) : "") + " " + HandleNullString(x.LastName);
+						patientAddress1 = HandleNullString(x.StreetAddress);
+						patientAddress2 = HandleNullString(x.StreetAddress2);
+						patientCity = HandleNullString(x.City);
+						patientState = HandleNullString(x.State);
+						patientPostalCode = HandleNullString(x.PostalCode);
+						dob = HandleNullString(x.BirthDate);
+						gender = HandleNullString(x.Gender);
+						phone = HandleNullString(x.PhoneCell);
+						email = HandleNullString(x.EmailAddress);
+						biometricStatus = HandleNullString(x.BiometricsCaptured);
 
-						htmlTable += "<table class='table' style='padding: 0; margin: 0; border-collapse: collapse;'><thead><tr>" +
+                        htmlTable += "<table class='table' style='padding: 0; margin: 0; border-collapse: collapse;'><thead><tr>" +
 									"<th style='width: 300px; padding:0; margin:0;text-align: center;'>Patient Details</th></tr></thead><tbody>";
 
 						htmlTable += "<tr>"
@@ -110,9 +117,9 @@ namespace NoID.Browser
 						+ "</tr>"
 						;
 						htmlTable += "</tbody></table>";
-
-					}
-				}				
+                        ExecuteJavaScriptAsync("alert('Test ExecuteJavaScriptAsync() function in ProviderBridge class.');");
+                    }
+                }				
 			}
 			catch (Exception ex)
 			{
@@ -121,6 +128,16 @@ namespace NoID.Browser
 			}
 			return htmlTable;
 		}
+
+        string HandleNullString(string convert)
+        {
+            if (convert == null)
+            {
+                return "";
+            }
+            return convert;
+        }
+
 		public bool postApproveOrDeny(string sessionID, string action)
 		{
 			try
@@ -166,7 +183,7 @@ namespace NoID.Browser
 					htmlTable += "</tbody></table>";
 					_patientApprovalTableRowCount = rowCount;
 					errorDescription = "";
-				}
+                }
 				else
 				{
 					htmlTable = "No patients in queue.";
