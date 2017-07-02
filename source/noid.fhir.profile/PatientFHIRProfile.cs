@@ -608,6 +608,7 @@ namespace NoID.FHIR.Profile
         public string BiometricsCaptured
         {
             get { return _biometricsCaptured; }
+            set { _biometricsCaptured = value; }
         }
 
         [JsonIgnore]
