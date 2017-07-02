@@ -115,14 +115,16 @@ namespace NoID.Network.Services
                                 seq._id = id.Value.ToString();
                             }
                         }
-                        //TODO get last update datetime
-                        seq.LocalReference = localNoID;
-                        seq.SparkReference = sparkReference;
-                        seq.PatientStatus = "new";
-                        seq.ApprovalStatus = "pending";
-                        seq.SessionComputerName = ""; //TODO: get from browser patient object.  browser needs to add it.
-                        seq.ClinicArea = ""; //TODO: get from browser patient object.  browser needs to add it.
                     }
+                    seq.LocalReference = localNoID;
+                    seq.SparkReference = sparkReference;
+                    seq.PatientStatus = "new";
+                    seq.ApprovalStatus = "pending";
+                    seq.SubmitDate = DateTime.UtcNow;
+                    //TODO get PatientBeginDate from FHIR message
+                    //seq.PatientBeginDate = DateTime.UtcNow;
+                    seq.SessionComputerName = ""; //TODO: get from browser patient object.  browser needs to add it.
+                    seq.ClinicArea = ""; //TODO: get from browser patient object.  browser needs to add it.
                 }
             }
             catch (Exception ex)
