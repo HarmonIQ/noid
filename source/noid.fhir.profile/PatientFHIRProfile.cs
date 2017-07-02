@@ -56,7 +56,10 @@ namespace NoID.FHIR.Profile
         private string _biometricAlternateAnswer1 = "";
         private string _biometricAlternateQuestion2 = "";
         private string _biometricAlternateAnswer2 = "";
-
+        private string _localNoID = "";
+        private string _sessionID = "";
+        private string _remoteNoID = "";
+        private string _biometricsCaptured = "";
 
         [JsonConstructor]
         public PatientProfile()
@@ -181,14 +184,16 @@ namespace NoID.FHIR.Profile
                         Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
                         
                         // Get captureSite and laterality from media
-                        string captureSiteCode = media.Extension[1].Value.Extension[1].Value.ToString();
+                        string captureSiteDescription = media.Extension[1].Value.Extension[1].Value.ToString();
                         string lateralityCode = media.Extension[1].Value.Extension[2].Value.ToString();
 
                         Template addMinutia = ConvertFHIR.FHIRToTemplate(media);
-                        FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(SessionID, addMinutia, FHIRUtilities.SnoMedCodeToLaterality(lateralityCode), FHIRUtilities.SnoMedCodeToCaptureSite(captureSiteCode));
+                        FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(
+                            SessionID, addMinutia, FHIRUtilities.SnoMedCodeToLaterality(lateralityCode), FHIRUtilities.StringToCaptureSite(captureSiteDescription));
 
                         AddFingerPrint(newFingerPrintMinutias);
                     }
+                    _biometricsCaptured = GetBiometricsCaptured(); 
                 }
             }
             else
@@ -332,6 +337,7 @@ namespace NoID.FHIR.Profile
 
                         AddFingerPrint(newFingerPrintMinutias);
                     }
+                    _biometricsCaptured = GetBiometricsCaptured();
                 }
             }
             else
@@ -358,22 +364,22 @@ namespace NoID.FHIR.Profile
         [JsonProperty("LocalNoID")]
         public string LocalNoID
         {
-            get { if (_noID != null) { return _noID.LocalNoID; } else { return ""; } }
-            set { if (_noID != null) { _noID.LocalNoID = value; } }
+            get { return _localNoID; }
+            set { _localNoID = value; }
         }
 
         [JsonProperty("SessionID")]
         public string SessionID
         {
-            get { if (_noID != null) { return _noID.SessionID; } else { return ""; } }
-            set { if (_noID != null) { _noID.SessionID = value; } }
+            get { return _sessionID; }
+            set { _sessionID = value; }
         }
 
         [JsonProperty("RemoteNoID")]
         public string RemoteNoID
         {
-            get { if (_noID != null) { return _noID.RemoteNoID; } else { return ""; } }
-            set { if (_noID != null) { _noID.RemoteNoID = value; } }
+            get {  return _remoteNoID; }
+            set { _remoteNoID = value; } 
         }
 
         [JsonProperty("Language")]
@@ -572,40 +578,53 @@ namespace NoID.FHIR.Profile
             set { _checkinDateTime = value; }
         }
 
-        [JsonProperty("BiometricsCaptured")]
-        public string BiometricsCaptured
-        {
-            get
-            {
-                string biometrics = "";
 
-                if (_fingerPrintMinutiasList.Count > 0)
+        private string GetBiometricsCaptured()
+        {
+            string biometrics = "";
+
+            if (_fingerPrintMinutiasList.Count > 0)
+            {
+                foreach (var finger in _fingerPrintMinutiasList)
                 {
-                    foreach(var finger in _fingerPrintMinutiasList)
+                    string fingerDesc = FHIRUtilities.LateralityToString(finger.LateralitySnoMedCode) + " " + FHIRUtilities.CaptureSiteToString(finger.CaptureSiteSnoMedCode);
+                    if (biometrics.Contains(fingerDesc) == false)
                     {
-                        string fingerDesc = FHIRUtilities.LateralityToString(finger.LateralitySnoMedCode) + " " + FHIRUtilities.CaptureSiteToString(finger.CaptureSiteSnoMedCode);
-                        if (biometrics.Contains(fingerDesc) == false)
+                        if (biometrics.Length > 0)
                         {
-                            if (biometrics.Length > 0)
-                            {
-                                biometrics = biometrics + " and " + fingerDesc;
-                            }
-                            else
-                            {
-                                biometrics = fingerDesc;
-                            }
+                            biometrics = biometrics + " and " + fingerDesc;
+                        }
+                        else
+                        {
+                            biometrics = fingerDesc;
                         }
                     }
                 }
-                return biometrics;
             }
+            return biometrics;
+        }
+
+        [JsonProperty("BiometricsCaptured")]
+        public string BiometricsCaptured
+        {
+            get { return _biometricsCaptured; }
         }
 
         [JsonIgnore]
         public SourceAFIS.Templates.NoID NoID
         {
             get { return _noID; }
-            set { _noID = value; }
+            set
+            {
+                _noID = value;
+                if (_noID != null)
+                {
+                    _localNoID = _noID.LocalNoID;
+                    _sessionID = _noID.SessionID;
+                    _remoteNoID = _noID.RemoteNoID;
+                    _checkinDateTime = FHIRUtilities.DateTimeToFHIRString(_noID.SessionStartDateTime);
+                }
+            }
         }
 
         [JsonIgnore]
