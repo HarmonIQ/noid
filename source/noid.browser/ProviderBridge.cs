@@ -55,6 +55,19 @@ namespace NoID.Browser
 
         ~ProviderBridge() { }
 
+		public bool getPatientDetailsProviderView(string sessionID)
+		{
+			try
+			{
+				errorDescription = "getPaitentDetailsProviderView with sessionID: " + sessionID;
+			}
+			catch (Exception ex)
+			{
+				errorDescription = ex.Message;
+				return false;
+			}
+			return true;
+		}
 		public bool postApproveOrDeny(string sessionID, string action)
 		{
 			try
@@ -79,20 +92,20 @@ namespace NoID.Browser
 				//_captureSite = FHIRUtilities.StringToCaptureSite(captureSite);
 				//_laterality = FHIRUtilities.StringToLaterality(laterality);
 				htmlTable += "<table class='table table-striped  table-bordered'>"
-					 + "<thead><tr><th style='width: 175px'>In Time</th><th style='width: 100px'>NoID Type</th><th style='width: 100px'>First Name</th>"
-					 + "<th style='width: 110px'>Last Name</th><th style='width: 100px'>DOB</th><th style='width: 100px'>Approve</th><th style='width: 80px'>Deny</th></tr></thead><tbody>";
+					 + "<thead><tr><th style='width: 170px' title='Time patient submitted NoID Enrollment or Identity request'>In Time</th><th style='width: 110px' title='New NoID Patient Type or Return NoID Patient Type'>Type</th><th style='width: 100px' title='Patient First Name'>First Name</th>"
+					 + "<th style='width: 130px' title='Patient Last Name'>Last Name</th><th style='width: 100px' title='Patient Date of Birth'>DOB</th><th style='width: 85px' title='Approve Patient'>Approve</th><th style='width: 80px' title='Deny Patient'>Deny</th></tr></thead><tbody>";
 				foreach (PatientProfile x in _patients)
 				{
 					htmlTable += "<tr>"
-									+ "<td style='width: 175px'>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
-									+ "<td style='width: 100px'>" + x.NoIDStatus.ToString() + "</td>"
-									+ "<td style='width: 100px'>" + x.FirstName.ToString() + "</td>"
-									+ "<td style='width: 110px'>" + x.LastName.ToString() + "</td>"
+									+ "<td style='width: 170px'>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
+									+ "<td style='width: 110px' title='" + x.NoIDStatus.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDStatus.ToString() + "</div></td>"
+									+ "<td style='width: 100px' title='" + x.FirstName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.FirstName.ToString() + "</u></div></td>"
+									+ "<td style='width: 130px' title='" + x.LastName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.LastName.ToString() + "</u></div></td>"
 									+ "<td style='width: 100px'>" + x.BirthDate.ToString() + "</td>"
-									+ "<td style='width: 100px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Approve" + (char)34 + ")'>Approve</a></td>"
-									+ "<td style='width: 80px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Deny" + (char)34 + ")'>Deny</a></td>"
+									+ "<td style='width: 85px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Approve" + (char)34 + ")' title='Click Approve to approve " + x.FirstName.ToString() + " " + x.LastName.ToString() + "'>Approve</a></td>"
+									+ "<td style='width: 80px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Deny" + (char)34 + ")' title='Click Deny to deny " + x.FirstName.ToString() + " " + x.LastName.ToString() + "'>Deny</a></td>"
 								+ "</tr>"
-								;
+								;					
 					rowCount++;
 				}
 				htmlTable += "</tbody></table>";

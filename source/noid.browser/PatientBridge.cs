@@ -30,8 +30,8 @@ namespace NoID.Browser
 
         PatientFHIRProfile _patientFHIRProfile;
         string _reponseString;
-		bool _hasValidLeftFingerprint = true;
-		bool _hasValidRightFingerprint = true;
+		bool _hasValidLeftFingerprint = false;
+		bool _hasValidRightFingerprint = false;
 		string _exceptionMissingReason = "";
 		string _secretAnswer1 = "";
 		string _secretAnswer2 = "";

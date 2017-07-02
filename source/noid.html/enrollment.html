@@ -20,13 +20,10 @@
     </script>
 </head>
 <body>
-    <!--<nav class="navbar navbar-default transparent navbar-fixed-top navbar-right">
-        <div class="container">
-            <ol class=" navbar-right">
-                <a href="#"><li class="glyphicon glyphicon-question-sign"></li>  Help</a>
-            </ol>
-        </div>
-    </nav>	-->
+    <div class="pull-right">
+        <br />
+        <a href="#" onclick="pageRefresh();"><span class="glyphicon glyphicon-trash"></span>  Start Over</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>   
     <div class="container">
         <div class="row setHeight">
             <section>
@@ -403,7 +400,8 @@
                                     <div class="jumbotron">
                                         <h1>Enter Demographics</h1>
                                         <h3>
-                                            Please fill out the below basic information about yourself
+                                            Please fill out the below basic information about yourself<br />
+                                            *Required Fields
                                         </h3>
                                         <hr>
                                         <div class="container-fluid">
@@ -489,6 +487,7 @@
                                                         <div class="col-md-4 col-xs-4 wdth">
                                                             <select name="BirthYear" id="BirthYear" class="dropselectsec1">
                                                                 <option value="">Year</option>
+                                                                <option value="2017">2017</option>
                                                                 <option value="2016">2016</option>
                                                                 <option value="2015">2015</option>
                                                                 <option value="2014">2014</option>
@@ -632,7 +631,7 @@
                                 <li><button id="demographics1" type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button type="button" id="demographics1Next" onmousedown="validateBasicDemographics();" onkeydown="validateBasicDemographics();" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="step7">
@@ -985,12 +984,13 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="jumbotron">
-                                <h2>Missing Biometric Information</h2>
+                                <h2>Missing Biometric Information<br />
+                                *All Fields Are Required</h2>
                                 <p></p>
                                 <p></p>
                                 <div class="row mar_ned">
                                     <div class="col-md-4 col-xs-3">
-                                        <p align="right"><strong>Reason For Missing Biometric:</strong></p>
+                                        <p align="right"><strong>Reason For Missing Biometric:*</strong></p>
                                     </div>
                                     <div class="col-md-8 col-xs-9">
                                         <select id="exceptionMissingReason" class="form-control">
@@ -1002,7 +1002,7 @@
                                 </div>
                                 <div class="row mar_ned">
                                     <div class="col-md-4 col-xs-3">
-                                        <p align="right"><strong>Select Secret Question 1:</strong></p>
+                                        <p align="right"><strong>Select Secret Question 1:*</strong></p>
                                     </div>
                                     <div class="col-md-8 col-xs-9">
                                         <ul class="list-group">
@@ -1020,7 +1020,7 @@
                                 </div>
                                 <div class="row mar_ned">
                                     <div class="col-md-4 col-xs-3">
-                                        <p align="right"><strong>Select Secret Question 2:</strong></p>
+                                        <p align="right"><strong>Select Secret Question 2:*</strong></p>
                                     </div>
                                     <div class="col-md-8 col-xs-9">
                                         <ul class="list-group">
@@ -1040,7 +1040,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="saveMissingBiometricInfo" onclick="saveMissingBiometricInfo();" type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                        <button id="saveMissingBiometricInfo" onmousedown="validateMissingBiometricsReasons();" onkeydown="validateMissingBiometricsReasons();" onclick="saveMissingBiometricInfo();" type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
                     </div>
                 </div>
                 <!-- /.modal-content -->
