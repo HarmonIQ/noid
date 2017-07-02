@@ -64,7 +64,7 @@
                                                 <div id="divPatientApprovalQueueTable" class="col-md-9">                                               
                                                 </div>
                                                 <div id="divPatientApprovalQueueDetailView"class="col-md-3 pull-right">
-                                                    <!--<table class="table" style="padding:0; margin:0; border-collapse: collapse;">
+                                                    <table class="table" style="padding:0; margin:0; border-collapse: collapse;">
                                                         <thead>
                                                             <tr>
                                                                 <th style="width: 300px; padding:0; margin:0;text-align: center;">Patient Details</th>
@@ -72,25 +72,28 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr>
-                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Name: </strong><span id="patientFullName">Mark A Schroeder</span></td>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Name: </strong><input id="patientFullName" type="text" value="" disabled style="border: none" /></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>DOB: </strong><span id="patientDOB">1961-10-30</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Gender: </strong><span id="patientGender">Male</span></td>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>DOB: </strong><input id="patientDOB" type="text" value="" maxlength="12" disabled style="width:100px; border: none">&nbsp;&nbsp;<strong>Gender: </strong><input style="width:25px; border: none" type="text" id="patientGender" value="" disabled maxlength="10" /></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Phone: </strong><span id="patientPhone1">555-555-5555</span></td>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Phone: </strong><input type="text" id="patientPhone1" value="" style="border: none" disabled /></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Email: </strong><span id="patientEmail">mrlongemailname@longernaemailaddres</span></td>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Email: </strong><input type="text" id="patientEmail" value="" style="border: none" disabled /></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Address: </strong><br /><span id="patientAddress1">11111 MyWayHwy</span><br /><span id="patientAddress2">apt 1.5</span><br /><span id="patientCity">New Orleans</span>, <span id="patientState">LA </span><span id="patientPostalCode">75238</span></td>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Address: </strong><br /><input type="text" id="patientAddress1" value="" style="border: none" disabled /><br /><input type="text" id="patientAddress2" value="" style="border: none" disabled /><br /><input type="text" id="patientCity" value="" style="border: none; width:50%;" disabled />, <input type="text" id="patientState" value="" style="width:20%; border: none" disabled /> <input type="text" value="" style="width:30%; border: none" disabled id="patientPostalCode" /></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br />Left Index, Right Middle fingerprints on file</td>
+                                                                <td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br /><input type="text" id="biometricStatus" style="border:none" value="" disabled /></td>
                                                             </tr>
                                                         </tbody>
-                                                    </table>-->-
+                                                    </table>
+                                                    <button onclick="enableEditDemographics();" type="button" id ="editDemographics" class="btn btn-primary" style="visibility:hidden">Enable Edit Demographics</button>
+                                                    <button onclick="postEditedDemographics();" type="button" id="submitEditDemographics" class="btn btn-primary" style="visibility:hidden">Submit Demographic Change</button>
+                                                    <input type="hidden" id="detailSessionID" name="sessionID" value="" />
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -158,9 +161,11 @@
         //};
         function approvePatient(sessionid, action) {
             NoIDBridge.postApproveOrDeny(sessionid, action);
+            document.getElementById('submitEditDemographics').style.visibility = "hidden";
+            document.getElementById('editDemographics').style.visibility = "visible";
             if (NoIDBridge.errorDescription == '') {
                 //no error continue with new page
-                alert("postApproveOrDeny no error");
+                alert(action + " successful");
             }
             else {
                 //error, show user message
@@ -168,7 +173,82 @@
             }
         };
         function showtPatientDetailsProviderView(sessionid) {
-            document.getElementById('divPatientApprovalQueueDetailView').innerHTML = NoIDBridge.getPatientDetailsProviderView(sessionid);
+            //document.getElementById('divPatientApprovalQueueDetailView').innerHTML = NoIDBridge.getPatientDetailsProviderView(sessionid);
+            NoIDBridge.getPatientDetailsProviderView(sessionid);           
+            if (NoIDBridge.errorDescription != '') {
+                //no error continue with new page
+                alert(NoIDBridge.errorDescription);
+            }
+            disableeEditDemographics();
+        };
+        //this is a place holder for now
+        function enableEditDemographics() {
+            document.getElementById('detailSessionID').disabled = false;
+            document.getElementById('patientFullName').disabled = false;
+            document.getElementById('patientDOB').disabled = false;
+            document.getElementById('patientGender').disabled = false;
+            document.getElementById('patientPhone1').disabled = false;
+            document.getElementById('patientEmail').disabled = false;
+            document.getElementById('patientAddress1').disabled = false;
+            document.getElementById('patientAddress2').disabled = false;
+            document.getElementById('patientCity').disabled = false;
+            document.getElementById('patientState').disabled = false;
+            document.getElementById('patientPostalCode').disabled = false;
+            document.getElementById('submitEditDemographics').style.visibility = "visible"; 
+            document.getElementById('editDemographics').style.visibility = "hidden";
+        };
+        function disableeEditDemographics() {
+            document.getElementById('detailSessionID').disabled = true;
+            document.getElementById('patientFullName').disabled = true;
+            document.getElementById('patientDOB').disabled = true;
+            document.getElementById('patientGender').disabled = true;
+            document.getElementById('patientPhone1').disabled = true;
+            document.getElementById('patientEmail').disabled = true;
+            document.getElementById('patientAddress1').disabled = true;
+            document.getElementById('patientAddress2').disabled = true;
+            document.getElementById('patientCity').disabled = true;
+            document.getElementById('patientState').disabled = true;
+            document.getElementById('patientPostalCode').disabled = true;
+        };
+        function postEditedDemographics() {           
+            var sessionID = document.getElementById('detailSessionID').value;
+            var name = document.getElementById('patientFullName').value;
+            var dob = document.getElementById('patientDOB').value;
+            var gender = document.getElementById('patientGender').value;
+            var phone = document.getElementById('patientPhone1').value;
+            var email = document.getElementById('patientEmail').value;
+            var patientAddress1 = document.getElementById('patientAddress1').value;
+            var patientAddress2 = document.getElementById('patientAddress2').value;
+            var patientCity = document.getElementById('patientCity').value;
+            var patientState = document.getElementById('patientState').value;
+            var patientPostalCode = document.getElementById('patientPostalCode').value;
+
+            document.getElementById('submitEditDemographics').style.visibility = "hidden";
+            document.getElementById('editDemographics').style.visibility = "visible";
+
+            NoIDBridge.postNewEditedDemographics(sessionID, name, dob, gender, phone, email, patientAddress1, patientAddress2, patientCity, patientState, patientPostalCode);
+            if (NoIDBridge.errorDescription != '') {
+                //no error continue with new page
+                alert(NoIDBridge.errorDescription);
+            }
+            disableeEditDemographics();
+        };
+        function populatetPatientDetailsProviderView(sessionID, name, dob, gender, phone, email, patientAddress1, patientAddress2, patientCity, patientState, patientPostalCode, biometricStatus) {
+            document.getElementById('detailSessionID').value = sessionID;
+            document.getElementById('patientFullName').value = name;
+            document.getElementById('patientDOB').value = dob;
+            document.getElementById('patientGender').value = gender;
+            document.getElementById('patientPhone1').value = phone;
+            document.getElementById('patientEmail').value = email;
+            document.getElementById('patientAddress1').value = patientAddress1;
+            document.getElementById('patientAddress2').value = patientAddress2;
+            document.getElementById('patientCity').value = patientCity;
+            document.getElementById('patientState').value = patientState;
+            document.getElementById('patientPostalCode').value = patientPostalCode;
+            document.getElementById('biometricStatus').value = biometricStatus;
+            //document.getElementById('submitEditDemographics').style.visibility = "hidden";
+            //document.getElementById('editDemographics').style.visibility = "visible";
+ 
             if (NoIDBridge.errorDescription != '') {
                 //no error continue with new page
                 alert(NoIDBridge.errorDescription);
