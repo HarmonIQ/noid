@@ -68,7 +68,7 @@ namespace NoID.Browser
 
 		public string getPatientDetailsProviderView(string sessionID)
 		{
-			string htmlTable = "";
+			//string htmlTable = "";
 			try
 			{
 				foreach (PatientProfile x in _patients)
@@ -99,25 +99,25 @@ namespace NoID.Browser
 						email = HandleNullString(x.EmailAddress);
 						biometricStatus = HandleNullString(x.BiometricsCaptured);
 
-                        htmlTable += "<table class='table' style='padding: 0; margin: 0; border-collapse: collapse;'><thead><tr>" +
-									"<th style='width: 300px; padding:0; margin:0;text-align: center;'>Patient Details</th></tr></thead><tbody>";
+      //                  htmlTable += "<table class='table' style='padding: 0; margin: 0; border-collapse: collapse;'><thead><tr>" +
+						//			"<th style='width: 300px; padding:0; margin:0;text-align: center;'>Patient Details</th></tr></thead><tbody>";
 
-						htmlTable += "<tr>"
-							+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left; '><strong>Name: </strong>" + name + " </td>"
-							+ "</tr><tr>"
-							+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>DOB: </strong>" + dob + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Gender: </strong>" + gender + "</td>"
-							+ "</tr><tr>"
-							+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Phone: </strong>" + phone + "</td>"
-							+ "</tr><tr>"
-							+ " <td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Email: </strong>" + email + "</td>"
-							+ "</tr><tr>"
-							+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Address: </strong><br />" + patientAddress1 + "<br />" + patientAddress2 + "<br />" + patientCity + ", " + patientState + " " + patientPostalCode + "</td>"
-							+ "</tr><tr>"
-							+ "<td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br />" + biometricStatus + "</td>"
-						+ "</tr>"
-						;
-						htmlTable += "</tbody></table>";
-                        ExecuteJavaScriptAsync("alert('Test ExecuteJavaScriptAsync() function in ProviderBridge class.');");
+						//htmlTable += "<tr>"
+						//	+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left; '><strong>Name: </strong>" + name + " </td>"
+						//	+ "</tr><tr>"
+						//	+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>DOB: </strong>" + dob + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Gender: </strong>" + gender + "</td>"
+						//	+ "</tr><tr>"
+						//	+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Phone: </strong>" + phone + "</td>"
+						//	+ "</tr><tr>"
+						//	+ " <td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Email: </strong>" + email + "</td>"
+						//	+ "</tr><tr>"
+						//	+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Address: </strong><br />" + patientAddress1 + "<br />" + patientAddress2 + "<br />" + patientCity + ", " + patientState + " " + patientPostalCode + "</td>"
+						//	+ "</tr><tr>"
+						//	+ "<td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br />" + biometricStatus + "</td>"
+						//+ "</tr>"
+						//;
+						//htmlTable += "</tbody></table>";
+                        ExecuteJavaScriptAsync("populatetPatientDetailsProviderView('" + sessionID + "', '" + name + "', '" + dob + "', '" + gender + "', '" + phone + "', '" + email + "', '" + patientAddress1 + "', '" + patientAddress2 + "', '" + patientCity + "', '" + patientState + "', '" + patientPostalCode + "', '" + biometricStatus + "');");
                     }
                 }				
 			}
@@ -126,7 +126,7 @@ namespace NoID.Browser
 				errorDescription = ex.Message;
 				return "error";
 			}
-			return htmlTable;
+			return "";
 		}
 
         string HandleNullString(string convert)
@@ -151,6 +151,35 @@ namespace NoID.Browser
 				return false;
 			}
 			return true;
+		}
+		public bool postNewEditedDemographics
+			(
+			string sessionID,
+			string name,
+			string dob,
+			string gender,
+			string phone,
+			string email,
+			string patientAddress1,
+			string patientAddress2,
+			string patientCity,
+			string patientState, 
+			string patientPostalCode
+		)
+		{
+			try
+			{
+				//stub to change demographics from provider view page
+				//need to set document.getElementById('editDemographics').style.visibility = "visible";
+				// which will enable edit button. click edit button to make field editable and click submit button to call this function
+				// do demographic update below
+				return true;
+			}
+			catch (Exception ex)
+			{
+				errorDescription = ex.Message;
+				return false;
+			}			
 		}
 
 		public string CreatePatientApprovalQueue()
