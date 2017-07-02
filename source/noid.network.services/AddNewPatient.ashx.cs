@@ -77,8 +77,8 @@ namespace NoID.Network.Services
                     MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
                     dbwrapper.AddPendingPatient(seq);
                     //TODO: end atomic transaction.  
-                    _responseText = "Successful.";      
                 }
+                _responseText = "Successful.";
             }
             catch (Exception ex)
             {
