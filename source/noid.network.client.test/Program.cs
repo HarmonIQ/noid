@@ -25,7 +25,7 @@ namespace NoID.Network.Client.Test
         static void Main(string[] args)
         {
             string commandLine = "";
-            Console.WriteLine("Enter C for checkin patient, P for pending patient queue and Q to quit");
+            Console.WriteLine("Enter C for checkin patient, P for pending patient queue, M for Mongo tests and Q to quit");
             while (commandLine != "q")
             {
                 if (commandLine == "c")
