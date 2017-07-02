@@ -37,6 +37,7 @@ namespace NoID.Network.Services
         {
             try
             {
+                LogUtilities.LogEvent("Start AddNewPatient.ashx");
                 Resource newResource = FHIRUtilities.StreamToFHIR(new StreamReader(context.Request.InputStream));
                 _patient = (Patient)newResource;
                 //TODO: make sure this FHIR message has a new pending status.
@@ -44,6 +45,7 @@ namespace NoID.Network.Services
                 //TODO: make this an atomic transaction.  
                 //          delete the FHIR message from Spark if there is an error in the minutia.
                 Patient ptSaved = (Patient)SendPatientToSparkServer();
+                LogUtilities.LogEvent("AddNewPatient.ashx Saved FHIR in spark.");
                 if (ptSaved == null)
                 {
                     _responseText = "Error sending Patient FHIR message to the Spark FHIR endpoint. " + ExceptionString;
@@ -73,16 +75,19 @@ namespace NoID.Network.Services
                         }
                     }
                     dbMinutia.Dispose();
-
+                    LogUtilities.LogEvent("AddNewPatient.ashx Before MongoDBWrapper.");
                     MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
                     dbwrapper.AddPendingPatient(seq);
+                    LogUtilities.LogEvent("AddNewPatient.ashx After MongoDBWrapper.");
                     //TODO: end atomic transaction.  
                 }
                 _responseText = "Successful.";
+                LogUtilities.LogEvent("AddNewPatient.ashx " + _responseText);
             }
             catch (Exception ex)
             {
                 _responseText = "Error in FHIRMessageRouter::FHIRMessageRouter: " + ex.Message;
+                LogUtilities.LogEvent(_responseText);
             }
         }
 
