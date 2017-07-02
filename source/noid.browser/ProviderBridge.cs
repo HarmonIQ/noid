@@ -30,10 +30,14 @@ namespace NoID.Browser
 		string _approveDenyAction = "";
         Uri _endPoint = null;
 
+	
+
 		private IList<PatientProfile> _patients;
 
         public ProviderBridge(string organizationName, string serviceName) : base(organizationName, serviceName)
         {
+			//mark schroeder 20170701 testing. Comment below and uncomment one below that for prod
+			//_patients = TestPatientList.GetTestPatients(organizationName);
             _patients = GetCheckinList();
 			_patientApprovalTable = CreatePatientApprovalQueue();
 		}
@@ -55,18 +59,67 @@ namespace NoID.Browser
 
         ~ProviderBridge() { }
 
-		public bool getPatientDetailsProviderView(string sessionID)
+		public string getPatientDetailsProviderView(string sessionID)
 		{
+			string htmlTable = "";
 			try
 			{
-				errorDescription = "getPaitentDetailsProviderView with sessionID: " + sessionID;
+				foreach (PatientProfile x in _patients)
+				{
+					if (x.SessionID.ToString() == sessionID)
+					{
+						string name = "";
+						string patientAddress1 = "";
+						string patientAddress2 = "";
+						string patientCity = "";
+						string patientState = "";
+						string patientPostalCode = "";
+						string dob = "";
+						string gender = "";
+						string phone = "";
+						string email = "";
+						string biometricStatus = "";					
+
+						name = x.FirstName + (x.MiddleName.Length > 0 ? (" " + x.MiddleName.ToString()) : "") + " " + x.LastName;
+						patientAddress1 = x.StreetAddress.ToString();
+						patientAddress2 = x.StreetAddress2.ToString();
+						patientCity = x.City.ToString();
+						patientState = x.State.ToString();
+						patientPostalCode = x.PostalCode.ToString();
+						dob = x.BirthDate.ToString();
+						gender = x.Gender.ToString();
+						phone = x.PhoneCell.ToString();
+						email = x.EmailAddress.ToString();
+						biometricStatus = "Need to get this passed back in patient profile class";
+
+						htmlTable += "<table class='table' style='padding: 0; margin: 0; border-collapse: collapse;'><thead><tr>" +
+									"<th style='width: 300px; padding:0; margin:0;text-align: center;'>Patient Details</th></tr></thead><tbody>";
+
+						htmlTable += "<tr>"
+							+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left; '><strong>Name: </strong>" + name + " </td>"
+							+ "</tr><tr>"
+							+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>DOB: </strong>" + dob + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Gender: </strong>" + gender + "</td>"
+							+ "</tr><tr>"
+							+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Phone: </strong>" + phone + "</td>"
+							+ "</tr><tr>"
+							+ " <td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Email: </strong>" + email + "</td>"
+							+ "</tr><tr>"
+							+ "<td style='width: 300px; padding: 0; margin: 0; text-align: left;'><strong>Address: </strong><br />" + patientAddress1 + "<br />" + patientAddress2 + "<br />" + patientCity + ", " + patientState + " " + patientPostalCode + "</td>"
+							+ "</tr><tr>"
+							+ "<td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br />" + biometricStatus + "</td>"
+						+ "</tr>"
+						;
+						htmlTable += "</tbody></table>";
+
+					}
+				}				
 			}
 			catch (Exception ex)
 			{
 				errorDescription = ex.Message;
-				return false;
+				return "error";
 			}
-			return true;
+			return htmlTable;
 		}
 		public bool postApproveOrDeny(string sessionID, string action)
 		{
@@ -91,26 +144,33 @@ namespace NoID.Browser
 			{
 				//_captureSite = FHIRUtilities.StringToCaptureSite(captureSite);
 				//_laterality = FHIRUtilities.StringToLaterality(laterality);
-				htmlTable += "<table class='table table-striped  table-bordered'>"
-					 + "<thead><tr><th style='width: 170px' title='Time patient submitted NoID Enrollment or Identity request'>In Time</th><th style='width: 110px' title='New NoID Patient Type or Return NoID Patient Type'>Type</th><th style='width: 100px' title='Patient First Name'>First Name</th>"
-					 + "<th style='width: 130px' title='Patient Last Name'>Last Name</th><th style='width: 100px' title='Patient Date of Birth'>DOB</th><th style='width: 85px' title='Approve Patient'>Approve</th><th style='width: 80px' title='Deny Patient'>Deny</th></tr></thead><tbody>";
-				foreach (PatientProfile x in _patients)
+				if (_patients != null)
 				{
-					htmlTable += "<tr>"
-									+ "<td style='width: 170px'>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
-									+ "<td style='width: 110px' title='" + x.NoIDStatus.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDStatus.ToString() + "</div></td>"
-									+ "<td style='width: 100px' title='" + x.FirstName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.FirstName.ToString() + "</u></div></td>"
-									+ "<td style='width: 130px' title='" + x.LastName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.LastName.ToString() + "</u></div></td>"
-									+ "<td style='width: 100px'>" + x.BirthDate.ToString() + "</td>"
-									+ "<td style='width: 85px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Approve" + (char)34 + ")' title='Click Approve to approve " + x.FirstName.ToString() + " " + x.LastName.ToString() + "'>Approve</a></td>"
-									+ "<td style='width: 80px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Deny" + (char)34 + ")' title='Click Deny to deny " + x.FirstName.ToString() + " " + x.LastName.ToString() + "'>Deny</a></td>"
-								+ "</tr>"
-								;					
-					rowCount++;
+					htmlTable += "<table class='table table-striped  table-bordered'>"
+						 + "<thead><tr><th style='width: 170px' title='Time patient submitted NoID Enrollment or Identity request'>In Time</th><th style='width: 110px' title='New NoID Patient Type or Return NoID Patient Type'>Type</th><th style='width: 100px' title='Patient First Name'>First Name</th>"
+						 + "<th style='width: 130px' title='Patient Last Name'>Last Name</th><th style='width: 100px' title='Patient Date of Birth'>DOB</th><th style='width: 85px' title='Approve Patient'>Approve</th><th style='width: 80px' title='Deny Patient'>Deny</th></tr></thead><tbody>";
+					foreach (PatientProfile x in _patients)
+					{
+						htmlTable += "<tr>"
+										+ "<td style='width: 170px'>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
+										+ "<td style='width: 110px' title='" + x.NoIDStatus.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDStatus.ToString() + "</div></td>"
+										+ "<td style='width: 100px' title='" + x.FirstName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.FirstName.ToString() + "</u></div></td>"
+										+ "<td style='width: 130px' title='" + x.LastName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.LastName.ToString() + "</u></div></td>"
+										+ "<td style='width: 100px'>" + x.BirthDate.ToString() + "</td>"
+										+ "<td style='width: 85px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Approve" + (char)34 + ")' title='Click Approve to approve " + x.FirstName.ToString() + " " + x.LastName.ToString() + "'>Approve</a></td>"
+										+ "<td style='width: 80px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Deny" + (char)34 + ")' title='Click Deny to deny " + x.FirstName.ToString() + " " + x.LastName.ToString() + "'>Deny</a></td>"
+									+ "</tr>"
+									;
+						rowCount++;
+					}
+					htmlTable += "</tbody></table>";
+					_patientApprovalTableRowCount = rowCount;
+					errorDescription = "";
 				}
-				htmlTable += "</tbody></table>";
-				_patientApprovalTableRowCount = rowCount;
-				errorDescription = "";
+				else
+				{
+					htmlTable = "No patients in queue.";
+				}
 			}
 			catch (Exception ex)
 			{
