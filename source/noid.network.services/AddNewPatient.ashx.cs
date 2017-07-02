@@ -116,6 +116,14 @@ namespace NoID.Network.Services
                             }
                         }
                     }
+                    if (seq._id == null)
+                    {
+                        seq._id = sparkReference;
+                    }
+                    if (seq._id.Length == 0)
+                    {
+                        seq._id = sparkReference;
+                    }
                     seq.LocalReference = localNoID;
                     seq.SparkReference = sparkReference;
                     seq.PatientStatus = "new";
