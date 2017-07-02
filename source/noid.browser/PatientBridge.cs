@@ -36,14 +36,24 @@ namespace NoID.Browser
 		string _secretAnswer1 = "";
 		string _secretAnswer2 = "";
 
-		public PatientBridge(string organizationName,  string serviceName) : base(organizationName, serviceName)
+        public delegate void PatientEventHandler(object sender, string trigger);
+        public event PatientEventHandler ResetSession = delegate { };
+
+
+        public PatientBridge(string organizationName,  string serviceName) : base(organizationName, serviceName)
         {
             _patientFHIRProfile = new PatientFHIRProfile(organizationName, "NewPending");
         }
 
         ~PatientBridge() { }
 
-		public bool postMissingBiometricInfo(string exceptionMissingReason,	string secretAnswer1, string secretAnswer2)
+        private void TriggerResetSession(string trigger)
+        {
+            if (ResetSession != null)
+                ResetSession(this, trigger);
+        }
+
+        public bool postMissingBiometricInfo(string exceptionMissingReason,	string secretAnswer1, string secretAnswer2)
 		{
 			try
 			{
@@ -313,6 +323,7 @@ namespace NoID.Browser
             _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
             _patientFHIRProfile = new PatientFHIRProfile(organizationName, "New");
             _patientFHIRProfile.FHIRAddress = null;
+            TriggerResetSession("PatientBridge::ResetVariables");
         }
 
         public bool postResetForNewPatient()
@@ -331,35 +342,39 @@ namespace NoID.Browser
 
         public string sessionID
         {
-            get { return _patientFHIRProfile.NoID.SessionID; }
+            get { return _patientFHIRProfile.SessionID; }
         }
 
         public string localNoID
         {
-            get { return _patientFHIRProfile.NoID.LocalNoID; }
-            set { _patientFHIRProfile.NoID.LocalNoID = value; }
+            get { return _patientFHIRProfile.LocalNoID; }
+            set { _patientFHIRProfile.LocalNoID = value; }
         }
 
         public string remoteNoID
         {
-            get { return _patientFHIRProfile.NoID.RemoteNoID; }
-            set { _patientFHIRProfile.NoID.RemoteNoID = value; }
+            get { return _patientFHIRProfile.RemoteNoID; }
+            set { _patientFHIRProfile.RemoteNoID = value; }
         }
+
 		public bool hasValidLeftFingerprint
 		{
 			get { return _hasValidLeftFingerprint; }
 			set { _hasValidLeftFingerprint = value; }
 		}
+
 		public bool hasValidRightFingerprint
 		{
 			get { return _hasValidRightFingerprint; }
 			set { _hasValidRightFingerprint = value; }
 		}
+
 		public string exceptionMissingReason
 		{
 			get { return _exceptionMissingReason; }
 			set { _exceptionMissingReason = value; }
 		}
+
 		public string secretAnswer1
 		{
 			get { return _secretAnswer1; }

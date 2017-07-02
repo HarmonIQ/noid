@@ -64,12 +64,14 @@ namespace NoID.FHIR.Profile
         [JsonConstructor]
         public PatientProfile()
         {
+            NewSession();
         }
 
         public PatientProfile(string organizationName, string noidStatus)
         {
             _organizationName = organizationName;
             _noidStatus = noidStatus;
+            NewSession();
         }
 
         public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient, string noidStatus, DateTime checkinDateTime)
@@ -78,6 +80,7 @@ namespace NoID.FHIR.Profile
             _fhirAddress = fhirAddress;
             _noidStatus = noidStatus;
             _checkinDateTime = FHIRUtilities.DateTimeToFHIRString(checkinDateTime);
+            NewSession();
 
             if (loadPatient != null)
             {
@@ -204,6 +207,7 @@ namespace NoID.FHIR.Profile
 
         public PatientProfile(Patient loadPatient, bool loadBiometrics = false)
         {
+            NewSession();
             if (loadPatient != null)
             {
                 _noID = new SourceAFIS.Templates.NoID();
@@ -347,6 +351,12 @@ namespace NoID.FHIR.Profile
         }
 
         ~PatientProfile() { }
+
+        void NewSession()
+        {
+            _noID = new SourceAFIS.Templates.NoID();
+            _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
+        }
 
         [JsonIgnore]
         public Uri FHIRAddress
