@@ -10,6 +10,7 @@ using NoID.Security;
 using NoID.Utilities;
 using NoID.Network.Transport;
 using NoID.FHIR.Profile;
+using NoID.Database.Wrappers;
 
 namespace NoID.Network.Client.Test
 {
@@ -17,12 +18,15 @@ namespace NoID.Network.Client.Test
     {
         private static readonly string PatentCheckinUri = ConfigurationManager.AppSettings["PatentCheckinUri"].ToString();
         private static readonly string PendingPatientsUri = ConfigurationManager.AppSettings["PendingPatientsUri"].ToString();
+        private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
         private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-
+        private static readonly string NoIDMongoDBAddress = ConfigurationManager.AppSettings["NoIDMongoDBAddress"].ToString();
+        private static readonly string SparkMongoDBAddress = ConfigurationManager.AppSettings["SparkMongoDBAddress"].ToString();
+        
         static void Main(string[] args)
         {
             string commandLine = "";
-            Console.WriteLine("Enter C for checkin patient, P for pending patient queue and Q to quit");
+            Console.WriteLine("Enter C for checkin patient, P for pending patient queue, M for Mongo tests, F for fingerprint identity and Q to quit");
             while (commandLine != "q")
             {
                 if (commandLine == "c")
@@ -32,14 +36,38 @@ namespace NoID.Network.Client.Test
                     Patient testPt = TestPatient();
                     SendJSON(testPt);
                     Console.WriteLine("Sending FHIR message from file.");
-                    Patient readPt = ReadPatient();
+                    Patient readPt = ReadPatient(@"C:\JSONTest\sample-new-patient.json");
                     SendJSON(readPt);
                 }
-                else if (commandLine == "p")
+                else if (commandLine == "p") //send profiles
                 {
                     // call PendingPatientsUri
                     IList<PatientProfile> patientProfiles = GetCheckinList();
                     Console.WriteLine("Patient profiles received.");
+                }
+                else if (commandLine == "m") // MongoDB tests
+                {
+                    MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
+                    SessionQueue seq = new SessionQueue();
+                    seq._id = Guid.NewGuid().ToString();
+                    seq.ClinicArea = "Test Clinic";
+                    seq.LocalReference = "123456";
+                    seq.SparkReference = "spark5";
+                    seq.ApprovalStatus = "pending";
+                    seq.PatientStatus = "new";
+                    seq.RemoteHubReference = "rem440403";
+                    seq.SessionComputerName = "Prototype Computer 1";
+                    seq.SubmitDate = DateTime.UtcNow.AddMinutes(-15);
+                    seq.PatientBeginDate = DateTime.UtcNow.AddMinutes(-19);
+                    Console.WriteLine(seq.Serialize());
+                    dbwrapper.AddPendingPatient(seq);
+                    List<SessionQueue> PendingPatients  = dbwrapper.GetPendingPatients();
+                    dbwrapper.UpdateSessionQueueRecord(seq._id, "approved", "TestUser");
+                }
+                else if (commandLine == "f") // test fingerprint identity web service
+                {
+                    Media readMedia = ReadMedia(@"C:\JSONTest\sample-media-fhir-message.json");
+                    SendJSON(readMedia);
                 }
                 string previousCommand = commandLine;
                 commandLine = Console.ReadLine();
@@ -54,14 +82,19 @@ namespace NoID.Network.Client.Test
             }
         }
 
-        private static Resource ReadJSONFile()
+        private static Resource ReadJSONFile(string filePath)
         {
-            return FHIRUtilities.FileToResource(@"C:\JSONTest\sample-new-patient.json");
+            return FHIRUtilities.FileToResource(filePath);
         }
 
-        private static Patient ReadPatient()
+        private static Patient ReadPatient(string filePath)
         {
-            return (Patient)ReadJSONFile();
+            return (Patient)ReadJSONFile(filePath);
+        }
+
+        private static Media ReadMedia(string filePath)
+        {
+            return (Media)ReadJSONFile(filePath);
         }
 
         private static Patient TestPatient()
@@ -81,6 +114,15 @@ namespace NoID.Network.Client.Test
             Uri endpoint = new Uri(PatentCheckinUri);
             HttpsClient client = new HttpsClient();
             client.SendFHIRPatientProfile(endpoint, auth, payload);
+            Console.WriteLine(client.ResponseText);
+        }
+
+        private static void SendJSON(Media payload)
+        {
+            Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            Uri endpoint = new Uri(SearchBiometricsUri);
+            HttpsClient client = new HttpsClient();
+            client.SendFHIRMediaProfile(endpoint, auth, payload);
             Console.WriteLine(client.ResponseText);
         }
 

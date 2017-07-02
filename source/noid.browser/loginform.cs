@@ -45,7 +45,7 @@ namespace NoID.Browser
             }
 
             Authentication auth = new Authentication(username, pwd);
-            Uri endpoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+            Uri endpoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["AddNewPatientUri"].ToString()));
 
             Patient newPatient = FHIRUtilities.CreateTestFHIRPatientProfile();
             WebSend ws = new WebSend(endpoint, auth, newPatient);

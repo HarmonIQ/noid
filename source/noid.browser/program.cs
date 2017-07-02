@@ -25,7 +25,7 @@ namespace NoID.Browser
             if (args.Length > 0)
             {
                 Utilities.Auth = new Authentication(_serviceName, args[0].ToString());
-                Uri endpoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+                Uri endpoint = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["AddNewPatientUri"].ToString()));
 
                 Patient newPatient = FHIRUtilities.CreateTestFHIRPatientProfile();
                 WebSend ws = new WebSend(endpoint, Utilities.Auth, newPatient);

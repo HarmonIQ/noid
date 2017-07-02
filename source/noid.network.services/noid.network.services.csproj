@@ -59,9 +59,19 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.InteropServices.4.3.0\lib\net462\System.Runtime.InteropServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
     <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -87,6 +97,8 @@
     <Content Include="ReceiveFHIR.ashx" />
     <Content Include="TestList.ashx" />
     <Content Include="PatientLists.ashx" />
+    <Content Include="AddNewPatient.ashx" />
+    <Content Include="SearchBiometrics.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -98,6 +110,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddNewPatient.ashx.cs">
+      <DependentUpon>AddNewPatient.ashx</DependentUpon>
+    </Compile>
     <Compile Include="FHIRMessageRouter.cs" />
     <Compile Include="PatientLists.ashx.cs">
       <DependentUpon>PatientLists.ashx</DependentUpon>
@@ -105,6 +120,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiveFHIR.ashx.cs">
       <DependentUpon>ReceiveFHIR.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchBiometrics.ashx.cs">
+      <DependentUpon>SearchBiometrics.ashx</DependentUpon>
     </Compile>
     <Compile Include="TestList.ashx.cs">
       <DependentUpon>TestList.ashx</DependentUpon>
@@ -122,6 +140,10 @@
     <ProjectReference Include="..\biometrics.fingerprint.match.lib\biometrics.fingerprint.match.lib.csproj">
       <Project>{0f1d6fcb-f813-4e2f-9d6c-de4bd7866233}</Project>
       <Name>biometrics.fingerprint.match.lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\noid.database.mongodb\noid.database.mongodb.csproj">
+      <Project>{561abbe8-e26c-4895-ab77-2dba3c90e377}</Project>
+      <Name>noid.database.mongodb</Name>
     </ProjectReference>
     <ProjectReference Include="..\noid.fhir.profile\noid.fhir.profile.csproj">
       <Project>{8af257d1-3bd7-4709-b5ba-b42bd07a45fb}</Project>
