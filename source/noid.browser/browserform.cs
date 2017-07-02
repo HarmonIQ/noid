@@ -6,6 +6,8 @@
 
 using System;
 using System.Windows.Forms;
+using System.Configuration;
+using System.Collections.Generic;
 using CefSharp;
 using CefSharp.WinForms;
 using CefSharp.WinForms.Internals;
@@ -19,7 +21,6 @@ using NoID.FHIR.Profile;
 using NoID.Biometrics.Managers;
 using NoID.Network.Transport;
 using NoID.Match.Database.Client;
-using System.Collections.Generic;
 
 namespace NoID.Browser
 {
@@ -42,10 +43,11 @@ namespace NoID.Browser
 
         //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
         private DigitalPersona biometricDevice;
-        
-        private string organizationName = System.Configuration.ConfigurationManager.AppSettings["OrganizationName"].ToString();
-        private readonly string NoIDServiceName = System.Configuration.ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-        private Uri healthcareNodeFHIRAddress;
+
+        private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
+        private static readonly string organizationName = ConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        //private Uri healthcareNodeFHIRAddress;
         private string healthcareNodeWebAddress;
         private string healthcareNodeChainVerifyAddress;
 		private int maxFingerprintScanAttempts = 1; //accept at least one attempt
@@ -61,7 +63,7 @@ namespace NoID.Browser
             this.MinimizeBox = false;
             this.MaximizeBox = false;
 
-            healthcareNodeFHIRAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
+            //healthcareNodeFHIRAddress = new Uri(StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeFHIRAddress"].ToString()));
             healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
             healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(System.Configuration.ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
 
@@ -82,7 +84,8 @@ namespace NoID.Browser
                 case "patient-kiosk":
                     endPath = endPath = healthcareNodeWebAddress + "/enrollment.html"; //TODO: rename to patient.html
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
-                    _patientBridge = new PatientBridge(organizationName, healthcareNodeFHIRAddress, NoIDServiceName);
+
+                    _patientBridge = new PatientBridge(organizationName, NoIDServiceName);
                     browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     break;
                 case "provider":
@@ -224,14 +227,19 @@ namespace NoID.Browser
 									{
 										auth = Utilities.Auth;
 									}
-
-									dataTransport.SendFHIRMediaProfile(healthcareNodeFHIRAddress, auth, media);
+                                    PatientBridge.fhirAddress = new Uri(SearchBiometricsUri);
+                                    dataTransport.SendFHIRMediaProfile(PatientBridge.fhirAddress, auth, media);
 									string lateralityString = FHIRUtilities.LateralityToString(Laterality);
 									string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);
 #if NAVIGATE
 									string output = lateralityString + " " + captureSiteString + " fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
 									DisplayOutput(output);
 #endif
+                                    if (dataTransport.ResponseText.ToLower().Contains("error") == true || dataTransport.ResponseText.ToLower().Contains("index") == true)
+                                    {
+                                        MessageBox.Show("Critical Identity Error Occured In Fingerprint Capture method. Please contact your adminstrator: " + dataTransport.ResponseText + " Error code = 909");
+                                        return;
+                                    }
 									if (dataTransport.ResponseText.ToLower().Contains("spark") == true)
 									{
 										// Match found, inform JavaScript that this is an returning patient for Identity.

@@ -14,7 +14,7 @@ using NoID.FHIR.Profile;
 using NoID.Utilities;
 using NoID.Match.Database.Client;
 using NoID.Match.Database.FingerPrint;
-
+using NoID.Database.Wrappers;
 
 namespace NoID.Network.Services
 {
@@ -26,14 +26,17 @@ namespace NoID.Network.Services
 
     public class FHIRMessageRouter
     {
+        private Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
+        private string _databaseDirectory = WebConfigurationManager.AppSettings["DatabaseLocation"];
+        private string _backupDatabaseDirectory = WebConfigurationManager.AppSettings["BackupLocation"];
+        private static readonly string NoIDMongoDBAddress = WebConfigurationManager.AppSettings["NoIDMongoDBAddress"].ToString();
+        private static readonly string SparkMongoDBAddress = WebConfigurationManager.AppSettings["SparkMongoDBAddress"].ToString();
         private PatientFHIRProfile _patientFHIRProfile;
         private FingerPrintMatchDatabase dbMinutia;
         private string _responseText;
         private Patient _patient = null;
         private Media _biometics = null;
-        private Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
-        private string _databaseDirectory = WebConfigurationManager.AppSettings["DatabaseLocation"];
-        private string _backupDatabaseDirectory = WebConfigurationManager.AppSettings["BackupLocation"];
+        
         private Exception _exception;
 
         public FHIRMessageRouter(HttpContext context)
@@ -45,6 +48,8 @@ namespace NoID.Network.Services
                 {
                     case "patient":
                         //if new patient. TODO: check meta for NoID status
+                        SessionQueue seq = new SessionQueue();
+
 
                         _patient = (Patient)newResource;
                         string sessionID = "";
@@ -144,7 +149,7 @@ namespace NoID.Network.Services
             }
         }
 
-        public Resource SendPatientToSparkServer()
+        Resource SendPatientToSparkServer()
         {
             FhirClient client = new FhirClient(_sparkEndpoint);
    
@@ -164,7 +169,7 @@ namespace NoID.Network.Services
             return response;
         }
 
-        public bool SendBiometicsToSparkServer()
+        bool SendBiometicsToSparkServer()
         {
             FhirClient client = new FhirClient(_sparkEndpoint);
 
@@ -185,28 +190,28 @@ namespace NoID.Network.Services
             return true;
         }
 
-        public PatientFHIRProfile PatientFHIRProfile
+        PatientFHIRProfile PatientFHIRProfile
         {
             get { return _patientFHIRProfile; }
-            private set { _patientFHIRProfile = value; }
+            set { _patientFHIRProfile = value; }
         }
 
-        public Uri SparkEndpoint
+        Uri SparkEndpoint
         {
             get { return _sparkEndpoint; }
-            private set { _sparkEndpoint = value; }
+            set { _sparkEndpoint = value; }
         }
 
-        public Patient Patient
+        Patient Patient
         {
             get { return _patient; }
-            private set { _patient = value; }
+            set { _patient = value; }
         }
 
-        public Media Biometics
+        Media Biometics
         {
             get { return _biometics; }
-            private set { _biometics = value; }
+            set { _biometics = value; }
         }
 
         public string ResponseText

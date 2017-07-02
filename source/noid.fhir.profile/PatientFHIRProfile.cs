@@ -25,7 +25,7 @@ namespace NoID.FHIR.Profile
     {
         private SourceAFIS.Templates.NoID _noID;
         private readonly string _organizationName;
-        private readonly Uri _fhirAddress;
+        private Uri _fhirAddress;
         private List<FingerPrintMinutias> _fingerPrintMinutiasList = new List<FingerPrintMinutias>();
         private Exception _exception;
 
@@ -62,10 +62,9 @@ namespace NoID.FHIR.Profile
         {
         }
 
-        public PatientProfile(string organizationName, Uri fhirAddress, string noidStatus)
+        public PatientProfile(string organizationName, string noidStatus)
         {
             _organizationName = organizationName;
-            _fhirAddress = fhirAddress;
             _noidStatus = noidStatus;
             NewSession();
         }
@@ -339,6 +338,7 @@ namespace NoID.FHIR.Profile
                 throw new Exception("Error in PatientProfile constructor.  loadPatient is null.");
             }
         }
+
         ~PatientProfile() { }
 
         public void NewSession()
@@ -351,6 +351,7 @@ namespace NoID.FHIR.Profile
         public Uri FHIRAddress
         {
             get { return _fhirAddress; }
+            set { _fhirAddress = value; }
         }
 
         [JsonProperty("OrganizationName")]
@@ -616,7 +617,7 @@ namespace NoID.FHIR.Profile
         public int OriginalHeight;
         public int OriginalWidth;
 
-        public PatientFHIRProfile(string organizationName, Uri endPoint, string noidStatus) : base(organizationName, endPoint, noidStatus)
+        public PatientFHIRProfile(string organizationName, string noidStatus) : base(organizationName, noidStatus)
         {
         }
 
@@ -647,7 +648,14 @@ namespace NoID.FHIR.Profile
             {
                 try
                 {
-                    return FHIRAddress.Host.Substring(FHIRAddress.Host.LastIndexOf('.', FHIRAddress.Host.LastIndexOf('.') - 1) + 1);
+                    if (FHIRAddress != null)
+                    {
+                        return FHIRAddress.Host.Substring(FHIRAddress.Host.LastIndexOf('.', FHIRAddress.Host.LastIndexOf('.') - 1) + 1);
+                    }
+                    else
+                    {
+                        return "mynoid.com";
+                    }
                 }
                 catch
                 {
@@ -660,7 +668,14 @@ namespace NoID.FHIR.Profile
         {
             get
             {
-                return FHIRAddress.GetLeftPart(UriPartial.Authority).ToString();
+                if (FHIRAddress != null)
+                {
+                    return FHIRAddress.GetLeftPart(UriPartial.Authority).ToString();
+                }
+                else
+                {
+                    return "www.mynoid.com";
+                }
             }
         }
 
