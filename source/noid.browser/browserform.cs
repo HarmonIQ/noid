@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Collections.Generic;
 using CefSharp;
 using CefSharp.WinForms;
+using CefSharp.WinForms.Internals;
 using DPUruNet;
 using SourceAFIS.Simple;
 using SourceAFIS.Templates;
