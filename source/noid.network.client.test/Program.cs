@@ -10,6 +10,7 @@ using NoID.Security;
 using NoID.Utilities;
 using NoID.Network.Transport;
 using NoID.FHIR.Profile;
+using NoID.Database.Wrappers;
 
 namespace NoID.Network.Client.Test
 {
@@ -18,7 +19,9 @@ namespace NoID.Network.Client.Test
         private static readonly string PatentCheckinUri = ConfigurationManager.AppSettings["PatentCheckinUri"].ToString();
         private static readonly string PendingPatientsUri = ConfigurationManager.AppSettings["PendingPatientsUri"].ToString();
         private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-
+        private static readonly string NoIDMongoDBAddress = ConfigurationManager.AppSettings["NoIDMongoDBAddress"].ToString();
+        private static readonly string SparkMongoDBAddress = ConfigurationManager.AppSettings["SparkMongoDBAddress"].ToString();
+        
         static void Main(string[] args)
         {
             string commandLine = "";
@@ -35,11 +38,30 @@ namespace NoID.Network.Client.Test
                     Patient readPt = ReadPatient();
                     SendJSON(readPt);
                 }
-                else if (commandLine == "p")
+                else if (commandLine == "p") //send profiles
                 {
                     // call PendingPatientsUri
                     IList<PatientProfile> patientProfiles = GetCheckinList();
                     Console.WriteLine("Patient profiles received.");
+                }
+                else if (commandLine == "m") // MongoDB tests
+                {
+                    MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
+                    SessionQueue seq = new SessionQueue();
+                    seq._id = Guid.NewGuid().ToString();
+                    seq.ClinicArea = "Test Clinic";
+                    seq.LocalReference = "123456";
+                    seq.SparkReference = "spark5";
+                    seq.ApprovalStatus = "pending";
+                    seq.PatientStatus = "new";
+                    seq.RemoteHubReference = "rem440403";
+                    seq.SessionComputerName = "Prototype Computer 1";
+                    seq.SubmitDate = DateTime.UtcNow.AddMinutes(-15);
+                    seq.PatientBeginDate = DateTime.UtcNow.AddMinutes(-19);
+                    Console.WriteLine(seq.Serialize());
+                    dbwrapper.AddPendingPatient(seq);
+                    List<SessionQueue> PendingPatients  = dbwrapper.GetPendingPatients();
+                    dbwrapper.UpdateSessionQueueRecord(seq._id, "approved", "TestUser");
                 }
                 string previousCommand = commandLine;
                 commandLine = Console.ReadLine();
