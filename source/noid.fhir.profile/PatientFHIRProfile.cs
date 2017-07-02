@@ -36,7 +36,7 @@ namespace NoID.FHIR.Profile
         private string _gender = ""; // F, M or O
         private string _birthDate = "";
         private string _streetAddress = "";
-        private string _streetAddress2;
+        private string _streetAddress2 = "";
         private string _city = "";
         private string _state = "";
         private string _country = "";
