@@ -227,7 +227,7 @@ namespace NoID.Browser
 									{
 										auth = Utilities.Auth;
 									}
-                                    
+                                    PatientBridge.fhirAddress = new Uri(SearchBiometricsUri);
                                     dataTransport.SendFHIRMediaProfile(PatientBridge.fhirAddress, auth, media);
 									string lateralityString = FHIRUtilities.LateralityToString(Laterality);
 									string captureSiteString = FHIRUtilities.CaptureSiteToString(CaptureSite);
@@ -235,6 +235,11 @@ namespace NoID.Browser
 									string output = lateralityString + " " + captureSiteString + " fingerprint accepted. Score = " + _minutiaCaptureController.BestScore + ", Fingerprint sent to server: Response = " + dataTransport.ResponseText;
 									DisplayOutput(output);
 #endif
+                                    if (dataTransport.ResponseText.ToLower().Contains("error") == true || dataTransport.ResponseText.ToLower().Contains("index") == true)
+                                    {
+                                        MessageBox.Show("Critical Identity Error Occured In Fingerprint Capture method. Please contact your adminstrator: " + dataTransport.ResponseText + " Error code = 909");
+                                        return;
+                                    }
 									if (dataTransport.ResponseText.ToLower().Contains("spark") == true)
 									{
 										// Match found, inform JavaScript that this is an returning patient for Identity.

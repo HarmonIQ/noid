@@ -648,7 +648,14 @@ namespace NoID.FHIR.Profile
             {
                 try
                 {
-                    return FHIRAddress.Host.Substring(FHIRAddress.Host.LastIndexOf('.', FHIRAddress.Host.LastIndexOf('.') - 1) + 1);
+                    if (FHIRAddress != null)
+                    {
+                        return FHIRAddress.Host.Substring(FHIRAddress.Host.LastIndexOf('.', FHIRAddress.Host.LastIndexOf('.') - 1) + 1);
+                    }
+                    else
+                    {
+                        return "mynoid.com";
+                    }
                 }
                 catch
                 {
@@ -661,7 +668,14 @@ namespace NoID.FHIR.Profile
         {
             get
             {
-                return FHIRAddress.GetLeftPart(UriPartial.Authority).ToString();
+                if (FHIRAddress != null)
+                {
+                    return FHIRAddress.GetLeftPart(UriPartial.Authority).ToString();
+                }
+                else
+                {
+                    return "www.mynoid.com";
+                }
             }
         }
 

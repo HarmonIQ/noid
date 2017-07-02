@@ -13,6 +13,7 @@ namespace NoID.Database.Wrappers
 
     /// <summary>
     /// NoID Wrapper class for MongoDB.
+    /// TODO: Thread Async call to MongoDB
     /// </summary>
 
     public class MongoDBWrapper
