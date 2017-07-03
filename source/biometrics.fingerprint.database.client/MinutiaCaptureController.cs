@@ -17,7 +17,7 @@ namespace NoID.Match.Database.Client
     public class MinutiaCaptureController
     {
         private const uint CAPTURE_ACCEPT_THRESHOLD = 75;
-        private static List<Template> _capturedFingerPrintMinutias = new List<Template>();
+        private List<Template> _capturedFingerPrintMinutias = new List<Template>();
         private static AfisEngine _afis = new AfisEngine();
         private Template _bestTemplate1;
         private Template _bestTemplate2;
