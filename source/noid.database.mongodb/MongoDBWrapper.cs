@@ -95,7 +95,6 @@ namespace NoID.Database.Wrappers
             bool successful = false;
             try
             {
-                SessionQueue sq = new SessionQueue();
                 IMongoCollection<SessionQueue> collection = _database.GetCollection<SessionQueue>("SessionQueue");
                 collection.InsertOneAsync(seq);
                 successful = true;

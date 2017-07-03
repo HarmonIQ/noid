@@ -22,8 +22,11 @@ namespace NoID.Browser
 
     class ProviderBridge : CEFBridge
     {
+        private static readonly string DevicePhysicalLocation = ConfigurationManager.AppSettings["DevicePhysicalLocation"].ToString();
+        private static readonly string ClinicArea = ConfigurationManager.AppSettings["ClinicArea"].ToString();
         private static readonly Uri PendingPatientsUri = new Uri(ConfigurationManager.AppSettings["PendingPatientsUri"].ToString());
         private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        
         string _patientApprovalTable = "";
 		int _patientApprovalTableRowCount = 0;
 		string _approveDenySession = "";

@@ -22,9 +22,11 @@ namespace NoID.Browser
 
     class PatientBridge : CEFBridge
     {
+        private static readonly string DevicePhysicalLocation = ConfigurationManager.AppSettings["DevicePhysicalLocation"].ToString();
+        private static readonly string ClinicArea = ConfigurationManager.AppSettings["ClinicArea"].ToString();
         private static readonly string AddNewPatientUri = ConfigurationManager.AppSettings["AddNewPatientUri"].ToString();
         private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
-
+        
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
 
@@ -170,6 +172,8 @@ namespace NoID.Browser
                 _patientFHIRProfile.PostalCode = postalCode;
                 _patientFHIRProfile.EmailAddress = emailAddress;
                 _patientFHIRProfile.PhoneCell = phoneCell;
+                _patientFHIRProfile.ClinicArea = ClinicArea;
+                _patientFHIRProfile.DevicePhysicalLocation = DevicePhysicalLocation;
                 // Send FHIR message
                 Authentication auth;
                 if (Utilities.Auth == null)
