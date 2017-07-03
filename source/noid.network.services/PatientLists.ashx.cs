@@ -71,7 +71,6 @@ namespace NoID.Network.Services
             
         }
 
-        //TODO: Add
         private IList<PatientProfile> GetPendingPatients()
         {
             List<PatientProfile> listPending = new List<PatientProfile>();
@@ -86,8 +85,12 @@ namespace NoID.Network.Services
                     string sparkAddress = sparkEndpointAddress.ToString() + "/Patient/" + pending.SparkReference;
                     Patient pendingPatient = (Patient)client.Get(sparkAddress);
                     PatientProfile patientProfile = new PatientProfile(pendingPatient, true);
-                    patientProfile.SessionID = pending.SparkReference;
+                    patientProfile.SessionID = pending._id;
                     patientProfile.LocalNoID = pending.LocalReference;
+                    patientProfile.NoIDStatus = pending.ApprovalStatus;
+                    patientProfile.NoIDType = pending.PatientStatus;
+                    patientProfile.CheckinDateTime = FHIRUtilities.DateTimeToFHIRString(pending.SubmitDate);
+
                     listPending.Add(patientProfile);
                 }
 

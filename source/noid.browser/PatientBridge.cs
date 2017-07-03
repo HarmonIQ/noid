@@ -93,21 +93,9 @@ namespace NoID.Browser
 
 		public bool postConfirmExistingPatient(string passedLocalNoID, string birthYear, string birthMonth, string birthDay)
 		{
+            bool result = false;
 			try
 			{
-                //need to define id to pass back. Calling existing id match does not seem to have id available
-                //testing. remove below message
-                // if dob == dob then set _existingDOBMatch to "match" and send patient to queue as returning patient
-                //need to return successful add to patient queue message so I can begin close. For now hardcodeing to 10 seconds
-                //_existingDOBMatch ??
-
-                /*
-                    private string _localNoID;
-                    private string _confirmFieldName;
-                    private string _confirmReponse;
-                    private string _computerName;
-                    private string _clinicArea;
-                */
                 Authentication auth;
                 if (Utilities.Auth == null)
                 {
@@ -122,15 +110,21 @@ namespace NoID.Browser
                 string isoBirthDate = formatDateOfBirth(birthYear, birthMonth, birthDay);
                 string resultResponse = client.SendIdentityChallenge(endpoint, auth, localNoID, "birthdate", isoBirthDate, SecurityUtilities.GetComputerName(), ClinicArea);
 
-                _existingDOBMatch = "match";
-				errorDescription = "";
+                if (resultResponse.ToLower() == "match: yes.")
+                {
+                    _existingDOBMatch = "match";
+                    result = true;
+                }
+                else
+                {
+                    errorDescription = resultResponse;
+                }
 			}
 			catch (Exception ex)
 			{
 				errorDescription = ex.Message;
-				return false;
 			}
-			return true;
+			return result;
 		}
 		public bool postDoNotHaveValidBiometricButtonclick(string laterality) {
 			try

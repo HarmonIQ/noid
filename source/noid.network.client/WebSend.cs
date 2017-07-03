@@ -52,8 +52,7 @@ namespace NoID.Network.Client
                 byte[] output = null;
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_enpoint);
                 request.Method = "POST";
-                //TODO: test compression
-                //request.AutomaticDecompression = DecompressionMethods.GZip;
+                //request.AutomaticDecompression = DecompressionMethods.GZip;//TODO: test compression
                 request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
                 if (!(_payloadJSON is null))
                 {
@@ -90,8 +89,7 @@ namespace NoID.Network.Client
                 Uri uriQueryString = new Uri(UriWithQueryString);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriQueryString);
                 request.Method = "GET";
-                //TODO: test compression
-                //request.AutomaticDecompression = DecompressionMethods.GZip;
+                //request.AutomaticDecompression = DecompressionMethods.GZip;//TODO: test compression
                 request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
                 // call BeforeHttpRequest event
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -123,8 +121,7 @@ namespace NoID.Network.Client
                 Uri uriQueryString = new Uri(UriWithQueryString);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriQueryString);
                 request.Method = "GET";
-                //TODO: test compression
-                //request.AutomaticDecompression = DecompressionMethods.GZip;
+                //request.AutomaticDecompression = DecompressionMethods.GZip;//TODO: test compression
                 request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
                 // call BeforeHttpRequest event
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
