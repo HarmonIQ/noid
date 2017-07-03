@@ -33,7 +33,6 @@ namespace NoID.Browser
         private static AfisEngine Afis = new AfisEngine();
         private MinutiaCaptureController _firstMinutiaCaptureController;
         private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
-        private List<FingerPrintMinutias> _fingerprintMinutias = new List<FingerPrintMinutias>();
 
         //TODO: Use one object for both bridges.
         private PatientBridge _patientBridge;
@@ -149,7 +148,7 @@ namespace NoID.Browser
 
 			if (currentCaptureInProcess == false)
 			{
-				if ((PatientBridge.hasValidLeftFingerprint == true && Laterality == FHIRUtilities.LateralitySnoMedCode.Left) || (PatientBridge.hasValidRightFingerprint == true && Laterality == FHIRUtilities.LateralitySnoMedCode.Right))
+                if ((PatientBridge.hasValidLeftFingerprint == true && Laterality == FHIRUtilities.LateralitySnoMedCode.Left) || (PatientBridge.hasValidRightFingerprint == true && Laterality == FHIRUtilities.LateralitySnoMedCode.Right))
 				{
 					//mark schroeder 20170701 do not capture more left fingerprints if left is set. Same for right
 					return;
@@ -270,7 +269,8 @@ namespace NoID.Browser
 											//mark schroeder 201707014 commenting out hardcode switch to right. Gui should be handling
 											//mark schroeder 20170703 gui does not seem to be handling here or I am setting in wrong place
 											Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
-											//Laterality = _patientBridge.laterality;
+                                            CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+                                            //Laterality = _patientBridge.laterality;
                                             _firstMinutiaCaptureController = _minutiaCaptureController;
                                             _minutiaCaptureController = new MinutiaCaptureController();
                                             PatientBridge.hasValidLeftFingerprint = true;
@@ -366,8 +366,14 @@ namespace NoID.Browser
 								case "RightThumb":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									hasRightFingerprintScan = false;
+                                    _minutiaCaptureController = null;
+                                    if (hasLeftFingerprintScan == false)
+                                    {
+                                        _firstMinutiaCaptureController = null;
+                                    }
                                     CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
                                     Laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
+                                    browser.GetMainFrame().ExecuteJavaScriptAsync("clickNoRightHandFingerPrint();");
                                     break;
 								default:
 									break;
@@ -389,11 +395,6 @@ namespace NoID.Browser
 						DisplayOutput("Must be on the correct page to accept a fingerprint scan.");
 #endif
 					}
-					if (hasLeftFingerprintScan == false && hasRightFingerprintScan == false)
-					{
-						browser.GetMainFrame().ExecuteJavaScriptAsync("clickNoRightHandFingerPrint();");
-					}
-
 					currentCaptureInProcess = false;
 				}
 			}
