@@ -410,7 +410,7 @@ namespace NoID.Utilities
                     [ 
                         {      "url": "Status",                         "valueString": pending, approved, denied, hold              }
                         {      "url": "Type",                           "valueString": new, return, newflag, returnflag             }
-                        {      "url": "DeviceStartTime",                "valueString": 2017-07-02 14:35:22-Z                        }
+                        {      "url": "CheckinTime",                    "valueString": 2017-07-02 14:35:22-Z                        }
                     ]
                 }
             */
@@ -418,7 +418,7 @@ namespace NoID.Utilities
             Extension ext = new Extension("NoIDStatus", new FhirString(NoIDType));
             ext.AddExtension("Status", new FhirString(NoIDStatus)); //pending, approved, denied, hold.
             ext.AddExtension("Type", new FhirString(NoIDType)); //new, return, newflag, returnflag
-            ext.AddExtension("DeviceStartTime", new FhirString(StartTime));
+            ext.AddExtension("CheckinTime", new FhirString(StartTime));
             return ext;
         }
 

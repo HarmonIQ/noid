@@ -63,22 +63,26 @@ namespace NoID.Database.Wrappers
             });
         }
 
-        public bool UpdateSessionQueueRecord(string _id, string approvalStatus, string reviewUser)
+        public bool UpdateSessionQueueRecord(string _id, string approvalStatus, string reviewUser, string computerName)
         {
             bool successful = false;
             try
             {
+                //TODO: Add index on SparkReference and ApprovalStatus
                 //TODO: Update document with one line.
                 IMongoCollection<SessionQueue> collection = _database.GetCollection<SessionQueue>("SessionQueue");
-                // Update PatientStatusType
+                // Update Patient Status Type
                 var update = Builders<SessionQueue>.Update.Set(a => a.ApprovalStatus, approvalStatus);
-                var result = collection.UpdateOneAsync(model => model._id == _id, update);
-                // Update AcceptDenyDate
+                var result = collection.UpdateOneAsync(model => model.SparkReference == _id, update);
+                // Update Accept Deny Date
                 update = Builders<SessionQueue>.Update.Set(a => a.AcceptDenyDate, DateTime.UtcNow);
-                result = collection.UpdateOneAsync(model => model._id == _id, update);
-                // Update ReviewUser
+                result = collection.UpdateOneAsync(model => model.SparkReference == _id, update);
+                // Update Review User
                 update = Builders<SessionQueue>.Update.Set(a => a.ReviewUser, reviewUser);
-                result = collection.UpdateOneAsync(model => model._id == _id, update);
+                result = collection.UpdateOneAsync(model => model.SparkReference == _id, update);
+                // Update Session Computer Name
+                update = Builders<SessionQueue>.Update.Set(a => a.SessionComputerName, reviewUser);
+                result = collection.UpdateOneAsync(model => model.SparkReference == _id, computerName);
 
                 successful = true;
             }

@@ -18,6 +18,22 @@ namespace NoID.Network.Transport
         private Exception _exception;
         private string _responseText;
 
+        public string UpdatePendingStatus(Uri endpoint, Authentication auth, string sessionID, string action, string computerName, string userName)
+        {
+            string response = "";
+            try
+            {
+                WebSend clientWebSend = new WebSend(endpoint, auth);
+                response = clientWebSend.SavePendingStatus(sessionID, action, computerName, userName);
+            }
+            catch (Exception ex)
+            {
+                _responseText = "DataTransport::RequestPendingQueue() failed to get pending patients: " + ex.Message;
+                _exception = new Exception(_responseText);
+            }
+            return response;
+        }
+
         public IList<PatientProfile> RequestPendingQueue(Uri endpoint, Authentication auth, Patient patient = null)
         {
             IList<PatientProfile> pendingProfiles = null;

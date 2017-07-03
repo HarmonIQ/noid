@@ -44,7 +44,7 @@ namespace NoID.Browser
 
         public PatientBridge(string organizationName,  string serviceName) : base(organizationName, serviceName)
         {
-            _patientFHIRProfile = new PatientFHIRProfile(organizationName, "NewPending");
+            _patientFHIRProfile = new PatientFHIRProfile(organizationName, "Pending");
         }
 
         ~PatientBridge() { }
@@ -174,6 +174,9 @@ namespace NoID.Browser
                 _patientFHIRProfile.PhoneCell = phoneCell;
                 _patientFHIRProfile.ClinicArea = ClinicArea;
                 _patientFHIRProfile.DevicePhysicalLocation = DevicePhysicalLocation;
+                _patientFHIRProfile.NoIDType = "New";
+                _patientFHIRProfile.NoIDStatus = "Pending";
+                _patientFHIRProfile.CheckinDateTime = FHIRUtilities.DateTimeToFHIRString(DateTime.UtcNow);
                 // Send FHIR message
                 Authentication auth;
                 if (Utilities.Auth == null)

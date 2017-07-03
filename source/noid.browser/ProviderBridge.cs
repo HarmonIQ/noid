@@ -22,6 +22,7 @@ namespace NoID.Browser
 
     class ProviderBridge : CEFBridge
     {
+        private static readonly string UpdatePendingStatusUri = ConfigurationManager.AppSettings["UpdatePendingStatusUri"].ToString();
         private static readonly string DevicePhysicalLocation = ConfigurationManager.AppSettings["DevicePhysicalLocation"].ToString();
         private static readonly string ClinicArea = ConfigurationManager.AppSettings["ClinicArea"].ToString();
         private static readonly Uri PendingPatientsUri = new Uri(ConfigurationManager.AppSettings["PendingPatientsUri"].ToString());
@@ -147,7 +148,13 @@ namespace NoID.Browser
 			{
 				_approveDenySession = sessionID;
 				_approveDenyAction = action;
-			}
+                string response = UpdateStatusAction(sessionID, action);
+                if (response.ToLower().Contains("error") == true)
+                {
+                    errorDescription = response;
+                    return false;
+                }
+            }
 			catch (Exception ex)
 			{
 				errorDescription = ex.Message;
@@ -155,6 +162,34 @@ namespace NoID.Browser
 			}
 			return true;
 		}
+
+        string UpdateStatusAction(string sessionID, string action)
+        {
+            string result = "";
+            try
+            {
+                //action = approve, deny or hold.
+                string computerName = SecurityUtilities.GetComputerName();
+                string userName = SecurityUtilities.GetUserName();
+                Authentication auth;
+                if (Utilities.Auth == null)
+                {
+                    auth = SecurityUtilities.GetAuthentication(serviceName);
+                }
+                else
+                {
+                    auth = Utilities.Auth;
+                }
+                HttpsClient client = new HttpsClient();
+                Uri fhirAddress = new Uri(UpdatePendingStatusUri);
+                result = client.UpdatePendingStatus(fhirAddress, auth, sessionID, action, computerName, userName);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            return result;
+        }
 
 		public string CreatePatientApprovalQueue()
 		{
@@ -173,7 +208,7 @@ namespace NoID.Browser
 					{
 						htmlTable += "<tr>"
 										+ "<td style='width: 170px'>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
-										+ "<td style='width: 110px' title='" + x.NoIDStatus.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDStatus.ToString() + "</div></td>"
+										+ "<td style='width: 110px' title='" + x.NoIDType.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDStatus.ToString() + "</div></td>"
 										+ "<td style='width: 100px' title='" + x.FirstName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.FirstName.ToString() + "</u></div></td>"
 										+ "<td style='width: 130px' title='" + x.LastName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.LastName.ToString() + "</u></div></td>"
 										+ "<td style='width: 100px'>" + x.BirthDate.ToString() + "</td>"
@@ -195,9 +230,8 @@ namespace NoID.Browser
 			catch (Exception ex)
 			{
 				errorDescription = ex.Message;
-				return "Error";
+				return "Error in ProviderBridge::CreatePatientApprovalQueue: " + errorDescription;
 			}
-
 			return htmlTable;
 		}
 		

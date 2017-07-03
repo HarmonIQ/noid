@@ -30,37 +30,45 @@ namespace NoID.Network.Services
         public void ProcessRequest(HttpContext context)
         {
             string jsonResponse = null;
-            context.Response.ContentType = "application/json"; // streaming JSON text
-            if (context.Request.QueryString.Count > 0)
+            try
             {
-                string queryStringOne = context.Request.QueryString[0].ToLower();
-                if (queryStringOne == "pending")
+                context.Response.ContentType = "application/json"; // streaming JSON text
+                if (context.Request.QueryString.Count > 0)
                 {
-                    IList<PatientProfile> _pendingPatients = GetPendingPatients();
-                    jsonResponse = JsonConvert.SerializeObject(_pendingPatients); // Pending patient list
-                }
-                else if (queryStringOne == "approved")
-                {
-                    jsonResponse = JsonConvert.SerializeObject("Error. Approved patient list not implemented yet.");
-                }
-                else if (queryStringOne == "denied")
-                {
-                    jsonResponse = JsonConvert.SerializeObject("Error. Denied patient list not implemented yet.");
-                }
-                else if (queryStringOne == "hold")
-                {
-                    jsonResponse = JsonConvert.SerializeObject("Error. Hold patient list not implemented yet.");
+                    string queryStringOne = context.Request.QueryString[0].ToLower();
+                    if (queryStringOne == "pending")
+                    {
+                        IList<PatientProfile> _pendingPatients = GetPendingPatients();
+                        jsonResponse = JsonConvert.SerializeObject(_pendingPatients); // Pending patient list
+                    }
+                    else if (queryStringOne == "approved")
+                    {
+                        jsonResponse = JsonConvert.SerializeObject("Error. Approved patient list not implemented yet.");
+                    }
+                    else if (queryStringOne == "denied")
+                    {
+                        jsonResponse = JsonConvert.SerializeObject("Error. Denied patient list not implemented yet.");
+                    }
+                    else if (queryStringOne == "hold")
+                    {
+                        jsonResponse = JsonConvert.SerializeObject("Error. Hold patient list not implemented yet.");
+                    }
+                    else
+                    {
+                        jsonResponse = JsonConvert.SerializeObject("Error. " + queryStringOne + " not implemented yet.");
+                    }
                 }
                 else
                 {
-                    jsonResponse = JsonConvert.SerializeObject("Error. " + queryStringOne + " not implemented yet.");
+                    jsonResponse = JsonConvert.SerializeObject("Error. No query string.");
                 }
+                context.Response.Write(jsonResponse);
             }
-            else
+            catch (Exception ex)
             {
-                jsonResponse = JsonConvert.SerializeObject("Error. No query string.");
+                context.Response.Write("PatientLists::ProcessRequest Error: " + ex.Message);
             }
-            context.Response.Write(jsonResponse);
+            
         }
 
         //TODO: Add
@@ -106,7 +114,7 @@ namespace NoID.Network.Services
             }
             catch(Exception ex)
             {
-                _exceptions.Add(ex);
+                throw ex;
             }
             return listPending;
         }
