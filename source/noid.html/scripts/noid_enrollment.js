@@ -1,10 +1,71 @@
 var doesLeftBiometricExist = "";
 var doesRightBiometricExist = "";
+var globaLocalNoID = "";
 
 window.oncontextmenu = function (event) {
     event.preventDefault();
     event.stopPropagation();
     return false;
+};
+//function saveUnknownDOBExistingpatient() {
+//    NoIDBridge.postUnknownDOBExistingpatient(sessionID);
+//    if (NoIDBridge.errorDescription != '') {
+//        //error, show user message
+//        alert("postUnknownDOBExistingpatient message " + NoIDBridge.errorDescription);
+//    }
+//};
+function saveUnknownDOBExistingpatient() {
+    document.getElementById('btnUnknownDOBExistingPatient').style.display = 'none';
+    NoIDBridge.postUnknownDOBExistingpatient(globaLocalNoID);
+    if (NoIDBridge.errorDescription != '') {
+        //error, show user message
+        alert("postUnknownDOBExistingpatient message " + NoIDBridge.errorDescription);
+    }
+    document.getElementById('ExistingIdentityModalBody').innerHTML = "<div class='row mar_ned'><div id='ExistingPatientFinalMessage' class='col-md-12 col-xs-12'><h3>Thank you. Your NoID profile is ready for staff approval. Please wait for a staff member to call your name to finalize this process.<br /><br />This window will automatically close in 10 seconds.</h3><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /></div></div>";
+    //document.getElementById('confirmExistingPatient').style.display = 'none';
+    //document.getElementById('btnUnknownDOBExistingPatient').style.display = 'none';
+    setTimeout(function () {
+        pageRefresh();
+    }, 10000);    
+};
+function confirmExistingPatient() {  
+    var birthYear = document.getElementById('IdentityBirthYear');
+    var selectedBirthYear = birthYear.options[birthYear.selectedIndex].text;
+    var birthMonth = document.getElementById('IdentityBirthMonth');
+    var selectedBirthMonth = birthMonth.options[birthMonth.selectedIndex].text;
+    var birthDay = document.getElementById('IdentityBrithDay');
+    var selectedBirthDay = birthDay.options[birthDay.selectedIndex].text;
+
+    document.getElementById('btnUnknownDOBExistingPatient').style.display = 'none';
+    NoIDBridge.postConfirmExistingPatient(globaLocalNoID, selectedBirthYear, selectedBirthMonth, selectedBirthDay);
+    if (NoIDBridge.errorDescription != '') {
+        //error, show user message
+        alert("postConfirmExistingPatient message " + NoIDBridge.errorDescription);
+    }
+    if (NoIDBridge.existingDOBMatch == "match") {
+        document.getElementById('ExistingIdentityModalBody').innerHTML = "<div class='row mar_ned'><div id='ExistingPatientFinalMessage' class='col-md-12 col-xs-12'><h3>Thank you. Your NoID profile is ready for staff approval. Please wait for a staff member to call your name to finalize this process.<br /><br />This window will automatically close in 10 seconds.</h3><br /><br /><br /><br /><br /><br /><br /></div></div>";
+        //document.getElementById('confirmExistingPatient').style.display = 'none';
+        setTimeout(function () {
+            pageRefresh();
+        }, 10000);    
+    }
+    else
+    {
+        alert("Date of birth did not match our records. Please try again, or click the button that you are unable to provider your birth date.")
+    }
+};
+function validateExistingPatient() {
+    var birthYear = document.getElementById('IdentityBirthYear');
+    var selectedBirthYear = birthYear.options[birthYear.selectedIndex].text;
+    var birthMonth = document.getElementById('IdentityBirthMonth');
+    var selectedBirthMonth = birthMonth.options[birthMonth.selectedIndex].text;
+    var birthDay = document.getElementById('IdentityBrithDay');
+    var selectedBirthDay = birthDay.options[birthDay.selectedIndex].text;
+
+    if (selectedBirthDay == "Date" || selectedBirthMonth == "Month" || selectedBirthYear == "Year") {
+        alert("Please select your date of brith");
+        return false;
+    }
 };
 function validateBasicDemographics() {
     var firstName = document.getElementById("FirstName").value;
@@ -195,11 +256,14 @@ function showPleaseWait() {
     document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please wait. Processing....</h4>";
     document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please wait. Processing....</h4>";
 };
-function showIdentity() {
-    alert("You EXIST!!");
-};
-function pageRefresh() {
-    location.reload();
+function showIdentity(localNoID) {
+    $('#identityModal').modal('show');
+    globaLocalNoID = localNoID;
+ };
+function pageRefresh() {    
+    NoIDBridge.postResetForNewPatient();
+    savelateralityCaptureSite("Left", "IndexFinger");
+    location.reload();   
 };
 function logNoRightHandFingerPrint() {
     if (doesRightBiometricExist != "yes") {

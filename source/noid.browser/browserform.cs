@@ -251,9 +251,8 @@ namespace NoID.Browser
 									{
 										// Match found, inform JavaScript that this is an returning patient for Identity.
 										PatientBridge.PatientFHIRProfile.LocalNoID = dataTransport.ResponseText;  //save the localNoID
-										PatientBridge.PatientFHIRProfile.NoIDStatus = "ReturnPending";
-										string challengeQuestion = "Please enter your date of birth."; //TODO: Dynamically select question.
-										browser.GetMainFrame().ExecuteJavaScriptAsync("showIdentity('" + challengeQuestion + "');");
+										PatientBridge.PatientFHIRProfile.NoIDStatus = "ReturnPending";										
+										browser.GetMainFrame().ExecuteJavaScriptAsync("showIdentity('" + PatientBridge.PatientFHIRProfile.LocalNoID + "');");
 									}
 									else
 									{
