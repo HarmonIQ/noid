@@ -73,16 +73,16 @@ namespace NoID.Database.Wrappers
                 IMongoCollection<SessionQueue> collection = _database.GetCollection<SessionQueue>("SessionQueue");
                 // Update Patient Status Type
                 var update = Builders<SessionQueue>.Update.Set(a => a.ApprovalStatus, approvalStatus);
-                var result = collection.UpdateOneAsync(model => model.SparkReference == _id, update);
+                var result = collection.UpdateOneAsync(model => model._id == _id, update);
                 // Update Accept Deny Date
                 update = Builders<SessionQueue>.Update.Set(a => a.AcceptDenyDate, DateTime.UtcNow);
-                result = collection.UpdateOneAsync(model => model.SparkReference == _id, update);
+                result = collection.UpdateOneAsync(model => model._id == _id, update);
                 // Update Review User
                 update = Builders<SessionQueue>.Update.Set(a => a.ReviewUser, reviewUser);
-                result = collection.UpdateOneAsync(model => model.SparkReference == _id, update);
+                result = collection.UpdateOneAsync(model => model._id == _id, update);
                 // Update Session Computer Name
                 update = Builders<SessionQueue>.Update.Set(a => a.SessionComputerName, reviewUser);
-                result = collection.UpdateOneAsync(model => model.SparkReference == _id, computerName);
+                result = collection.UpdateOneAsync(model => model._id == _id, computerName);
 
                 successful = true;
             }
