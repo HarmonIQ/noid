@@ -79,47 +79,6 @@ namespace NoID.FHIR.Profile
             NewSession();
         }
 
-        void SetMetaData(Patient loadPatient)
-        {
-            if (loadPatient.Meta != null)
-            {
-                foreach (Extension metaExtension in loadPatient.Meta.Extension)
-                {
-                    if (metaExtension.Value.TypeName.ToLower().Contains("noidstatus") == true)
-                    {
-                        CheckinDateTime = metaExtension.Value.ToString();
-                    }
-                    else if (metaExtension.Value.TypeName.ToLower().Contains("noidlocation") == true)
-                    {
-                        ClinicArea = metaExtension.Value.ToString();
-                    }
-                }
-            }
-        }
-
-        void SetIdentifierData(Patient loadPatient)
-        {
-            // Gets the identifiers from the patient FHIR resource class
-            if (loadPatient.Identifier != null)
-            {
-                foreach (Identifier id in loadPatient.Identifier)
-                {
-                    if (id.System.ToLower().Contains("session") == true)
-                    {
-                        _noID.SessionID = id.Value.ToString();
-                    }
-                    else if (id.System.ToLower().Contains("local") == true)
-                    {
-                        _noID.LocalNoID = id.Value.ToString();
-                    }
-                    else if (id.System.ToLower().Contains("remote") == true)
-                    {
-                        _noID.RemoteNoID = id.Value.ToString();
-                    }
-                }
-            }
-        }
-
         public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient, string noidStatus, DateTime checkinDateTime)
         {
             _organizationName = organizationName;
@@ -226,14 +185,8 @@ namespace NoID.FHIR.Profile
             if (loadPatient != null)
             {
                 _noID = new SourceAFIS.Templates.NoID();
-
                 SetMetaData(loadPatient); //Sets all the data from the meta area of FHIR message
                 SetIdentifierData(loadPatient); //Sets all the data from the identifier area of FHIR message
-
-                if (_noID.LocalNoID.Length == 0)
-                {
-                    _noID.LocalNoID = loadPatient.Id;
-                }
 
                 // Gets the demographics from the patient FHIR resource class
                 _lastName = loadPatient.Name[0].Family.ToString();
@@ -322,8 +275,79 @@ namespace NoID.FHIR.Profile
 
         ~PatientProfile() { }
 
-#endregion
+        #endregion
 
+        void SetMetaData(Patient loadPatient)
+        {
+            if (loadPatient.Meta != null)
+            {
+                try
+                {
+                    foreach (Extension metaExtension in loadPatient.Meta.Extension)
+                    {
+                        if (metaExtension.Url.ToLower().Contains("status") == true)
+                        {
+                            foreach (Extension statusExtension in metaExtension.Extension)
+                            {
+                                if (statusExtension.Url.ToLower().Contains("status") == true)
+                                {
+                                    NoIDStatus = statusExtension.Value.ToString();
+                                }
+                                else if (statusExtension.Url.ToLower().Contains("type") == true)
+                                {
+                                    NoIDType = statusExtension.Value.ToString();
+                                }
+                                else if (statusExtension.Url.ToLower().Contains("checkin") == true)
+                                {
+                                    CheckinDateTime = statusExtension.Value.ToString();
+                                }
+                            }
+                        }
+                        else if (metaExtension.Url.ToLower().Contains("location") == true)
+                        {
+                            foreach (Extension locationExtension in metaExtension.Extension)
+                            {
+                                if (locationExtension.Url.ToLower().Contains("clinic") == true)
+                                {
+                                    ClinicArea = locationExtension.Value.ToString();
+                                }
+                                else if (locationExtension.Url.ToLower().Contains("physical") == true)
+                                {
+                                    DevicePhysicalLocation = locationExtension.Value.ToString();
+                                }
+                            }   
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        void SetIdentifierData(Patient loadPatient)
+        {
+            // Gets the identifiers from the patient FHIR resource class
+            if (loadPatient.Identifier != null)
+            {
+                foreach (Identifier id in loadPatient.Identifier)
+                {
+                    if (id.System.ToLower().Contains("session") == true)
+                    {
+                        SessionID = id.Value.ToString();
+                    }
+                    else if (id.System.ToLower().Contains("local") == true)
+                    {
+                        LocalNoID = id.Value.ToString();
+                    }
+                    else if (id.System.ToLower().Contains("remote") == true)
+                    {
+                        RemoteNoID = id.Value.ToString();
+                    }
+                }
+            }
+        }
         public void NewSession()
         {
             _noID = new SourceAFIS.Templates.NoID();
@@ -761,8 +785,8 @@ namespace NoID.FHIR.Profile
                 GetBiometricsCaptured();
                 // Add message status New, Return or Update
                 Meta meta = new Meta();
-                meta.Extension.Add(FHIRUtilities.OrganizationExtension(OrganizationName, DomainName, ServerName));
-                meta.Extension.Add(FHIRUtilities.MessageTypeExtension(NoIDStatus, NoIDType, DeviceStartTime));
+
+                meta.Extension.Add(FHIRUtilities.MessageTypeExtension(NoIDStatus, NoIDType, CheckinDateTime));
                 meta.Extension.Add(FHIRUtilities.ClinicLocationExtension(ClinicArea, DevicePhysicalLocation));
                 meta.Extension.Add(FHIRUtilities.CaptureSummaryExtension(BiometricsCaptured, DeviceName, OriginalDpi, OriginalHeight, OriginalWidth));
                 pt.Meta = meta;

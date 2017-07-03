@@ -5,6 +5,7 @@
 using System;
 using System.Net;
 using System.IO;
+using System.Web;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Utility;
@@ -50,6 +51,7 @@ namespace NoID.Network.Client
                 byte[] output = null;
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_enpoint);
                 request.Method = "POST";
+                //TODO: test compression
                 //request.AutomaticDecompression = DecompressionMethods.GZip;
                 request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
                 if (!(_payloadJSON is null))
@@ -74,6 +76,38 @@ namespace NoID.Network.Client
             return html;
         }
 
+        public string SavePendingStatus(string sessionID, string action, string computerName, string userName)
+        {
+            string jsonResponse = null;
+            try
+            {
+                string UriWithQueryString = _enpoint.ToString() 
+                    + "?sessionid=" + HttpUtility.UrlEncode(sessionID)
+                    + "&action=" + HttpUtility.UrlEncode(action)
+                    + "&computername=" + HttpUtility.UrlEncode(computerName) 
+                    + "&username=" + HttpUtility.UrlEncode(userName);
+                Uri uriQueryString = new Uri(UriWithQueryString);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriQueryString);
+                request.Method = "GET";
+                //TODO: test compression
+                //request.AutomaticDecompression = DecompressionMethods.GZip;
+                request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
+                // call BeforeHttpRequest event
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (Stream stream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    jsonResponse = reader.ReadToEnd();
+                }
+                // call AfterHttpResponse event
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return jsonResponse;
+        }
+
         public string GetPatientList(string listType)
         {
             string jsonResponse = null;
@@ -83,6 +117,7 @@ namespace NoID.Network.Client
                 Uri uriQueryString = new Uri(UriWithQueryString);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriQueryString);
                 request.Method = "GET";
+                //TODO: test compression
                 //request.AutomaticDecompression = DecompressionMethods.GZip;
                 request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
                 // call BeforeHttpRequest event

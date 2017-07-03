@@ -99,6 +99,7 @@
     <Content Include="PatientLists.ashx" />
     <Content Include="AddNewPatient.ashx" />
     <Content Include="SearchBiometrics.ashx" />
+    <Content Include="UpdatePendingStatus.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -126,6 +127,9 @@
     </Compile>
     <Compile Include="TestList.ashx.cs">
       <DependentUpon>TestList.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="UpdatePendingStatus.ashx.cs">
+      <DependentUpon>UpdatePendingStatus.ashx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
