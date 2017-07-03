@@ -25,8 +25,8 @@ namespace NoID.Browser
         private static readonly string AddNewPatientUri = ConfigurationManager.AppSettings["AddNewPatientUri"].ToString();
         private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
 
-        FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
-        FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
+        FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+        FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Left;
 
         PatientFHIRProfile _patientFHIRProfile;
         string _reponseString;
@@ -35,8 +35,10 @@ namespace NoID.Browser
 		string _exceptionMissingReason = "";
 		string _secretAnswer1 = "";
 		string _secretAnswer2 = "";
+		string _existingDOBMatch = "";
 
-        public delegate void PatientEventHandler(object sender, string trigger);
+
+		public delegate void PatientEventHandler(object sender, string trigger);
         public event PatientEventHandler ResetSession = delegate { };
 
 
@@ -68,7 +70,43 @@ namespace NoID.Browser
 			}
 			return true;
 		}
-
+		public bool postUnknownDOBExistingpatient(string passedLocalNoID)
+		{
+			try
+			{
+				//need to define id to pass back. Calling existing id match does not seem to have id available
+				//testing. remove below message
+				// need to add patient to approval queue from this step, but flag the type with an *
+				//need to return 
+				//errorDescription = "Need to wire this up. Currently passing NoID : " + HandleNullString(sessionID);
+				errorDescription = "";
+			}
+			catch (Exception ex)
+			{
+				errorDescription = ex.Message;
+				return false;
+			}
+			return true;
+		}
+		public bool postConfirmExistingPatient(string passedLocalNoID, string birthYear, string birthMonth, string birthDay)
+		{
+			try
+			{
+				//need to define id to pass back. Calling existing id match does not seem to have id available
+				//testing. remove below message
+				// if dob == dob then set _existingDOBMatch to "match" and send patient to queue as returning patient
+				//need to return successful add to patient queue message so I can begin close. For now hardcodeing to 10 seconds
+				//_existingDOBMatch ??
+				_existingDOBMatch = "match";
+				errorDescription = "";
+			}
+			catch (Exception ex)
+			{
+				errorDescription = ex.Message;
+				return false;
+			}
+			return true;
+		}
 		public bool postDoNotHaveValidBiometricButtonclick(string laterality) {
 			try
 			{
@@ -339,8 +377,15 @@ namespace NoID.Browser
             }
             return true;
         }
-
-        public string sessionID
+		string HandleNullString(string convert)
+		{
+			if (convert == null)
+			{
+				return "";
+			}
+			return convert;
+		}
+		public string sessionID
         {
             get { return _patientFHIRProfile.SessionID; }
         }
@@ -384,6 +429,11 @@ namespace NoID.Browser
 		{
 			get { return _secretAnswer2; }
 			set { _secretAnswer2 = value; }
+		}
+		public string existingDOBMatch
+		{
+			get { return _existingDOBMatch; }
+			set { _existingDOBMatch = value; }
 		}
 	}
 }
