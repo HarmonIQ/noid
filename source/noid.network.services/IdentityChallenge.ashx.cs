@@ -87,6 +87,16 @@ namespace NoID.Network.Services
                         //TODO: implement firstname, use root or just accept exact matches?
                         context.Response.Write("Match: No. " + _confirmFieldName + " not implemented");
                     }
+                    else if (_confirmFieldName == "failedchallenge")
+                    {
+                        SessionQueue seq = Utilities.PatientToSessionQueue(pendingPatient, sparkReference, _localNoID, "return**", "pending");
+                        seq.SubmitDate = DateTime.UtcNow;
+                        seq._id = StringUtilities.SHA256(DomainName + Guid.NewGuid().ToString() + NodeSalt);
+                        seq.SessionComputerName = _computerName;
+                        seq.ClinicArea = _clinicArea;
+                        dbwrapper.AddPendingPatient(seq);
+                        context.Response.Write("Successful.");
+                    }
                 }
             }
             catch (Exception ex)

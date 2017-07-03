@@ -74,22 +74,37 @@ namespace NoID.Browser
 
 		public bool postUnknownDOBExistingpatient(string passedLocalNoID)
 		{
-			try
-			{
-				//need to define id to pass back. Calling existing id match does not seem to have id available
-				//testing. remove below message
-				// need to add patient to approval queue from this step, but flag the type with an *
-				//need to return 
-				//errorDescription = "Need to wire this up. Currently passing NoID : " + HandleNullString(sessionID);
-				errorDescription = "";
-			}
-			catch (Exception ex)
-			{
-				errorDescription = ex.Message;
-				return false;
-			}
-			return true;
-		}
+            bool result = false;
+            try
+            {
+                Authentication auth;
+                if (Utilities.Auth == null)
+                {
+                    auth = SecurityUtilities.GetAuthentication(serviceName);
+                }
+                else
+                {
+                    auth = Utilities.Auth;
+                }
+                HttpsClient client = new HttpsClient();
+                Uri endpoint = new Uri(IdentityChallengeUri);
+                string resultResponse = client.SendIdentityChallenge(endpoint, auth, localNoID, "failedchallenge", "", SecurityUtilities.GetComputerName(), ClinicArea);
+
+                if (resultResponse.ToLower().Contains("error") == false)
+                {
+                    result = true;
+                }
+                else
+                {
+                    errorDescription = "Error in PatientBridge::postUnknownDOBExistingpatient: " + resultResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                errorDescription = "Error in PatientBridge::postUnknownDOBExistingpatient: " + ex.Message;
+            }
+            return result;
+        }
 
 		public bool postConfirmExistingPatient(string passedLocalNoID, string birthYear, string birthMonth, string birthDay)
 		{
@@ -117,15 +132,16 @@ namespace NoID.Browser
                 }
                 else
                 {
-                    errorDescription = resultResponse;
+                    errorDescription = "Error in PatientBridge::postUnknownDOBExistingpatient: " + resultResponse;
                 }
 			}
 			catch (Exception ex)
 			{
-				errorDescription = ex.Message;
-			}
+                errorDescription = "Error in PatientBridge::postUnknownDOBExistingpatient: " + ex.Message;
+            }
 			return result;
 		}
+
 		public bool postDoNotHaveValidBiometricButtonclick(string laterality) {
 			try
 			{
