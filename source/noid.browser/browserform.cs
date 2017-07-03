@@ -309,46 +309,66 @@ namespace NoID.Browser
 							{
 								case "LeftIndexFinger":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
-									browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftMiddle');");
-									break;
+                                    browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftMiddle');");
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.MiddleFinger;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+                                    break;
 								case "LeftMiddleFinger":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftRing');");
-									break;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.RingFinger;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+                                    break;
 								case "LeftRingFinger":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftLittle');");
-									break;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.LittleFinger;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+                                    break;
 								case "LeftLittleFinger":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectLeftThumb');");
-									break;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Thumb;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+                                    break;
 								case "LeftThumb":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									browser.GetMainFrame().ExecuteJavaScriptAsync("moveToRightHandScan();");
-									hasLeftFingerprintScan = false;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+                                    hasLeftFingerprintScan = false;
 									break;
 								case "RightIndexFinger":
 									hasLeftFingerprintScan = _patientBridge.hasValidLeftFingerprint;
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightMiddle');");
-									break;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.MiddleFinger;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+                                    break;
 								case "RightMiddleFinger":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightRing');");
-									break;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.RingFinger;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+                                    break;
 								case "RightRingFinger":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightLittle');");
-									break;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.LittleFinger;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+                                    break;
 								case "RightLittleFinger":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									browser.GetMainFrame().ExecuteJavaScriptAsync("setLateralitySite('selectRightThumb');");
-									break;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Thumb;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+                                    break;
 								case "RightThumb":
 									attemptedScannedFingers.Add(Laterality.ToString() + CaptureSite.ToString());
 									hasRightFingerprintScan = false;
-									break;
+                                    CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
+                                    Laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
+                                    break;
 								default:
 									break;
 							}
@@ -537,13 +557,13 @@ namespace NoID.Browser
                     currentCaptureInProcess = false;
                     _firstMinutiaCaptureController = null;
                     _minutiaCaptureController = new MinutiaCaptureController();
-                    //browser.RegisterJsObject("NoIDBridge", _patientBridge);
+                    browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     break;
                 case "provider":
                 case "provider-pc":
                 case "provider-kiosk":
                     _providerBridge = new ProviderBridge(organizationName, NoIDServiceName);
-                    //browser.RegisterJsObject("NoIDBridge", _providerBridge);
+                    browser.RegisterJsObject("NoIDBridge", _providerBridge);
                     break;
             }
         }

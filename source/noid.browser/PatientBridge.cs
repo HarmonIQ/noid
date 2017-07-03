@@ -397,8 +397,8 @@ namespace NoID.Browser
         private void ResetVariables()
         {
             alertFunction = "";
-            _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
-            _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
+            _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.LittleFinger;
+            _laterality = FHIRUtilities.LateralitySnoMedCode.Left;
             _patientFHIRProfile = new PatientFHIRProfile(organizationName, "New");
             _patientFHIRProfile.FHIRAddress = null;
             TriggerResetSession("PatientBridge::ResetVariables");
