@@ -86,9 +86,10 @@ namespace NoID.Browser
                 {
                     auth = Utilities.Auth;
                 }
+                localNoID = passedLocalNoID;
                 HttpsClient client = new HttpsClient();
                 Uri endpoint = new Uri(IdentityChallengeUri);
-                string resultResponse = client.SendIdentityChallenge(endpoint, auth, localNoID, "failedchallenge", "", SecurityUtilities.GetComputerName(), ClinicArea);
+                string resultResponse = client.SendIdentityChallenge(endpoint, auth, passedLocalNoID, "failedchallenge", "", SecurityUtilities.GetComputerName(), ClinicArea);
 
                 if (resultResponse.ToLower().Contains("error") == false)
                 {
