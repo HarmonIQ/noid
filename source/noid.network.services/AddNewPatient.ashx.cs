@@ -41,7 +41,15 @@ namespace NoID.Network.Services
         {
             try
             {
-                Resource newResource = FHIRUtilities.StreamToFHIR(new StreamReader(context.Request.InputStream));
+                Stream httpStream = context.Request.InputStream;
+                StreamReader httpStreamReader = new StreamReader(httpStream);
+                string jsonFHIRMessage = FHIRUtilities.StreamToFHIRString(httpStreamReader);
+                
+                //reset the stream to the begining
+                httpStream.Position = 0;
+                httpStreamReader.DiscardBufferedData();
+                Resource newResource = FHIRUtilities.StreamToFHIR(httpStreamReader);
+
                 _patient = (Patient)newResource;
                 //TODO: make sure this FHIR message has a new pending status.
                 
@@ -57,6 +65,7 @@ namespace NoID.Network.Services
 
                 SourceAFIS.Templates.NoID noID = new SourceAFIS.Templates.NoID();
                 noID.SessionID = ptSaved.Id.ToString();
+                //TODO: Add Argon2d hash here
                 noID.LocalNoID = "noid://" + DomainName + "/" + StringUtilities.SHA256(DomainName + noID.SessionID + NodeSalt);
                 SessionQueue seq = PatientToSessionQueue(_patient, ptSaved.Id.ToString(), noID.LocalNoID);
                 //TODO: send to selected match hub and get the remote hub ID.
@@ -85,7 +94,7 @@ namespace NoID.Network.Services
                     }
                     dbMinutia.Dispose();
                     MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
-                    dbwrapper.AddPendingPatient(seq);
+                    dbwrapper.AddPendingPatient(seq, jsonFHIRMessage);
                     //TODO: end atomic transaction.  
                 }
                 _responseText = "Successful.";

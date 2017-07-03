@@ -60,6 +60,11 @@ namespace NoID.FHIR.Profile
         private string _sessionID = "";
         private string _remoteNoID = "";
         private string _biometricsCaptured = "";
+        private string _clinicArea = "";
+        private string _devicePhysicalLocation = "";
+        private string _deviceStartTime = "";
+
+#region Constructors
 
         [JsonConstructor]
         public PatientProfile()
@@ -74,6 +79,47 @@ namespace NoID.FHIR.Profile
             NewSession();
         }
 
+        void SetMetaData(Patient loadPatient)
+        {
+            if (loadPatient.Meta != null)
+            {
+                foreach (Extension metaExtension in loadPatient.Meta.Extension)
+                {
+                    if (metaExtension.Value.TypeName.ToLower().Contains("noidstatus") == true)
+                    {
+                        CheckinDateTime = metaExtension.Value.ToString();
+                    }
+                    else if (metaExtension.Value.TypeName.ToLower().Contains("noidlocation") == true)
+                    {
+                        ClinicArea = metaExtension.Value.ToString();
+                    }
+                }
+            }
+        }
+
+        void SetIdentifierData(Patient loadPatient)
+        {
+            // Gets the identifiers from the patient FHIR resource class
+            if (loadPatient.Identifier != null)
+            {
+                foreach (Identifier id in loadPatient.Identifier)
+                {
+                    if (id.System.ToLower().Contains("session") == true)
+                    {
+                        _noID.SessionID = id.Value.ToString();
+                    }
+                    else if (id.System.ToLower().Contains("local") == true)
+                    {
+                        _noID.LocalNoID = id.Value.ToString();
+                    }
+                    else if (id.System.ToLower().Contains("remote") == true)
+                    {
+                        _noID.RemoteNoID = id.Value.ToString();
+                    }
+                }
+            }
+        }
+
         public PatientProfile(string organizationName, Uri fhirAddress, Patient loadPatient, string noidStatus, DateTime checkinDateTime)
         {
             _organizationName = organizationName;
@@ -85,41 +131,10 @@ namespace NoID.FHIR.Profile
             if (loadPatient != null)
             {
                 _noID = new SourceAFIS.Templates.NoID();
-                // Gets the identifiers from the patient FHIR resource class
-                if (loadPatient.Identifier.Count > 0)
-                {
-                    Identifier identifier = loadPatient.Identifier[0];
 
-                    if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
-                    {
-                        _noID.SessionID = identifier.Value.ToString();
-                    }
-                    else if (identifier.System.ToString().ToLower().Contains("local") == true)
-                    {
-                        _noID.LocalNoID = identifier.Value.ToString();
-                    }
-                    else if (identifier.System.ToString().ToLower().Contains("remote") == true)
-                    {
-                        _noID.RemoteNoID = identifier.Value.ToString();
-                    }
+                SetMetaData(loadPatient); //Sets all the data from the meta area of FHIR message
+                SetIdentifierData(loadPatient); //Sets all the data from the identifier area of FHIR message
 
-                    if (loadPatient.Identifier.Count > 1)
-                    {
-                        identifier = loadPatient.Identifier[1];
-                        if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
-                        {
-                            _noID.SessionID = identifier.Value.ToString();
-                        }
-                        else if (identifier.System.ToString().ToLower().Contains("local") == true)
-                        {
-                            _noID.LocalNoID = identifier.Value.ToString();
-                        }
-                        else if (identifier.System.ToString().ToLower().Contains("remote") == true)
-                        {
-                            _noID.RemoteNoID = identifier.Value.ToString();
-                        }
-                    }
-                }
                 // Gets the demographics from the patient FHIR resource class
                 _lastName   = loadPatient.Name[0].Family.ToString();
                 List<string> givenNames = loadPatient.Name[0].Given.ToList();
@@ -211,58 +226,13 @@ namespace NoID.FHIR.Profile
             if (loadPatient != null)
             {
                 _noID = new SourceAFIS.Templates.NoID();
-                // Gets the identifiers from the patient FHIR resource class
-                if (loadPatient.Identifier.Count > 0)
-                {
-                    Identifier identifier = loadPatient.Identifier[0];
 
-                    if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
-                    {
-                        _noID.SessionID = identifier.Value.ToString();
-                    }
-                    else if (identifier.System.ToString().ToLower().Contains("local") == true)
-                    {
-                        _noID.LocalNoID = identifier.Value.ToString();
-                    }
-                    else if (identifier.System.ToString().ToLower().Contains("remote") == true)
-                    {
-                        _noID.RemoteNoID = identifier.Value.ToString();
-                    }
+                SetMetaData(loadPatient); //Sets all the data from the meta area of FHIR message
+                SetIdentifierData(loadPatient); //Sets all the data from the identifier area of FHIR message
 
-                    if (loadPatient.Identifier.Count > 1)
-                    {
-                        identifier = loadPatient.Identifier[1];
-                        if (identifier.System.ToString().ToLower().Contains("sessionid") == true)
-                        {
-                            _noID.SessionID = identifier.Value.ToString();
-                        }
-                        else if (identifier.System.ToString().ToLower().Contains("local") == true)
-                        {
-                            _noID.LocalNoID = identifier.Value.ToString();
-                        }
-                        else if (identifier.System.ToString().ToLower().Contains("remote") == true)
-                        {
-                            _noID.RemoteNoID = identifier.Value.ToString();
-                        }
-                    }
-                }
                 if (_noID.LocalNoID.Length == 0)
                 {
                     _noID.LocalNoID = loadPatient.Id;
-                }
-
-                Meta meta = loadPatient.Meta;
-                if (meta != null)
-                {
-                    if (meta.LastUpdated != null)
-                    {
-                        CheckinDateTime = meta.LastUpdated.ToString();
-                    }
-                    if (meta.Extension.Count > 0)
-                    {
-                        Extension ext = meta.Extension[0];
-                        NoIDStatus = ext.Value.ToString();
-                    }
                 }
 
                 // Gets the demographics from the patient FHIR resource class
@@ -352,10 +322,14 @@ namespace NoID.FHIR.Profile
 
         ~PatientProfile() { }
 
-        void NewSession()
+#endregion
+
+        public void NewSession()
         {
             _noID = new SourceAFIS.Templates.NoID();
             _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
+            //TODO: Add domain name to session string.
+            _sessionID = "noid://session/" + _noID.SessionID;
         }
 
         [JsonIgnore]
@@ -560,9 +534,28 @@ namespace NoID.FHIR.Profile
             set { _biometricAlternateAnswer2 = value; }
         }
 
+        /// <summary>
+        ///   The clinic or area the kiosk/computer is used to create the FHIR profile. 
+        /// </summary>
+        [JsonProperty("ClinicArea")]
+        public string ClinicArea
+        {
+            get { return _clinicArea; }
+            set { _clinicArea = value; }
+        }
 
         /// <summary>
-        ///   Status is pending, approved, denied, flagged,
+        ///   physical location of the kiosk or computer is used to create the FHIR profile. 
+        /// </summary>
+        [JsonProperty("DevicePhysicalLocation")]
+        public string DevicePhysicalLocation
+        {
+            get { return _devicePhysicalLocation; }
+            set { _devicePhysicalLocation = value; }
+        }
+
+        /// <summary>
+        ///   Status is pending, approved, denied, flagged.
         /// </summary>
         [JsonProperty("NoIDStatus")]
         public string NoIDStatus
@@ -588,8 +581,14 @@ namespace NoID.FHIR.Profile
             set { _checkinDateTime = value; }
         }
 
-
-        private string GetBiometricsCaptured()
+        [JsonProperty("DeviceStartTime")]
+        public string DeviceStartTime
+        {
+            get { return _deviceStartTime; }
+            set { _deviceStartTime = value; }
+        }
+        
+        protected string GetBiometricsCaptured()
         {
             string biometrics = "";
 
@@ -759,27 +758,25 @@ namespace NoID.FHIR.Profile
             try
             {
                 pt = new Patient();
+                GetBiometricsCaptured();
                 // Add message status New, Return or Update
                 Meta meta = new Meta();
-                meta.Extension.Add(FHIRUtilities.MessageTypeExtension(NoIDStatus));
+                meta.Extension.Add(FHIRUtilities.OrganizationExtension(OrganizationName, DomainName, ServerName));
+                meta.Extension.Add(FHIRUtilities.MessageTypeExtension(NoIDStatus, NoIDType, DeviceStartTime));
+                meta.Extension.Add(FHIRUtilities.ClinicLocationExtension(ClinicArea, DevicePhysicalLocation));
+                meta.Extension.Add(FHIRUtilities.CaptureSummaryExtension(BiometricsCaptured, DeviceName, OriginalDpi, OriginalHeight, OriginalWidth));
                 pt.Meta = meta;
-                // Add patient certificate hash.
-                Identifier idSession;
-                Identifier idPatientCertificate;
-                if (SessionID != null && SessionID.Length > 0)
+
+                Identifier idSession = new Identifier();
+                idSession.System = ServerName + "/fhir/SessionID";
+                if (SessionID == null || SessionID.Length == 0)
                 {
-                    idSession = new Identifier();
-                    idSession.System = ServerName + "/fhir/SessionID";
-                    idSession.Value = SessionID;
-                    pt.Identifier.Add(idSession);
+                    NewSession();
                 }
-                if (LocalNoID != null && LocalNoID.Length > 0)
-                {
-                    idPatientCertificate = new Identifier();
-                    idPatientCertificate.System = ServerName + "/fhir/PatientCertificateID";
-                    idPatientCertificate.Value = LocalNoID;
-                    pt.Identifier.Add(idPatientCertificate);
-                }
+                idSession.Value = SessionID;
+                pt.Identifier.Add(idSession);
+
+                //TODO: Move fingerprint minutias to Identifier.Extension
 
                 ResourceReference managingOrganization = new ResourceReference(OrganizationName, DomainName);
                 pt.ManagingOrganization = managingOrganization;
@@ -861,7 +858,7 @@ namespace NoID.FHIR.Profile
                 {
                     pt.Contact.Add(contact);
                 }
-                //TODO: Change location of minutias in Patient FHIR profile from attached photo to a more appropriate location.
+                //TODO: Change location of minutias in Patient FHIR profile from attached Photo.Extension to Identity.Extension
                 foreach (FingerPrintMinutias minutias in FingerPrintMinutiasList)
                 {
                     Attachment attach = new Attachment();
@@ -873,7 +870,7 @@ namespace NoID.FHIR.Profile
             }
             catch (Exception ex)
             {
-                BaseException = new Exception("PatientProfile.CreateFHIRProfile() failed to create a new profile: " + ex.Message);
+                BaseException = new Exception("Error in PatientProfile::CreateFHIRProfile(). Failed to create a new FHIR profile: " + ex.Message);
                 return null;
             }
             return pt;

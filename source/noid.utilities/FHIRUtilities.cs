@@ -42,18 +42,38 @@ namespace NoID.Utilities
             Unknown = 0
         }
 
-        public static Resource StreamToFHIR(StreamReader streamReader)
+        public static Resource StreamToFHIR(StreamReader streamReader, bool strictFHIR = true)
         {
             try
             {
                 string jsonString = streamReader.ReadToEnd();
-                FhirJsonParser fhirJsonParser = new FhirJsonParser();
+                ParserSettings ps = new ParserSettings();
+                if (strictFHIR == false)
+                {
+                    ps.AcceptUnknownMembers = true;
+                    ps.AllowUnrecognizedEnums = true;
+                }
+                FhirJsonParser fhirJsonParser = new FhirJsonParser(ps);
                 return fhirJsonParser.Parse<Resource>(jsonString);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+        public static string StreamToFHIRString(StreamReader streamReader)
+        {
+            string jsonString = null;
+            try
+            {
+                jsonString = streamReader.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return jsonString;
         }
 
         public static string FHIRToString(Resource _fhir)
@@ -325,6 +345,39 @@ namespace NoID.Utilities
             return extCaptureSite;
         }
 
+        public static Extension CaptureSummaryExtension
+            (
+            string captureStringList,
+            string ScannerName,
+            int OriginalDPI,
+            int OriginalHeight,
+            int OriginalWidth
+            )
+        {
+            /*
+                Example JSON FHIR Message
+                Capture Summary
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "Capture Site List",              "valueString": Left Index and Right Index   },
+                        {      "url": "Scanner Name",                   "valueString": U.are.U 4500                 },  
+                        {      "url": "Original DPI",                   "valueInt": 500                             },  
+                        {      "url": "Original Height",                "valueInt": 300                             },  
+                        {      "url": "Original Width",                 "valueInt": 200                             }  
+                    ]
+                }
+            */
+            Extension extCaptureSite = new Extension("Capture Summary", new FhirString("Biometric Site Capture Summary"));
+            extCaptureSite.AddExtension("Capture Site List", new FhirString(captureStringList));
+            extCaptureSite.AddExtension("Scanner Name", new FhirString(ScannerName));
+            extCaptureSite.AddExtension("Original DPI", new FhirString(OriginalDPI.ToString()));
+            extCaptureSite.AddExtension("Original Height", new FhirString(OriginalHeight.ToString()));
+            extCaptureSite.AddExtension("Original Width", new FhirString(OriginalWidth.ToString()));
+            return extCaptureSite;
+        }
+
         public static Extension OrganizationExtension(string organizationName, string domainName, string fhirServerName)
         {
             /*
@@ -341,12 +394,12 @@ namespace NoID.Utilities
             */
 
             Extension ext = new Extension("Organization", new FhirString(organizationName));
-            Extension extCodingSystem = ext.AddExtension("Domain", new FhirString(domainName));
-            Extension extCaptureSiteDescription = ext.AddExtension("FHIR Server", new FhirString(fhirServerName));
+            ext.AddExtension("Domain", new FhirString(domainName));
+            ext.AddExtension("FHIR Server", new FhirString(fhirServerName));
             return ext;
         }
 
-        public static Extension MessageTypeExtension(string NoIDStatus)
+        public static Extension MessageTypeExtension(string NoIDStatus, string NoIDType, string StartTime)
         {
             /*
                 Example JSON FHIR Message
@@ -355,13 +408,37 @@ namespace NoID.Utilities
                 {  
                     "extension": 
                     [ 
-                        {      "url": "Status",                         "valueString": new, return, update              }
+                        {      "url": "Status",                         "valueString": pending, approved, denied, hold              }
+                        {      "url": "Type",                           "valueString": new, return, newflag, returnflag             }
+                        {      "url": "DeviceStartTime",                "valueString": 2017-07-02 14:35:22-Z                        }
                     ]
                 }
             */
 
-            Extension ext = new Extension("NoID", new FhirString(NoIDStatus));
-            Extension extNoIDStatus = ext.AddExtension("Status", new FhirString(NoIDStatus));
+            Extension ext = new Extension("NoIDStatus", new FhirString(NoIDType));
+            ext.AddExtension("Status", new FhirString(NoIDStatus)); //pending, approved, denied, hold.
+            ext.AddExtension("Type", new FhirString(NoIDType)); //new, return, newflag, returnflag
+            ext.AddExtension("DeviceStartTime", new FhirString(StartTime));
+            return ext;
+        }
+
+        public static Extension ClinicLocationExtension(string ClinicArea, string DevicePhysicalLocation)
+        {
+            /*
+                Example JSON FHIR Message
+                Clinic and Location Extension 
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "ClinicArea",                         "valueString": 200 Camp St, 2nd foor            }
+                        {      "url": "Physical",                           "valueString": Orthopedic Clinic                }
+                    ]
+                }
+            */
+            Extension ext = new Extension("Location", new FhirString(ClinicArea));
+            ext.AddExtension("ClinicArea", new FhirString(ClinicArea));
+            ext.AddExtension("Physical", new FhirString(DevicePhysicalLocation));
             return ext;
         }
 
