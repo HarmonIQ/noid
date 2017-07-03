@@ -90,15 +90,13 @@ namespace NoID.Database.Wrappers
         }
 
 
-        public bool AddPendingPatient(SessionQueue seq, string noidProfileFHIR)
+        public bool AddPendingPatient(SessionQueue seq)
         {
             bool successful = false;
             try
             {
                 IMongoCollection<SessionQueue> collection = _database.GetCollection<SessionQueue>("SessionQueue");
                 collection.InsertOneAsync(seq);
-                IMongoCollection<Object> messageCollection = _database.GetCollection<Object>("FHIR");
-                messageCollection.InsertOneAsync(noidProfileFHIR);
                 successful = true;
             }
             catch (Exception ex)

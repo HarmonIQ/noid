@@ -43,12 +43,14 @@ namespace NoID.Network.Services
             {
                 Stream httpStream = context.Request.InputStream;
                 StreamReader httpStreamReader = new StreamReader(httpStream);
-                string jsonFHIRMessage = FHIRUtilities.StreamToFHIRString(httpStreamReader);
-                
+                Resource newResource = FHIRUtilities.StreamToFHIR(httpStreamReader);
+
+                /*
                 //reset the stream to the begining
                 httpStream.Position = 0;
                 httpStreamReader.DiscardBufferedData();
-                Resource newResource = FHIRUtilities.StreamToFHIR(httpStreamReader);
+                string jsonFHIRMessage = FHIRUtilities.StreamToFHIRString(httpStreamReader);
+                */
 
                 _patient = (Patient)newResource;
                 //TODO: make sure this FHIR message has a new pending status.
@@ -94,7 +96,7 @@ namespace NoID.Network.Services
                     }
                     dbMinutia.Dispose();
                     MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
-                    dbwrapper.AddPendingPatient(seq, jsonFHIRMessage);
+                    dbwrapper.AddPendingPatient(seq);
                     //TODO: end atomic transaction.  
                 }
                 _responseText = "Successful.";
