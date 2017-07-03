@@ -22,6 +22,8 @@ namespace NoID.Browser
 
     class PatientBridge : CEFBridge
     {
+        private static readonly string DevicePhysicalLocation = ConfigurationManager.AppSettings["DevicePhysicalLocation"].ToString();
+        private static readonly string ClinicArea = ConfigurationManager.AppSettings["ClinicArea"].ToString();
         private static readonly string AddNewPatientUri = ConfigurationManager.AppSettings["AddNewPatientUri"].ToString();
         private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
 
@@ -30,15 +32,15 @@ namespace NoID.Browser
 
         PatientFHIRProfile _patientFHIRProfile;
         string _reponseString;
-		bool _hasValidLeftFingerprint = false;
-		bool _hasValidRightFingerprint = false;
-		string _exceptionMissingReason = "";
-		string _secretAnswer1 = "";
-		string _secretAnswer2 = "";
-		string _existingDOBMatch = "";
+		    bool _hasValidLeftFingerprint = false;
+		    bool _hasValidRightFingerprint = false;
+		    string _exceptionMissingReason = "";
+		    string _secretAnswer1 = "";
+		    string _secretAnswer2 = "";
+		    string _existingDOBMatch = "";
 
 
-		public delegate void PatientEventHandler(object sender, string trigger);
+		    public delegate void PatientEventHandler(object sender, string trigger);
         public event PatientEventHandler ResetSession = delegate { };
 
 
@@ -208,6 +210,8 @@ namespace NoID.Browser
                 _patientFHIRProfile.PostalCode = postalCode;
                 _patientFHIRProfile.EmailAddress = emailAddress;
                 _patientFHIRProfile.PhoneCell = phoneCell;
+                _patientFHIRProfile.ClinicArea = ClinicArea;
+                _patientFHIRProfile.DevicePhysicalLocation = DevicePhysicalLocation;
                 // Send FHIR message
                 Authentication auth;
                 if (Utilities.Auth == null)

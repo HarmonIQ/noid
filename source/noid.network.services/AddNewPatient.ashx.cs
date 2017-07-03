@@ -41,7 +41,17 @@ namespace NoID.Network.Services
         {
             try
             {
-                Resource newResource = FHIRUtilities.StreamToFHIR(new StreamReader(context.Request.InputStream));
+                Stream httpStream = context.Request.InputStream;
+                StreamReader httpStreamReader = new StreamReader(httpStream);
+                Resource newResource = FHIRUtilities.StreamToFHIR(httpStreamReader);
+
+                /*
+                //reset the stream to the begining
+                httpStream.Position = 0;
+                httpStreamReader.DiscardBufferedData();
+                string jsonFHIRMessage = FHIRUtilities.StreamToFHIRString(httpStreamReader);
+                */
+
                 _patient = (Patient)newResource;
                 //TODO: make sure this FHIR message has a new pending status.
                 
@@ -57,6 +67,7 @@ namespace NoID.Network.Services
 
                 SourceAFIS.Templates.NoID noID = new SourceAFIS.Templates.NoID();
                 noID.SessionID = ptSaved.Id.ToString();
+                //TODO: Add Argon2d hash here
                 noID.LocalNoID = "noid://" + DomainName + "/" + StringUtilities.SHA256(DomainName + noID.SessionID + NodeSalt);
                 SessionQueue seq = PatientToSessionQueue(_patient, ptSaved.Id.ToString(), noID.LocalNoID);
                 //TODO: send to selected match hub and get the remote hub ID.
@@ -115,6 +126,14 @@ namespace NoID.Network.Services
                                 seq._id = id.Value.ToString();
                             }
                         }
+                    }
+                    if (seq._id == null)
+                    {
+                        seq._id = sparkReference;
+                    }
+                    if (seq._id.Length == 0)
+                    {
+                        seq._id = sparkReference;
                     }
                     seq.LocalReference = localNoID;
                     seq.SparkReference = sparkReference;
