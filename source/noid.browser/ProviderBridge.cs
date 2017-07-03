@@ -22,6 +22,7 @@ namespace NoID.Browser
 
     class ProviderBridge : CEFBridge
     {
+        private static readonly string IdentityChallengeUri = ConfigurationManager.AppSettings["IdentityChallengeUri"].ToString();
         private static readonly string UpdatePendingStatusUri = ConfigurationManager.AppSettings["UpdatePendingStatusUri"].ToString();
         private static readonly string DevicePhysicalLocation = ConfigurationManager.AppSettings["DevicePhysicalLocation"].ToString();
         private static readonly string ClinicArea = ConfigurationManager.AppSettings["ClinicArea"].ToString();
@@ -60,7 +61,15 @@ namespace NoID.Browser
         private static IList<PatientProfile> GetCheckinList()
         {
             IList<PatientProfile> PatientProfiles = null;
-            Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            Authentication auth;
+            if (Utilities.Auth == null)
+            {
+                auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            }
+            else
+            {
+                auth = Utilities.Auth;
+            }
             HttpsClient client = new HttpsClient();
             PatientProfiles = client.RequestPendingQueue(PendingPatientsUri, auth);
             return PatientProfiles;
@@ -235,7 +244,7 @@ namespace NoID.Browser
 					{
 						htmlTable += "<tr>"
 										+ "<td style='width: 170px'>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
-										+ "<td style='width: 110px' title='" + x.NoIDType.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDStatus.ToString() + "</div></td>"
+										+ "<td style='width: 110px' title='" + x.NoIDType.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDType.ToString() + "</div></td>"
 										+ "<td style='width: 100px' title='" + x.FirstName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.FirstName.ToString() + "</u></div></td>"
 										+ "<td style='width: 130px' title='" + x.LastName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.LastName.ToString() + "</u></div></td>"
 										+ "<td style='width: 100px'>" + x.BirthDate.ToString() + "</td>"

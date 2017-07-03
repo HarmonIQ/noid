@@ -26,23 +26,22 @@ namespace NoID.Browser
         private static readonly string ClinicArea = ConfigurationManager.AppSettings["ClinicArea"].ToString();
         private static readonly string AddNewPatientUri = ConfigurationManager.AppSettings["AddNewPatientUri"].ToString();
         private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
+        private static readonly string IdentityChallengeUri = ConfigurationManager.AppSettings["IdentityChallengeUri"].ToString();
 
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Left;
 
         PatientFHIRProfile _patientFHIRProfile;
         string _reponseString;
-		    bool _hasValidLeftFingerprint = false;
-		    bool _hasValidRightFingerprint = false;
-		    string _exceptionMissingReason = "";
-		    string _secretAnswer1 = "";
-		    string _secretAnswer2 = "";
-		    string _existingDOBMatch = "";
+		bool _hasValidLeftFingerprint = false;
+		bool _hasValidRightFingerprint = false;
+		string _exceptionMissingReason = "";
+		string _secretAnswer1 = "";
+		string _secretAnswer2 = "";
+		string _existingDOBMatch = "";
 
-
-		    public delegate void PatientEventHandler(object sender, string trigger);
+		public delegate void PatientEventHandler(object sender, string trigger);
         public event PatientEventHandler ResetSession = delegate { };
-
 
         public PatientBridge(string organizationName,  string serviceName) : base(organizationName, serviceName)
         {
@@ -72,6 +71,7 @@ namespace NoID.Browser
 			}
 			return true;
 		}
+
 		public bool postUnknownDOBExistingpatient(string passedLocalNoID)
 		{
 			try
@@ -90,24 +90,41 @@ namespace NoID.Browser
 			}
 			return true;
 		}
+
 		public bool postConfirmExistingPatient(string passedLocalNoID, string birthYear, string birthMonth, string birthDay)
 		{
+            bool result = false;
 			try
 			{
-				//need to define id to pass back. Calling existing id match does not seem to have id available
-				//testing. remove below message
-				// if dob == dob then set _existingDOBMatch to "match" and send patient to queue as returning patient
-				//need to return successful add to patient queue message so I can begin close. For now hardcodeing to 10 seconds
-				//_existingDOBMatch ??
-				_existingDOBMatch = "match";
-				errorDescription = "";
+                Authentication auth;
+                if (Utilities.Auth == null)
+                {
+                    auth = SecurityUtilities.GetAuthentication(serviceName);
+                }
+                else
+                {
+                    auth = Utilities.Auth;
+                }
+                HttpsClient client = new HttpsClient();
+                Uri endpoint = new Uri(IdentityChallengeUri);
+                string isoBirthDate = formatDateOfBirth(birthYear, birthMonth, birthDay);
+                string resultResponse = client.SendIdentityChallenge(endpoint, auth, localNoID, "birthdate", isoBirthDate, SecurityUtilities.GetComputerName(), ClinicArea);
+
+                if (resultResponse.ToLower() == "match: yes.")
+                {
+                    _existingDOBMatch = "match";
+                    result = true;
+                }
+                else
+                {
+                    errorDescription = resultResponse;
+                }
 			}
 			catch (Exception ex)
 			{
 				errorDescription = ex.Message;
-				return false;
 			}
-			return true;
+			return result;
 		}
 		public bool postDoNotHaveValidBiometricButtonclick(string laterality) {
 			try

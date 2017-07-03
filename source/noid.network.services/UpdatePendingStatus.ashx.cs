@@ -24,15 +24,7 @@ namespace NoID.Network.Services
 
         public void ProcessRequest(HttpContext context)
         {
-            context.Response.ContentType = "application/json"; // streaming JSON text
-            /*
-             "?sessionid=" + sessionID+ "&action=" + action + "&computername=" + computerName + "&username=" + userName; 
-            */
-            string zero = context.Request.QueryString[0];
-            string one = context.Request.QueryString[1];
-            string two = context.Request.QueryString[2];
-            string three = context.Request.QueryString[3];
-
+            context.Response.ContentType = "text/plain";
             try
             {
                 foreach (String key in context.Request.QueryString.AllKeys)

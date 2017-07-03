@@ -11,6 +11,7 @@ using Hl7.Fhir.Rest;
 using Hl7.Fhir.Utility;
 using Hl7.Fhir.Serialization;
 using NoID.Security;
+using NoID.Utilities;
 
 namespace NoID.Network.Client
 {
@@ -51,8 +52,7 @@ namespace NoID.Network.Client
                 byte[] output = null;
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_enpoint);
                 request.Method = "POST";
-                //TODO: test compression
-                //request.AutomaticDecompression = DecompressionMethods.GZip;
+                //request.AutomaticDecompression = DecompressionMethods.GZip;//TODO: test compression
                 request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
                 if (!(_payloadJSON is null))
                 {
@@ -89,8 +89,39 @@ namespace NoID.Network.Client
                 Uri uriQueryString = new Uri(UriWithQueryString);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriQueryString);
                 request.Method = "GET";
-                //TODO: test compression
-                //request.AutomaticDecompression = DecompressionMethods.GZip;
+                //request.AutomaticDecompression = DecompressionMethods.GZip;//TODO: test compression
+                request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
+                // call BeforeHttpRequest event
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (Stream stream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    jsonResponse = reader.ReadToEnd();
+                }
+                // call AfterHttpResponse event
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return jsonResponse;
+        }
+
+        public string SendIdentityChallenge(string localNoID, string confirmFieldName, string confirmReponse, string clinicArea)
+        {
+            string jsonResponse = null;
+            try
+            {
+                string UriWithQueryString = _enpoint.ToString()
+                    + "?localnoid=" + HttpUtility.UrlEncode(localNoID)
+                    + "&fieldname=" + HttpUtility.UrlEncode(confirmFieldName)
+                    + "&confirmreponse=" + HttpUtility.UrlEncode(confirmReponse)
+                    + "&clinicarea=" + HttpUtility.UrlEncode(clinicArea)
+                    + "&computername=" + HttpUtility.UrlEncode(SecurityUtilities.GetComputerName());
+                Uri uriQueryString = new Uri(UriWithQueryString);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uriQueryString);
+                request.Method = "GET";
+                //request.AutomaticDecompression = DecompressionMethods.GZip;//TODO: test compression
                 request.Headers.Add("Authorization", "Basic " + _auth.BasicAuthentication);
                 // call BeforeHttpRequest event
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())

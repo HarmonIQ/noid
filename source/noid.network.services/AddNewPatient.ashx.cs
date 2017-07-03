@@ -69,7 +69,9 @@ namespace NoID.Network.Services
                 noID.SessionID = ptSaved.Id.ToString();
                 //TODO: Add Argon2d hash here
                 noID.LocalNoID = "noid://" + DomainName + "/" + StringUtilities.SHA256(DomainName + noID.SessionID + NodeSalt);
-                SessionQueue seq = PatientToSessionQueue(_patient, ptSaved.Id.ToString(), noID.LocalNoID);
+                SessionQueue seq = Utilities.PatientToSessionQueue(_patient, ptSaved.Id.ToString(), noID.LocalNoID, "new", "pending");
+                seq.SubmitDate = DateTime.UtcNow;
+
                 //TODO: send to selected match hub and get the remote hub ID.
                 // Hub ID in the same format: noid://domain/LocalID
                 if (_patient.Photo.Count > 0)
@@ -109,49 +111,7 @@ namespace NoID.Network.Services
             }
         }
 
-        SessionQueue PatientToSessionQueue(Patient pt, string sparkReference, string localNoID)
-        {
-            SessionQueue seq = null;
-            try
-            {
-                if (pt != null)
-                {
-                    seq = new SessionQueue();
-                    if (pt.Identifier.Count > 0)
-                    {
-                        foreach (Identifier id in _patient.Identifier)
-                        {
-                            if (id.System.ToString().ToLower().Contains("session") == true)
-                            {
-                                seq._id = id.Value.ToString();
-                            }
-                        }
-                    }
-                    if (seq._id == null)
-                    {
-                        seq._id = sparkReference;
-                    }
-                    if (seq._id.Length == 0)
-                    {
-                        seq._id = sparkReference;
-                    }
-                    seq.LocalReference = localNoID;
-                    seq.SparkReference = sparkReference;
-                    seq.PatientStatus = "new";
-                    seq.ApprovalStatus = "pending";
-                    seq.SubmitDate = DateTime.UtcNow;
-                    //TODO get PatientBeginDate from FHIR message
-                    //seq.PatientBeginDate = DateTime.UtcNow;
-                    seq.SessionComputerName = ""; //TODO: get from browser patient object.  browser needs to add it.
-                    seq.ClinicArea = ""; //TODO: get from browser patient object.  browser needs to add it.
-                }
-            }
-            catch (Exception ex)
-            {
-                _exception = ex;
-            }
-            return seq;
-        }
+        
 
         Resource SendPatientToSparkServer()
         {

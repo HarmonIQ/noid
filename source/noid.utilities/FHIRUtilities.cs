@@ -524,6 +524,20 @@ namespace NoID.Utilities
             return dateString;
         }
 
+        public static string DateTimeToFHIRString(DateTimeOffset _date)
+        {
+            string dateString;
+            try
+            {
+                dateString = _date.ToString(FHIRDateTimeExpression);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dateString;
+        }
+
         public static string NowToFHIRString()
         {
             // Uses the current UTC date and time.
