@@ -911,7 +911,8 @@
                                 <div class="jumbotron">
                                     <h1>Success!</h1>
                                     <h3>
-                                        Your NoID data has been accepted by your selected HUB and is now being processed. Please wait for a staff member to call your name to finalize this process.
+                                        Your NoID data has been accepted by your selected HUB and is now being processed. Please wait for a staff member to call your name to finalize this process.<br /><br />
+                                        This window will automatically close in 10 seconds.
                                     </h3>
                                 </div>
                             </div>
@@ -1386,6 +1387,9 @@
                 //error, show user message
                 alert("postDemographics Error " + NoIDBridge.errorDescription);
             }
+            setTimeout(function () {
+                pageRefresh();
+            }, 10000);    
         }
 
         //according menu

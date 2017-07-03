@@ -144,6 +144,8 @@ namespace NoID.Browser
         private void OnCaptured(CaptureResult captureResult)
         {
 			browser.GetMainFrame().ExecuteJavaScriptAsync("showPleaseWait();");
+			//mark schroeder20170703
+			Laterality = _patientBridge.laterality;
 
 			if (currentCaptureInProcess == false)
 			{
@@ -266,8 +268,9 @@ namespace NoID.Browser
                                         if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left)
 										{
 											//mark schroeder 201707014 commenting out hardcode switch to right. Gui should be handling
-											//Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
-											Laterality = _patientBridge.laterality;
+											//mark schroeder 20170703 gui does not seem to be handling here or I am setting in wrong place
+											Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+											//Laterality = _patientBridge.laterality;
                                             _firstMinutiaCaptureController = _minutiaCaptureController;
                                             _minutiaCaptureController = new MinutiaCaptureController();
                                             PatientBridge.hasValidLeftFingerprint = true;
