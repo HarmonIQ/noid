@@ -47,8 +47,6 @@ namespace NoID.Browser
 
         public ProviderBridge(string organizationName, string serviceName) : base(organizationName, serviceName)
         {
-			//mark schroeder 20170701 testing. Comment below and uncomment one below that for prod
-			//_patients = TestPatientList.GetTestPatients(organizationName);
             _patients = GetCheckinList();
 			_patientApprovalTable = CreatePatientApprovalQueue();
 		}
