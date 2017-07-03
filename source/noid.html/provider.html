@@ -72,7 +72,7 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr>
-                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Name: </strong><input id="patientFullName" type="text" value="" disabled style="border: none" /></td>
+                                                                <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Name: </strong><input id="patientFullName" type="text" value="" disabled style="border: none;" /></td>
                                                             </tr>
                                                             <tr>
                                                                 <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>DOB: </strong><input id="patientDOB" type="text" value="" maxlength="12" disabled style="width:100px; border: none">&nbsp;&nbsp;<strong>Gender: </strong><input style="width:25px; border: none" type="text" id="patientGender" value="" disabled maxlength="10" /></td>
@@ -161,11 +161,11 @@
         //};
         function approvePatient(sessionid, action) {
             NoIDBridge.postApproveOrDeny(sessionid, action);
-            document.getElementById('submitEditDemographics').style.visibility = "hidden";
-            document.getElementById('editDemographics').style.visibility = "visible";
+            //document.getElementById('submitEditDemographics').style.visibility = "hidden";
+            //document.getElementById('editDemographics').style.visibility = "hidden";
             if (NoIDBridge.errorDescription == '') {
                 //no error continue with new page
-                alert(action + " successful");
+                alert(action + " successful");                
             }
             else {
                 //error, show user message

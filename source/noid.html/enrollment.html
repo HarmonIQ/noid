@@ -15,7 +15,7 @@
     <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
     <script>
         window.onload = function () {
-            $('#myModal').modal('show');
+            $('#myModal').modal({ 'backdrop': 'static' });
         }
     </script>
 </head>
@@ -927,12 +927,12 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Select Language</h4>
+                    <h4 class="modal-title">Welcome to NoID. Please Select A Language</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row mar_ned">
                         <div class="col-md-4 col-xs-3">
-                            <p align="right"><strong>Please select a language:</strong></p>
+                            <p align="right"><strong>Language:</strong></p>
                         </div>
                         <div class="col-md-8 col-xs-9">
                             <select name="selectedLanguage" id="selectedLanguage" class="dropselectsec1">
@@ -971,7 +971,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Select</button>
+                    <button type="button" onclick="hideOverLayDiv();" class="btn btn-primary" data-dismiss="modal">Select</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -1275,6 +1275,9 @@
             <!-- /.modal-dialog -->
         </div>
     </div>
+    <div id="overlay">
+        <div id="text"></div>
+    </div>
     <script type="text/javascript">
         $(document).ready(function () {
             //Initialize tooltips
@@ -1379,14 +1382,10 @@
                 + "\nPortal Password = " + portalPassword);*/
 
             NoIDBridge.postDemographics(languageSelected, firstName, middleName, lastName, gender, selectedBirthYear, selectedBirthMonth, selectedBirthDay, streetAddress, streetAddress2, city, state, postalCode, emailAddress, phoneCell);
-            if (NoIDBridge.errorDescription == '') {
+            if (NoIDBridge.errorDescription != '') {
                 //no error continue with new page
-                alert("Your demographics have been successfully posted.");
-            }
-            else {
-                //error, show user message
                 alert("postDemographics Error " + NoIDBridge.errorDescription);
-            }
+            }            
             setTimeout(function () {
                 pageRefresh();
             }, 10000);    
