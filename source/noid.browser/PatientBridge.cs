@@ -86,9 +86,10 @@ namespace NoID.Browser
                 {
                     auth = Utilities.Auth;
                 }
+                localNoID = passedLocalNoID;
                 HttpsClient client = new HttpsClient();
                 Uri endpoint = new Uri(IdentityChallengeUri);
-                string resultResponse = client.SendIdentityChallenge(endpoint, auth, localNoID, "failedchallenge", "", SecurityUtilities.GetComputerName(), ClinicArea);
+                string resultResponse = client.SendIdentityChallenge(endpoint, auth, passedLocalNoID, "failedchallenge", "", SecurityUtilities.GetComputerName(), ClinicArea);
 
                 if (resultResponse.ToLower().Contains("error") == false)
                 {
@@ -397,8 +398,8 @@ namespace NoID.Browser
         private void ResetVariables()
         {
             alertFunction = "";
-            _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.Unknown;
-            _laterality = FHIRUtilities.LateralitySnoMedCode.Unknown;
+            _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.LittleFinger;
+            _laterality = FHIRUtilities.LateralitySnoMedCode.Left;
             _patientFHIRProfile = new PatientFHIRProfile(organizationName, "New");
             _patientFHIRProfile.FHIRAddress = null;
             TriggerResetSession("PatientBridge::ResetVariables");
