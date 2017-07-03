@@ -156,11 +156,11 @@ namespace NoID.Browser
 				_approveDenySession = sessionID;
 				_approveDenyAction = action;
                 string response = UpdateStatusAction(sessionID, action);
-                if (response.ToLower().Contains("error") == true)
-                {
-                    errorDescription = response;
-                    return false;
-                }
+				if (response.ToLower().Contains("error") == true)
+				{
+					errorDescription = response;
+					return false;
+				}				
             }
 			catch (Exception ex)
 			{
@@ -244,9 +244,9 @@ namespace NoID.Browser
 					{
 						htmlTable += "<tr>"
 										+ "<td style='width: 170px'>" + Convert.ToDateTime(x.CheckinDateTime.ToString().Replace("-Z", "")).ToLocalTime() + " </td>"
-										+ "<td style='width: 110px' title='" + x.NoIDType.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDType.ToString() + "</div></td>"
-										+ "<td style='width: 100px' title='" + x.FirstName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.FirstName.ToString() + "</u></div></td>"
-										+ "<td style='width: 130px' title='" + x.LastName.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.LastName.ToString() + "</u></div></td>"
+										+ "<td style='width: 110px;' title='" + x.NoIDType.ToString() + "'><div style='white-space:nowrap; text-overflow:ellipsis; overflow:hidden;'>" + x.NoIDType.ToString() + "</div></td>"
+										+ "<td style='' title='" + x.FirstName.ToString() + "'><div style='width: 83px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.FirstName.ToString() + "</u></div></td>"
+										+ "<td style='' title='" + x.LastName.ToString() + "'><div style='width: 113px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;' onclick='showtPatientDetailsProviderView(" + (char)34 + x.SessionID.ToString() + (char)34 + ");'><u>" + x.LastName.ToString() + "</u></div></td>"
 										+ "<td style='width: 100px'>" + x.BirthDate.ToString() + "</td>"
 										+ "<td style='width: 85px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Approve" + (char)34 + ")' title='Click Approve to approve " + x.FirstName.ToString() + " " + x.LastName.ToString() + "'>Approve</a></td>"
 										+ "<td style='width: 80px'>" + "<a href='javascript:void(0);' onclick='approvePatient(" + (char)34 + x.SessionID.ToString() + (char)34 + "," + (char)34 + "Deny" + (char)34 + ")' title='Click Deny to deny " + x.FirstName.ToString() + " " + x.LastName.ToString() + "'>Deny</a></td>"

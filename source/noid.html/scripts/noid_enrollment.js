@@ -35,12 +35,15 @@ function confirmExistingPatient() {
     var selectedBirthMonth = birthMonth.options[birthMonth.selectedIndex].text;
     var birthDay = document.getElementById('IdentityBrithDay');
     var selectedBirthDay = birthDay.options[birthDay.selectedIndex].text;
-
-    document.getElementById('btnUnknownDOBExistingPatient').style.display = 'none';
+    
     NoIDBridge.postConfirmExistingPatient(globaLocalNoID, selectedBirthYear, selectedBirthMonth, selectedBirthDay);
     if (NoIDBridge.errorDescription != '') {
         //error, show user message
         alert("postConfirmExistingPatient message " + NoIDBridge.errorDescription);
+    }
+    else
+    {
+        document.getElementById('btnUnknownDOBExistingPatient').style.display = 'none';
     }
     if (NoIDBridge.existingDOBMatch == "match") {
         document.getElementById('ExistingIdentityModalBody').innerHTML = "<div class='row mar_ned'><div id='ExistingPatientFinalMessage' class='col-md-12 col-xs-12'><h3>Thank you. Your NoID profile is ready for staff approval. Please wait for a staff member to call your name to finalize this process.<br /><br />This window will automatically close in 10 seconds.</h3><br /><br /><br /><br /><br /><br /><br /></div></div>";
@@ -273,7 +276,7 @@ function showPleaseWait() {
     document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please wait. Processing....</h4>";
 };
 function showIdentity(localNoID) {
-    $('#identityModal').modal('show');
+    $('#identityModal').modal({ 'backdrop': 'static' });
     globaLocalNoID = localNoID;
  };
 function pageRefresh() {    
@@ -317,7 +320,7 @@ function showExceptionModal() {
     document.getElementById('rightFingerprintBackButton').disabled = true;
     document.getElementById('demographics1').disabled = true;
     document.getElementById("saveMissingBiometricInfo").classList.add('next-step');*/
-    $('#biometricExceptionsModal').modal('show');
+    $('#biometricExceptionsModal').modal({ 'backdrop': 'static' });
 };
 function saveMissingBiometricInfo() {
     var exceptionReason = document.getElementById('exceptionMissingReason');
@@ -385,10 +388,17 @@ function wait(whichStep, result) {
             break;
     };
 };
-function showNewExistingModal() {    
- setTimeout(function () {
-    $('#newReturnPatientModal').modal('show');
-  }, 750);    
+function showNewExistingModal() {
+    showOverLayDiv();
+    setTimeout(function () {
+        $('#newReturnPatientModal').modal({ 'backdrop': 'static' });
+    }, 500);
+};
+function showOverLayDiv() {
+    document.getElementById("overlay").style.display = "block";
+};
+function hideOverLayDiv() {
+    document.getElementById("overlay").style.display = "none";
 };
 function showExceptions() {
     document.getElementById('exceptions').setAttribute('class', 'tab-pane active');
