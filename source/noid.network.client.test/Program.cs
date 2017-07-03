@@ -62,7 +62,7 @@ namespace NoID.Network.Client.Test
                     Console.WriteLine(seq.Serialize());
                     dbwrapper.AddPendingPatient(seq);
                     List<SessionQueue> PendingPatients  = dbwrapper.GetPendingPatients();
-                    dbwrapper.UpdateSessionQueueRecord(seq._id, "approved", "TestUser");
+                    dbwrapper.UpdateSessionQueueRecord(seq._id, "approved", "TestUser", "TestComputer");
                 }
                 else if (commandLine == "f") // test fingerprint identity web service
                 {

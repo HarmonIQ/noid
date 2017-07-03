@@ -100,6 +100,7 @@
     <Content Include="AddNewPatient.ashx" />
     <Content Include="SearchBiometrics.ashx" />
     <Content Include="UpdatePendingStatus.ashx" />
+    <Content Include="IdentityChallenge.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -115,6 +116,9 @@
       <DependentUpon>AddNewPatient.ashx</DependentUpon>
     </Compile>
     <Compile Include="FHIRMessageRouter.cs" />
+    <Compile Include="IdentityChallenge.ashx.cs">
+      <DependentUpon>IdentityChallenge.ashx</DependentUpon>
+    </Compile>
     <Compile Include="PatientLists.ashx.cs">
       <DependentUpon>PatientLists.ashx</DependentUpon>
     </Compile>
@@ -131,6 +135,7 @@
     <Compile Include="UpdatePendingStatus.ashx.cs">
       <DependentUpon>UpdatePendingStatus.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\biometric.match.database.engine\biometric.match.database.engine.csproj">

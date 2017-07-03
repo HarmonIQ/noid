@@ -112,6 +112,7 @@ namespace NoID.Database.Wrappers
 
         public List<SessionQueue> GetPendingPatients()
         {
+            // TODO: index ApprovalStatus
             List<SessionQueue> listSessionQueue = null;
             try 
             {
@@ -124,6 +125,31 @@ namespace NoID.Database.Wrappers
                 _exceptions.Add(ex);
             }
             return listSessionQueue;
+        }
+
+        public string GetSparkID(string localNoID)
+        {
+            //TODO: index LocalReference
+            string sparkID = "";
+            try
+            {
+                List<SessionQueue> listSessionQueue = null;
+                var _collection = _database.GetCollection<SessionQueue>("SessionQueue");
+                var filter = Builders<SessionQueue>.Filter.Eq("LocalReference", localNoID);
+                listSessionQueue = _collection.Find(filter).ToList();
+                if (listSessionQueue != null)
+                {
+                    if (listSessionQueue.Count > 0)
+                    {
+                        sparkID = listSessionQueue[listSessionQueue.Count -1].SparkReference;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _exceptions.Add(ex);
+            }
+            return sparkID;
         }
     }
 }

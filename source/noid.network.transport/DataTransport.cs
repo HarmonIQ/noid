@@ -62,7 +62,7 @@ namespace NoID.Network.Transport
             }
             catch (Exception ex)
             {
-                _exception = new Exception("DataTransport.SendFHIRPatientProfile() failed to send to FHIR server: " + ex.Message);
+                _exception = new Exception("DataTransport::SendFHIRPatientProfile() failed to send to FHIR server: " + ex.Message);
                 return false;
             }
             return true;
@@ -78,11 +78,27 @@ namespace NoID.Network.Transport
             }
             catch (Exception ex)
             {
-                _responseText = "Error in DataTransport.SendFHIRMediaProfile() failed to send to FHIR server: " + ex.Message;
+                _responseText = "Error in DataTransport::SendFHIRMediaProfile() failed to send to FHIR server: " + ex.Message;
                 _exception = new Exception(_responseText);
                 return false;
             }
             return true;
+        }
+
+        public string SendIdentityChallenge(Uri endpoint, Authentication auth, string localNoID, string confirmFieldName, string confirmReponse, string computerName, string clinicArea)
+        {
+            try
+            {
+                _responseText = "";
+                WebSend clientWebSend = new WebSend(endpoint, auth);
+                _responseText = clientWebSend.SendIdentityChallenge(localNoID, confirmFieldName, confirmReponse, clinicArea);
+            }
+            catch (Exception ex)
+            {
+                _responseText = "Error in DataTransport::SendIdentityChallenge() failed to send to FHIR server: " + ex.Message;
+                _exception = new Exception(_responseText);
+            }
+            return _responseText;
         }
 
         public string ResponseText

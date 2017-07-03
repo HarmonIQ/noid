@@ -22,6 +22,7 @@ namespace NoID.Browser
 
     class ProviderBridge : CEFBridge
     {
+        private static readonly string IdentityChallengeUri = ConfigurationManager.AppSettings["IdentityChallengeUri"].ToString();
         private static readonly string UpdatePendingStatusUri = ConfigurationManager.AppSettings["UpdatePendingStatusUri"].ToString();
         private static readonly string DevicePhysicalLocation = ConfigurationManager.AppSettings["DevicePhysicalLocation"].ToString();
         private static readonly string ClinicArea = ConfigurationManager.AppSettings["ClinicArea"].ToString();
@@ -60,7 +61,15 @@ namespace NoID.Browser
         private static IList<PatientProfile> GetCheckinList()
         {
             IList<PatientProfile> PatientProfiles = null;
-            Authentication auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            Authentication auth;
+            if (Utilities.Auth == null)
+            {
+                auth = SecurityUtilities.GetAuthentication(NoIDServiceName);
+            }
+            else
+            {
+                auth = Utilities.Auth;
+            }
             HttpsClient client = new HttpsClient();
             PatientProfiles = client.RequestPendingQueue(PendingPatientsUri, auth);
             return PatientProfiles;
