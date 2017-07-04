@@ -151,5 +151,54 @@ namespace NoID.Database.Wrappers
             }
             return sparkID;
         }
+
+        public bool DeleteMongoDBs()
+        {
+            bool result = false;
+            try
+            {
+                if (DeleteNoIDMongoDB() == true && DeleteSparkMongoDB() == true)
+                {
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _exceptions.Add(ex);
+            }
+            return result;
+        }
+
+        bool DeleteNoIDMongoDB()
+        {
+            bool result = false;
+            try
+            {
+                var client = new MongoClient(_noidMongoAddress);
+                client.DropDatabase("NoID");
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                _exceptions.Add(ex);
+            }
+            return result;
+        }
+
+        bool DeleteSparkMongoDB()
+        {
+            bool result = false;
+            try
+            {
+                var client = new MongoClient(_sparkMongoAddress);
+                client.DropDatabase("spark");
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                _exceptions.Add(ex);
+            }
+            return result;
+        }
     }
 }

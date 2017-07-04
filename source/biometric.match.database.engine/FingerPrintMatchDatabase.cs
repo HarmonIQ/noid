@@ -40,6 +40,11 @@ namespace NoID.Match.Database.FingerPrint
             }
         }
 
+        public bool DeleteMatchDatabase()
+        {
+            return MinutiaMatch.DeleteMatchDatabase();
+        }
+
         public int CandidateCount
         {
             get { return _minutiaMatch.CandidateCount; }
