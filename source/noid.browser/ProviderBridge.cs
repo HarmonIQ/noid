@@ -156,12 +156,15 @@ namespace NoID.Browser
 				_approveDenySession = sessionID;
 				_approveDenyAction = action;
                 string response = UpdateStatusAction(sessionID, action);
+				_patients = GetCheckinList();
+				_patientApprovalTable = CreatePatientApprovalQueue();
+				ExecuteJavaScriptAsync("location.reload();");
 				if (response.ToLower().Contains("error") == true)
 				{
 					errorDescription = response;
 					return false;
-				}				
-            }
+				}
+			}
 			catch (Exception ex)
 			{
 				errorDescription = ex.Message;

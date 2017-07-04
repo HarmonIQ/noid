@@ -176,21 +176,21 @@ function setLateralitySite(selectedElementID) {
             document.getElementById('spnLeftHandFinger2').innerText = "Left Little Finger";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Little Finger</h3>Please place your finger on the scanner as shown in the image to the right.</h4>";
             document.getElementById('leftHandImage').src = "resources/LeftHandImageMapLittleFinger.jpg";  
-            savelateralityCaptureSite("Left", "LittleFinger");
+            //savelateralityCaptureSite("Left", "LittleFinger");
             break;
         case 'selectLeftRing':
             document.getElementById('spnLeftHandFinger').innerText = "Left Ring Finger";
             document.getElementById('spnLeftHandFinger2').innerText = "Left Ring Finger";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Ring Finger</h3>Please place your finger on the scanner as shown in the image to the right.</h4>";
             document.getElementById('leftHandImage').src = "resources/LeftHandImageMapRingFinger.jpg";  
-            savelateralityCaptureSite("Left", "RingFinger");
+            //savelateralityCaptureSite("Left", "RingFinger");
             break;
         case 'selectLeftMiddle':
             document.getElementById('spnLeftHandFinger').innerText = "Left Middle Finger";
             document.getElementById('spnLeftHandFinger2').innerText = "Left Middle Finger";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Middle Finger</h3>Please place your finger on the scanner as shown in the image to the right.</h4>";
             document.getElementById('leftHandImage').src = "resources/LeftHandImageMapMiddleFinger.jpg";  
-            savelateralityCaptureSite("Left", "MiddleFinger");
+            //savelateralityCaptureSite("Left", "MiddleFinger");
             break;
         case 'selectLeftIndex': 
             if (selectedNewOrReturn != "return") {
@@ -205,7 +205,7 @@ function setLateralitySite(selectedElementID) {
                 document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Original finger used to enroll</h3>Please place your finger on the scanner as shown in the image to the right. If you do not remember your enrollment finger, please start with your left index finger.</h4>";
             }
             document.getElementById('leftHandImage').src = "resources/LeftHandImageMapIndexFinger.jpg";
-            savelateralityCaptureSite("Left", "IndexFinger");
+            //savelateralityCaptureSite("Left", "IndexFinger");
             break;
             //document.getElementById('spnLeftHandFinger').innerText = "Left Index Finger";
             //document.getElementById('spnLeftHandFinger2').innerText = "Left Index Finger";
@@ -218,28 +218,28 @@ function setLateralitySite(selectedElementID) {
             document.getElementById('spnLeftHandFinger2').innerText = "Left Thumb";
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Please scan your:<br /><h3>Left Thumb</h3>Please place your finger on the scanner as shown in the image to the right.</h4>";
             document.getElementById('leftHandImage').src = "resources/LeftHandImageMapThumb.jpg";  
-            savelateralityCaptureSite("Left", "Thumb");
+            //savelateralityCaptureSite("Left", "Thumb");
             break;            
         case 'selectRightLittle':
             document.getElementById('spnRightHandFinger').innerText = "Right Little Finger";
             document.getElementById('spnRightHandFinger2').innerText = "Right Little Finger";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Little Finger</h3>Please place your finger on the scanner as shown in the image to the left.</h4>";
             document.getElementById('rightHandImage').src = "resources/RightHandImageMapLittleFinger.jpg";  
-            savelateralityCaptureSite("Right", "LittleFinger");
+            //savelateralityCaptureSite("Right", "LittleFinger");
             break;
         case 'selectRightRing':
             document.getElementById('spnRightHandFinger').innerText = "Right Ring Finger";
             document.getElementById('spnRightHandFinger2').innerText = "Right Ring Finger";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Ring Finger</h3>Please place your finger on the scanner as shown in the image to the left.</h4>";
             document.getElementById('rightHandImage').src = "resources/RightHandImageMapRingFinger.jpg";  
-            savelateralityCaptureSite("Right", "RingFinger");
+            //savelateralityCaptureSite("Right", "RingFinger");
             break;
         case 'selectRightMiddle':
             document.getElementById('spnRightHandFinger').innerText = "Right Middle Finger";
             document.getElementById('spnRightHandFinger2').innerText = "Right Middle Finger";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Middle Finger</h3>Please place your finger on the scanner as shown in the image to the left.</h4>";
             document.getElementById('rightHandImage').src = "resources/RightHandImageMapMiddleFinger.jpg";  
-            savelateralityCaptureSite("Right", "MiddleFinger");
+            //savelateralityCaptureSite("Right", "MiddleFinger");
             break;
         case 'selectRightIndex':           
             document.getElementById('spnRightHandFinger').innerText = "Right Index Finger";
@@ -259,14 +259,14 @@ function setLateralitySite(selectedElementID) {
                     alert("postLateralityCaptureSite Error " + NoIDBridge.errorDescription);
                 }
             };           
-            savelateralityCaptureSite("Right", "IndexFinger");
+            //savelateralityCaptureSite("Right", "IndexFinger");
             break;
         case 'selectRightThumb':
             document.getElementById('spnRightHandFinger').innerText = "Right Thumb";
             document.getElementById('spnRightHandFinger2').innerText = "Right Thumb";
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Thumb</h3>Please place your finger on the scanner as shown in the image to the left.</h4>";
             document.getElementById('rightHandImage').src = "resources/RightHandImageMapThumb.jpg";  
-            savelateralityCaptureSite("Right", "Thumb");
+            //savelateralityCaptureSite("Right", "Thumb");
             break;
                     
     };
@@ -279,11 +279,34 @@ function showIdentity(localNoID) {
     $('#identityModal').modal({ 'backdrop': 'static' });
     globaLocalNoID = localNoID;
  };
-function pageRefresh() {    
+function pageRefresh() {
+    doesLeftBiometricExist = "";
+    doesRightBiometricExist = "";
+    globaLocalNoID = "";
     NoIDBridge.postResetForNewPatient();
     savelateralityCaptureSite("Left", "IndexFinger");
     location.reload();   
-};
+ };
+function logNoLeftHandFingerPrint() {
+    document.getElementById('spnRightHandFinger').innerText = "Right Index Finger";
+    document.getElementById('spnRightHandFinger2').innerText = "Right Index Finger";
+    document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Please scan your:<br /><h3>Right Index Finger</h3>Please place your finger on the scanner as shown in the image to the left.</h4>";
+    document.getElementById('rightHandImage').src = "resources/RightHandImageMapIndexFinger.jpg";
+    document.getElementById('leftHandScanNav').href = "#";
+    document.getElementById('leftHandScanNav').title = "Left Hand Fingerprint Scan No Longer Available. Click Restart Button if Required";
+    document.getElementById('consentNav').href = "#";
+    document.getElementById('consentNav').title = "Consent Page No Longer Available. Click Restart Button if Required";
+    document.getElementById('rightFingerprintBackButton').disabled = true;
+    if (doesLeftBiometricExist != "yes") {
+        NoIDBridge.postDoNotHaveValidBiometricButtonclick("Left");
+        doesLeftBiometricExist = "no";
+        if (NoIDBridge.errorDescription != '') {
+            //error, show user message
+            alert("postLateralityCaptureSite Error " + NoIDBridge.errorDescription);
+        }
+    };
+    savelateralityCaptureSite("Right", "IndexFinger");
+ };
 function logNoRightHandFingerPrint() {
     if (doesRightBiometricExist != "yes") {
         NoIDBridge.postDoNotHaveValidBiometricButtonclick("Right");
