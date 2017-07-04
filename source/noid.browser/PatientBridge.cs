@@ -266,7 +266,7 @@ namespace NoID.Browser
                 Patient pt = _patientFHIRProfile.CreateFHIRPatientProfile();
 
                 // TODO: REMOVE THIS LINE!  ONLY FOR TESTING
-                //FHIRUtilities.SaveJSONFile(pt, @"C:\JSONTest");
+                FHIRUtilities.SaveJSONFile(pt, @"C:\JSONTest");
                 fhirAddress = new Uri(AddNewPatientUri);
                 if (client.SendFHIRPatientProfile(fhirAddress, auth, pt) == false)
                 {

@@ -222,11 +222,19 @@ namespace NoID.Browser
 									// Good pair found.  Query web service for a match.
 									FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias
 											(SessionID, _minutiaCaptureController.BestTemplate1, Laterality, CaptureSite);
-									PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias);
+									PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias, 
+                                        deviceName, 
+                                        _minutiaCaptureController.BestTemplate1.OriginalDpi, 
+                                        _minutiaCaptureController.BestTemplate1.OriginalHeight, 
+                                        _minutiaCaptureController.BestTemplate1.OriginalWidth);
 
-									newFingerPrintMinutias = new FingerPrintMinutias
+                                    newFingerPrintMinutias = new FingerPrintMinutias
 										(SessionID, _minutiaCaptureController.BestTemplate2, Laterality, CaptureSite);
-									PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias);
+									PatientBridge.PatientFHIRProfile.AddFingerPrint(newFingerPrintMinutias, 
+                                        deviceName, 
+                                        _minutiaCaptureController.BestTemplate2.OriginalDpi, 
+                                        _minutiaCaptureController.BestTemplate2.OriginalHeight, 
+                                        _minutiaCaptureController.BestTemplate2.OriginalWidth);
 
 									Media media = PatientBridge.PatientFHIRProfile.FingerPrintFHIRMedia(newFingerPrintMinutias, deviceName, tmpCurrent.OriginalDpi, tmpCurrent.OriginalHeight, tmpCurrent.OriginalWidth);
 
