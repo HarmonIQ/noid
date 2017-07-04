@@ -42,8 +42,8 @@ namespace NoID.Browser
         private MinutiaCaptureController _minutiaCaptureController;
 
         //TODO: Use one object for both bridges.
-        private PatientBridge _patientBridge;
-        private ProviderBridge _providerBridge;
+        private static PatientBridge _patientBridge;
+        private static ProviderBridge _providerBridge;
 
         private const float PROBE_MATCH_THRESHOLD = 70;
         private readonly ChromiumWebBrowser browser;
@@ -152,7 +152,10 @@ namespace NoID.Browser
         {
 			browser.GetMainFrame().ExecuteJavaScriptAsync("showPleaseWait();");
 			//mark schroeder20170703
-			Laterality = _patientBridge.laterality;
+			if (PatientBridge.cannotCaptureLeftFingerprint == true)
+			{
+				Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
+			}		
 
 			if (currentCaptureInProcess == false)
 			{
@@ -566,21 +569,22 @@ namespace NoID.Browser
                 case "enrollment-kiosk":
                 case "patient-pc":
                 case "patient-kiosk":
-                    _patientBridge = new PatientBridge(organizationName, NoIDServiceName);
-                    fingerprintScanAttempts = 0;
+					//_patientBridge = new PatientBridge(organizationName, NoIDServiceName);
+					_patientBridge.Dispose();
+					fingerprintScanAttempts = 0;
                     attemptedScannedFingers = new List<string>();
                     hasLeftFingerprintScan = true;
                     hasRightFingerprintScan = true;
                     currentCaptureInProcess = false;
                     _firstMinutiaCaptureController = null;
                     _minutiaCaptureController = new MinutiaCaptureController(_minimumAcceptedMatchScore);
-                    browser.RegisterJsObject("NoIDBridge", _patientBridge);
+                    //browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     break;
                 case "provider":
                 case "provider-pc":
                 case "provider-kiosk":
                     _providerBridge = new ProviderBridge(organizationName, NoIDServiceName);
-                    browser.RegisterJsObject("NoIDBridge", _providerBridge);
+                    //browser.RegisterJsObject("NoIDBridge", _providerBridge);
                     break;
             }
         }

@@ -284,9 +284,47 @@ namespace NoID.FHIR.Profile
 
         ~PatientProfile() { }
 
-        #endregion
+		#endregion
 
-        void SetMetaData(Patient loadPatient)
+		public void Dispose()
+		{
+			_language = "";
+			_firstName = "";
+			_lastName = "";
+			_middleName = "";
+			_gender = ""; // F, M or O
+			_birthDate = "";
+			_streetAddress = "";
+			_streetAddress2 = "";
+			_city = "";
+			_state = "";
+			_country = "";
+			_postalCode = "";
+			_phoneHome = "";
+			_phoneCell = "";
+			_phoneWork = "";
+			_emailAddress = "";
+			_multipleBirth = ""; //Yes or No
+			_noidStatus = ""; //pending, approved, denied
+			_noidType = ""; //new, return, error, or critical
+			_checkinDateTime = "";
+			_noidHubName = "";
+			_noidHubPassword = "";
+			_biometricAlternateReason = "";
+			_biometricAlternateQuestion1 = "";
+			_biometricAlternateAnswer1 = "";
+			_biometricAlternateQuestion2 = "";
+			_biometricAlternateAnswer2 = "";
+			_localNoID = "";
+			_sessionID = "";
+			_remoteNoID = "";
+			_biometricsCaptured = "";
+			_clinicArea = "";
+			_devicePhysicalLocation = "";
+			_deviceStartTime = "";
+		}
+
+		void SetMetaData(Patient loadPatient)
         {
             if (loadPatient.Meta != null)
             {

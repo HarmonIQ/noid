@@ -14,6 +14,66 @@ window.oncontextmenu = function (event) {
 //        alert("postUnknownDOBExistingpatient message " + NoIDBridge.errorDescription);
 //    }
 //};
+function savePatient() {
+    //mark schroeder 20170621
+    var language = document.getElementById('selectedLanguage');
+    var languageSelected = language.options[language.selectedIndex].text;
+    var firstName = document.getElementById("FirstName").value;
+    var middleName = document.getElementById("MiddleName").value;
+    var lastName = document.getElementById("LastName").value;
+    var birthYear = document.getElementById('BirthYear');
+    var selectedBirthYear = birthYear.options[birthYear.selectedIndex].text;
+    var birthMonth = document.getElementById('BirthMonth');
+    var selectedBirthMonth = birthMonth.options[birthMonth.selectedIndex].text;
+    var birthDay = document.getElementById('BirthDay');
+    var selectedBirthDay = birthDay.options[birthDay.selectedIndex].text;
+    if (document.getElementById("GenderMale").checked) {
+        var gender = document.getElementById("GenderMale").value;
+    };
+    if (document.getElementById("GenderFemale").checked) {
+        var gender = document.getElementById("GenderFemale").value;
+    };
+    var streetAddress = document.getElementById("StreetAddress").value;
+    var streetAddress2 = document.getElementById("StreetAddress2").value;
+    var city = document.getElementById("City").value;
+    var state = document.getElementById("State").value;
+    var postalCode = document.getElementById("ZipCode").value;
+    var phoneCell = document.getElementById("PhoneNumber").value;
+    var emailAddress = document.getElementById("EmailAddress").value;
+    //may not need below for profile, but will need eventually
+    var newOrReturnPatient = document.getElementById('NewOrReturnPatient');
+    var selectedNewOrReturnPatient = newOrReturnPatient.options[newOrReturnPatient.selectedIndex].value;
+    var multipleBirthPregnancy = document.getElementById('FromMultipleBirthPregnancy');
+    var selectedMultipleBirthPregnancy = multipleBirthPregnancy.options[multipleBirthPregnancy.selectedIndex].value;
+    var genderChanged = document.getElementById('GenderChanged');
+    var selectedGenderChanged = genderChanged.options[genderChanged.selectedIndex].value;
+    var patientHub = document.getElementById('PatientHub');
+    var selectedPatientHub = patientHub.options[patientHub.selectedIndex].value;
+    var portalPassword = document.getElementById("PortalPassword").value;
+    /*string multipleBirthFlag,
+        string genderChangeFlag,
+        string password,
+        string patientdHub,
+        string leftHandNotAvailableFlag,
+        string rightHandNotAvailableFlag*/
+    var multipleBirthFlag = document.getElementById('FromMultipleBirthPregnancy');
+    var selectedMultipleBirthFlag = multipleBirthFlag.options[multipleBirthFlag.selectedIndex].value;
+    var genderChangeFlag = document.getElementById('GenderChanged');
+    var selectedGenderChangeFlag = genderChangeFlag.options[genderChangeFlag.selectedIndex].value;
+    var password = document.getElementById('PortalPassword').value;
+    var patientdHub = document.getElementById('PatientHub');
+    var selectedPatientdHub = patientdHub.options[patientdHub.selectedIndex].value;
+    
+    NoIDBridge.postDemographics(languageSelected, firstName, middleName, lastName, gender, selectedBirthYear, selectedBirthMonth, selectedBirthDay, streetAddress, streetAddress2, city, state, postalCode, emailAddress, phoneCell, selectedMultipleBirthFlag, selectedGenderChangeFlag, password, selectedPatientdHub, doesLeftBiometricExist, doesRightBiometricExist);
+    if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
+        //no error continue with new page
+        alert("postDemographics Error " + NoIDBridge.errorDescription);
+    }
+    setTimeout(function () {
+        pageRefresh();
+    }, 10000);
+};
+
 function saveUnknownDOBExistingpatient() {
     document.getElementById('btnUnknownDOBExistingPatient').style.display = 'none';
     NoIDBridge.postUnknownDOBExistingpatient(globaLocalNoID);
@@ -305,7 +365,7 @@ function logNoLeftHandFingerPrint() {
             alert("postLateralityCaptureSite Error " + NoIDBridge.errorDescription);
         }
     };
-    savelateralityCaptureSite("Right", "IndexFinger");
+    //savelateralityCaptureSite("Right", "IndexFinger");
  };
 function logNoRightHandFingerPrint() {
     if (doesRightBiometricExist != "yes") {
@@ -372,6 +432,7 @@ function showComplete(whichStep) {
             document.getElementById('scanStatusMessageLeft').innerHTML = "<h4>Success!<br />Please click next to scan a finger<br />from your right hand</h4>";
             document.getElementById('leftFingerNextButton').disabled = false;
             document.getElementById('rightFingerprintBackButton').disabled = true;
+            document.getElementById('clickNoLeftHandFingerPrint').disabled = true;
             doesLeftBiometricExist = "yes";
             break;
         case 'Right':
@@ -379,6 +440,7 @@ function showComplete(whichStep) {
             document.getElementById('scanStatusMessageRight').innerHTML = "<h4>Success!<br />Please click next.</h4>";
             document.getElementById('rightFingerNextButton').disabled = false;
             document.getElementById('demographics1').disabled = true;
+            document.getElementById('clickNoRightHandFingerPrint').disabled = true;
             doesRightBiometricExist = "yes";
             break;
     };
