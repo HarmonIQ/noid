@@ -16,7 +16,7 @@ namespace NoID.Match.Database.Client
     
     public class MinutiaCaptureController
     {
-        private const uint CAPTURE_ACCEPT_THRESHOLD = 75;
+        private uint CAPTURE_ACCEPT_THRESHOLD = 75;
         private List<Template> _capturedFingerPrintMinutias = new List<Template>();
         private static AfisEngine _afis = new AfisEngine();
         private Template _bestTemplate1;
@@ -26,8 +26,12 @@ namespace NoID.Match.Database.Client
         private int _otherBestFingerprintItem;
         public bool MatchFound = false;
 
-        public MinutiaCaptureController()
+        public MinutiaCaptureController(uint minAcceptedMatchScore)
         {
+            if (minAcceptedMatchScore != 0)
+            {
+                CAPTURE_ACCEPT_THRESHOLD = minAcceptedMatchScore;
+            }
             _afis.Threshold = CAPTURE_ACCEPT_THRESHOLD;
         }
 

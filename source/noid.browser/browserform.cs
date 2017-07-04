@@ -30,9 +30,16 @@ namespace NoID.Browser
 
     public partial class BrowserForm : Form
     {
+        private readonly string MinimumAcceptedMatchScore = ConfigurationManager.AppSettings["MinimumAcceptedMatchScore"].ToString();
+        private readonly uint _minimumAcceptedMatchScore;
+        private readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
+        private readonly string organizationName = ConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
+        private readonly string approle = ConfigurationManager.AppSettings["approle"].ToString();
+        
         private static AfisEngine Afis = new AfisEngine();
         private MinutiaCaptureController _firstMinutiaCaptureController;
-        private static MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
+        private MinutiaCaptureController _minutiaCaptureController;
 
         //TODO: Use one object for both bridges.
         private PatientBridge _patientBridge;
@@ -44,10 +51,7 @@ namespace NoID.Browser
         //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
         private DigitalPersona biometricDevice;
 
-        private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
-        private static readonly string organizationName = ConfigurationManager.AppSettings["OrganizationName"].ToString();
-        private static readonly string NoIDServiceName = ConfigurationManager.AppSettings["NoIDServiceName"].ToString();
-        private static readonly string approle = ConfigurationManager.AppSettings["approle"].ToString();
+        
 
         //private Uri healthcareNodeFHIRAddress;
         private string healthcareNodeWebAddress;
@@ -83,6 +87,11 @@ namespace NoID.Browser
                 case "enrollment-kiosk":
                 case "patient-pc":
                 case "patient-kiosk":
+                    if (uint.TryParse(MinimumAcceptedMatchScore, out _minimumAcceptedMatchScore) == false)
+                    {
+                        _minimumAcceptedMatchScore = 75;
+                    }
+                    _minutiaCaptureController = new MinutiaCaptureController(_minimumAcceptedMatchScore);
                     endPath = endPath = healthcareNodeWebAddress + "/enrollment.html"; //TODO: rename to patient.html
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
                     _patientBridge = new PatientBridge(organizationName, NoIDServiceName);
@@ -272,7 +281,7 @@ namespace NoID.Browser
                                             CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
                                             //Laterality = _patientBridge.laterality;
                                             _firstMinutiaCaptureController = _minutiaCaptureController;
-                                            _minutiaCaptureController = new MinutiaCaptureController();
+                                            _minutiaCaptureController = new MinutiaCaptureController(_minimumAcceptedMatchScore);
                                             PatientBridge.hasValidLeftFingerprint = true;
 										}
 										else if (Laterality == FHIRUtilities.LateralitySnoMedCode.Right)
@@ -557,7 +566,7 @@ namespace NoID.Browser
                     hasRightFingerprintScan = true;
                     currentCaptureInProcess = false;
                     _firstMinutiaCaptureController = null;
-                    _minutiaCaptureController = new MinutiaCaptureController();
+                    _minutiaCaptureController = new MinutiaCaptureController(_minimumAcceptedMatchScore);
                     browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     break;
                 case "provider":

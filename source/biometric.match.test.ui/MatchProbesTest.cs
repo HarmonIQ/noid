@@ -22,6 +22,8 @@ namespace NoID.Match.Database.Tests
 
     public class MatchProbesTest
     {
+        private static readonly uint MinimumAcceptedMatchScore = 70;
+
         public event EventHandler FingerCaptured = delegate { };
         public event EventHandler GoodPairFound = delegate { };
         public event EventHandler NewBestMatchFound = delegate { };
@@ -34,7 +36,7 @@ namespace NoID.Match.Database.Tests
         public string ScannerStatus = "";
 
         private static AfisEngine Afis = new AfisEngine();
-        private MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController();
+        private MinutiaCaptureController _minutiaCaptureController = new MinutiaCaptureController(MinimumAcceptedMatchScore);
         private DigitalPersona biometricDevice;
         private Exception _exception;
         private FingerPrintMatchDatabase dbMinutia;
@@ -46,11 +48,11 @@ namespace NoID.Match.Database.Tests
         private Person currentCapture;
         public int Quality;
         public float HighScore = 0;
-        
+        private readonly uint _matchThreshold = 30;
 
         public MatchProbesTest(string databaseDirectory, string backupDatabaseDirectory, string lateralityCode, string captureSiteCode)
         {
-            dbMinutia = new FingerPrintMatchDatabase(databaseDirectory, backupDatabaseDirectory);
+            dbMinutia = new FingerPrintMatchDatabase(databaseDirectory, backupDatabaseDirectory, _matchThreshold);
             try
             {
                 dbMinutia.LateralityCode = (FHIRUtilities.LateralitySnoMedCode)Int32.Parse(lateralityCode);

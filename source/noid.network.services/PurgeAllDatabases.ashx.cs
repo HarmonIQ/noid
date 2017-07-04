@@ -16,6 +16,8 @@ namespace NoID.Network.Services
 
     public class PurgeAllDatabases : IHttpHandler
     {
+        private readonly string MinimumAcceptedMatchScore = WebConfigurationManager.AppSettings["MinimumAcceptedMatchScore"];
+        private uint _minimumAcceptedMatchScore;
         private static readonly string NoIDMongoDBAddress = WebConfigurationManager.AppSettings["NoIDMongoDBAddress"].ToString();
         private static readonly string SparkMongoDBAddress = WebConfigurationManager.AppSettings["SparkMongoDBAddress"].ToString();
         private static readonly string DestroyKey = WebConfigurationManager.AppSettings["DestroyKey"].ToString();
@@ -29,6 +31,11 @@ namespace NoID.Network.Services
             string destroyKey = "";
             try
             {
+                if (uint.TryParse(MinimumAcceptedMatchScore, out _minimumAcceptedMatchScore) == false)
+                {
+                    _minimumAcceptedMatchScore = 30;
+                }
+
                 foreach (String key in context.Request.QueryString.AllKeys)
                 {
                     if (key == "destroykey")
@@ -42,7 +49,7 @@ namespace NoID.Network.Services
                     MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
                     if (dbwrapper.DeleteMongoDBs() == true)
                     {
-                        FingerPrintMatchDatabase dbMinutia = new FingerPrintMatchDatabase(DatabaseLocation, BackupLocation);
+                        FingerPrintMatchDatabase dbMinutia = new FingerPrintMatchDatabase(DatabaseLocation, BackupLocation, _minimumAcceptedMatchScore);
                         if (dbMinutia.DeleteMatchDatabase())
                         {
                             purgeResult = "Successful.";

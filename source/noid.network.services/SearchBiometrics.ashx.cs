@@ -19,6 +19,8 @@ namespace NoID.Network.Services
     /// </summary>
     public class SearchBiometrics : IHttpHandler
     {
+        private readonly string MinimumAcceptedMatchScore = WebConfigurationManager.AppSettings["MinimumAcceptedMatchScore"];
+        private uint _minimumAcceptedMatchScore;
         private Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
         private string _databaseDirectory = WebConfigurationManager.AppSettings["DatabaseLocation"];
         private string _backupDatabaseDirectory = WebConfigurationManager.AppSettings["BackupLocation"];
@@ -33,12 +35,16 @@ namespace NoID.Network.Services
         {
             try
             {
+                if (uint.TryParse(MinimumAcceptedMatchScore, out _minimumAcceptedMatchScore) == false)
+                {
+                    _minimumAcceptedMatchScore = 30;
+                }
                 Resource newResource = FHIRUtilities.StreamToFHIR(new StreamReader(context.Request.InputStream));
                 _biometics = (Media)newResource;
                 // TODO send to biometric match engine. If found, add patient reference to FHIR message.
                 // convert FHIR fingerprint message (_biometics) to AFIS template class
                 Template probe = ConvertFHIR.FHIRToTemplate(_biometics);
-                dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory);
+                dbMinutia = new FingerPrintMatchDatabase(_databaseDirectory, _backupDatabaseDirectory, _minimumAcceptedMatchScore);
                 try
                 {
                     dbMinutia.LateralityCode = (FHIRUtilities.LateralitySnoMedCode)probe.NoID.LateralitySnoMedCode;
