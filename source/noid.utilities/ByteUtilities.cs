@@ -33,5 +33,13 @@ namespace NoID.Utilities
         {
             return Encoding.UTF8.GetString(input);
         }
+
+        public static void ResetStreamReaderToBegining(StreamReader inputStreamReader, out Stream outputStream)
+        {
+            //resets the StreamReader to the begining
+            inputStreamReader.BaseStream.Position = 0;
+            inputStreamReader.DiscardBufferedData();
+            outputStream = inputStreamReader.BaseStream;
+        }
     }
 }
