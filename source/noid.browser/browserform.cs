@@ -72,8 +72,6 @@ namespace NoID.Browser
             healthcareNodeWebAddress = StringUtilities.RemoveTrailingBackSlash(ConfigurationManager.AppSettings["HealthcareNodeWeb"].ToString());
             healthcareNodeChainVerifyAddress = StringUtilities.RemoveTrailingBackSlash(ConfigurationManager.AppSettings["HealthcareNodeChainVerifyAddress"].ToString());
 
-            Afis.Threshold = PROBE_MATCH_THRESHOLD;
-
             Text = "NoID Browser";
             WindowState = FormWindowState.Maximized;
             
@@ -91,6 +89,7 @@ namespace NoID.Browser
                     {
                         _minimumAcceptedMatchScore = 75;
                     }
+                    Afis.Threshold = _minimumAcceptedMatchScore;
                     _minutiaCaptureController = new MinutiaCaptureController(_minimumAcceptedMatchScore);
                     endPath = endPath = healthcareNodeWebAddress + "/enrollment.html"; //TODO: rename to patient.html
                     browser = new ChromiumWebBrowser(endPath) { Dock = DockStyle.Fill };
@@ -261,25 +260,25 @@ namespace NoID.Browser
 									{
 										// Match found, inform JavaScript that this is an returning patient for Identity.
 										PatientBridge.PatientFHIRProfile.LocalNoID = dataTransport.ResponseText;  //save the localNoID
-										PatientBridge.PatientFHIRProfile.NoIDStatus = "ReturnPending";										
+										PatientBridge.PatientFHIRProfile.NoIDStatus = "Pending";										
 										browser.GetMainFrame().ExecuteJavaScriptAsync("showIdentity('" + PatientBridge.PatientFHIRProfile.LocalNoID + "');");
 									}
 									else
 									{
-                                        if (MatchLeftAndRight() == true)
+                                        if (PatientBridge.hasValidLeftFingerprint == true)
                                         {
-                                            MessageBox.Show("Both right and left capture sites match.  Error, we need to start over.");
-                                            return;
+                                            if (MatchLeftAndRight() == true)
+                                            {
+                                                MessageBox.Show("Both right and left capture sites match.  Error, we need to start over.");
+                                                return;
+                                            }
                                         }
                                         // Match not found, inform JavaScript the capture pair is complete and the patient can move to the next step.
                                         browser.GetMainFrame().ExecuteJavaScriptAsync("showComplete('" + Laterality.ToString() + "');");
                                         if (Laterality == FHIRUtilities.LateralitySnoMedCode.Left)
 										{
-											//mark schroeder 201707014 commenting out hardcode switch to right. Gui should be handling
-											//mark schroeder 20170703 gui does not seem to be handling here or I am setting in wrong place
 											Laterality = FHIRUtilities.LateralitySnoMedCode.Right;
                                             CaptureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
-                                            //Laterality = _patientBridge.laterality;
                                             _firstMinutiaCaptureController = _minutiaCaptureController;
                                             _minutiaCaptureController = new MinutiaCaptureController(_minimumAcceptedMatchScore);
                                             PatientBridge.hasValidLeftFingerprint = true;

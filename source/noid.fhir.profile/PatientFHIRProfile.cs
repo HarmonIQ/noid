@@ -26,7 +26,7 @@ namespace NoID.FHIR.Profile
         private SourceAFIS.Templates.NoID _noID;
         private readonly string _organizationName;
         private Uri _fhirAddress;
-        private List<FingerPrintMinutias> _fingerPrintMinutiasList = new List<FingerPrintMinutias>();
+        private static List<FingerPrintMinutias> _fingerPrintMinutiasList = new List<FingerPrintMinutias>();
         private Exception _exception;
 
         private string _language = "";
@@ -63,8 +63,9 @@ namespace NoID.FHIR.Profile
         private string _clinicArea = "";
         private string _devicePhysicalLocation = "";
         private string _deviceStartTime = "";
+        private string _domainName = "mynoid.com";
 
-#region Constructors
+        #region Constructors
 
         [JsonConstructor]
         public PatientProfile()
@@ -353,7 +354,7 @@ namespace NoID.FHIR.Profile
             _noID = new SourceAFIS.Templates.NoID();
             _noID.SessionID = StringUtilities.SHA256(Guid.NewGuid().ToString());
             //TODO: Add domain name to session string.
-            _sessionID = "noid://session/" + _noID.SessionID;
+            _sessionID = "noid://" + DomainName + "/" + _noID.SessionID;
         }
 
         [JsonIgnore]
@@ -367,6 +368,12 @@ namespace NoID.FHIR.Profile
         public string OrganizationName
         {
             get { return _organizationName; }
+        }
+
+        [JsonProperty("DomainName")]
+        public string DomainName
+        {
+            get { return _domainName; }
         }
 
         [JsonProperty("LocalNoID")]
@@ -620,7 +627,7 @@ namespace NoID.FHIR.Profile
             {
                 foreach (var finger in _fingerPrintMinutiasList)
                 {
-                    string fingerDesc = FHIRUtilities.LateralityToString(finger.LateralitySnoMedCode) + " " + FHIRUtilities.CaptureSiteToString(finger.CaptureSiteSnoMedCode);
+                    string fingerDesc = FixFingerDescriptions(FHIRUtilities.LateralityToString(finger.LateralitySnoMedCode) + " " + FHIRUtilities.CaptureSiteToString(finger.CaptureSiteSnoMedCode));
                     if (biometrics.Contains(fingerDesc) == false)
                     {
                         if (biometrics.Length > 0)
@@ -635,6 +642,11 @@ namespace NoID.FHIR.Profile
                 }
             }
             return biometrics;
+        }
+
+        string FixFingerDescriptions(string inputFinger)
+        {
+            return FHIRUtilities.FixEnumFingerDescriptions(inputFinger);
         }
 
         [JsonProperty("BiometricsCaptured")]

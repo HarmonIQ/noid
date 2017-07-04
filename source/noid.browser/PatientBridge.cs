@@ -3,12 +3,13 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 using System;
+using System.Configuration;
+using System.Collections.Generic;
 using Hl7.Fhir.Model;
 using NoID.FHIR.Profile;
 using NoID.Security;
 using NoID.Utilities;
 using NoID.Network.Transport;
-using System.Configuration;
 
 namespace NoID.Browser
 {
@@ -203,6 +204,8 @@ namespace NoID.Browser
         }
 
         //  C# -> Javascript function is NoIDBridge.postDemographics( <params> )
+        // Maybe rename to postEnrollment
+        // TODO: pass multi birth flag, password, hub selected, gender Q&A to this funtion.
         public bool postDemographics
             (
                 string language,
@@ -404,6 +407,7 @@ namespace NoID.Browser
             _laterality = FHIRUtilities.LateralitySnoMedCode.Left;
             _patientFHIRProfile = new PatientFHIRProfile(organizationName, "New");
             _patientFHIRProfile.FHIRAddress = null;
+            _patientFHIRProfile.FingerPrintMinutiasList = new List<FingerPrintMinutias>();
             TriggerResetSession("PatientBridge::ResetVariables");
         }
 

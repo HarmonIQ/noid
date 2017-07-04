@@ -42,6 +42,13 @@ namespace NoID.Utilities
             Unknown = 0
         }
 
+        public static string FixEnumFingerDescriptions(string inputFinger)
+        {
+            string fixString = "";
+            fixString = inputFinger.Replace("Finger", " Finger");
+            return fixString;
+        }
+
         public static Resource StreamToFHIR(StreamReader streamReader, bool strictFHIR = true)
         {
             try
