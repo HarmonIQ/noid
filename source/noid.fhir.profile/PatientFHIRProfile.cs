@@ -160,16 +160,20 @@ namespace NoID.FHIR.Profile
 
                         Stream stream = new MemoryStream(byteMinutias);
                         Media media = (Media)FHIRUtilities.StreamToFHIR(new StreamReader(stream));
-                        
+
                         // Get captureSite and laterality from media
                         string captureSiteDescription = media.Extension[1].Value.Extension[1].Value.ToString();
                         string lateralityCode = media.Extension[1].Value.Extension[2].Value.ToString();
+                        string DeviceName = media.Extension[2].Value.Extension[1].Value.ToString();
+                        string OriginalDpi = media.Extension[2].Value.Extension[2].Value.ToString();
+                        string OriginalHeight = media.Extension[2].Value.Extension[3].Value.ToString();
+                        string OriginalWidth = media.Extension[2].Value.Extension[4].Value.ToString();
 
                         Template addMinutia = ConvertFHIR.FHIRToTemplate(media);
                         FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(
                             SessionID, addMinutia, FHIRUtilities.SnoMedCodeToLaterality(lateralityCode), FHIRUtilities.StringToCaptureSite(captureSiteDescription));
 
-                        AddFingerPrint(newFingerPrintMinutias);
+                        AddFingerPrint(newFingerPrintMinutias, DeviceName, Int32.Parse(OriginalDpi), Int32.Parse(OriginalHeight), Int32.Parse(OriginalWidth));
                     }
                     _biometricsCaptured = GetBiometricsCaptured(); 
                 }
@@ -258,12 +262,16 @@ namespace NoID.FHIR.Profile
                         // Get captureSite and laterality from media
                         string captureSiteDescription = media.Extension[1].Value.Extension[1].Value.ToString();
                         string lateralityCode = media.Extension[1].Value.Extension[2].Value.ToString();
+                        string DeviceName = media.Extension[2].Value.Extension[1].Value.ToString();
+                        string OriginalDpi = media.Extension[2].Value.Extension[2].Value.ToString();
+                        string OriginalHeight = media.Extension[2].Value.Extension[3].Value.ToString();
+                        string OriginalWidth = media.Extension[2].Value.Extension[4].Value.ToString();
 
                         Template addMinutia = ConvertFHIR.FHIRToTemplate(media);
                         FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(
                             SessionID, addMinutia, FHIRUtilities.SnoMedCodeToLaterality(lateralityCode), FHIRUtilities.StringToCaptureSite(captureSiteDescription));
 
-                        AddFingerPrint(newFingerPrintMinutias);
+                        AddFingerPrint(newFingerPrintMinutias, DeviceName, Int32.Parse(OriginalDpi), Int32.Parse(OriginalHeight), Int32.Parse(OriginalWidth));
                     }
                     _biometricsCaptured = GetBiometricsCaptured();
                 }
@@ -349,6 +357,7 @@ namespace NoID.FHIR.Profile
                 }
             }
         }
+
         public void NewSession()
         {
             _noID = new SourceAFIS.Templates.NoID();
@@ -680,11 +689,15 @@ namespace NoID.FHIR.Profile
             set { _exception = value; }
         }
 
-        public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia)
+        public bool AddFingerPrint(FingerPrintMinutias patientFingerprintMinutia, string deviceName, int originalDpi, int originalHeight, int originalWidth)
         {
             bool result = false;
             try
             {
+                patientFingerprintMinutia.DeviceName = deviceName;
+                patientFingerprintMinutia.OriginalDpi = originalDpi;
+                patientFingerprintMinutia.OriginalHeight = originalHeight;
+                patientFingerprintMinutia.OriginalWidth = originalWidth;
                 FHIRUtilities.LateralitySnoMedCode lateralitySnoMedCode = patientFingerprintMinutia.LateralitySnoMedCode;
                 FHIRUtilities.CaptureSiteSnoMedCode captureSiteSnoMedCode = patientFingerprintMinutia.CaptureSiteSnoMedCode;
                 if (lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Left || lateralitySnoMedCode == FHIRUtilities.LateralitySnoMedCode.Right)
@@ -721,11 +734,6 @@ namespace NoID.FHIR.Profile
 
     public class PatientFHIRProfile : PatientProfile
     {
-        public string DeviceName;
-        public int OriginalDpi;
-        public int OriginalHeight;
-        public int OriginalWidth;
-
         public PatientFHIRProfile(string organizationName, string noidStatus) : base(organizationName, noidStatus)
         {
         }
@@ -750,7 +758,7 @@ namespace NoID.FHIR.Profile
         {
             get { return BaseException; }
         }
-
+        /*
         public string DomainName
         {
             get
@@ -772,7 +780,7 @@ namespace NoID.FHIR.Profile
                 }
             }
         }
-
+        */
         public string ServerName
         {
             get
@@ -800,7 +808,16 @@ namespace NoID.FHIR.Profile
 
                 meta.Extension.Add(FHIRUtilities.MessageTypeExtension(NoIDStatus, NoIDType, CheckinDateTime));
                 meta.Extension.Add(FHIRUtilities.ClinicLocationExtension(ClinicArea, DevicePhysicalLocation));
-                meta.Extension.Add(FHIRUtilities.CaptureSummaryExtension(BiometricsCaptured, DeviceName, OriginalDpi, OriginalHeight, OriginalWidth));
+                if (FingerPrintMinutiasList.Count > 0)
+                {
+                    meta.Extension.Add(FHIRUtilities.CaptureSummaryExtension(BiometricsCaptured, 
+                        FingerPrintMinutiasList[0].DeviceName,
+                        FingerPrintMinutiasList[0].OriginalDpi,
+                        FingerPrintMinutiasList[0].OriginalHeight,
+                        FingerPrintMinutiasList[0].OriginalWidth)
+                        );
+                }
+                
                 pt.Meta = meta;
 
                 Identifier idSession = new Identifier();
@@ -898,7 +915,7 @@ namespace NoID.FHIR.Profile
                 foreach (FingerPrintMinutias minutias in FingerPrintMinutiasList)
                 {
                     Attachment attach = new Attachment();
-                    Media fingerprintMedia = FingerPrintFHIRMedia(minutias, DeviceName, OriginalDpi, OriginalHeight, OriginalWidth);
+                    Media fingerprintMedia = FingerPrintFHIRMedia(minutias, minutias.DeviceName, minutias.OriginalDpi, minutias.OriginalHeight, minutias.OriginalWidth);
                     byte[] mediaBytes = FhirSerializer.SerializeToJsonBytes(fingerprintMedia, summary: SummaryType.Data);
                     attach.Data = mediaBytes;
                     pt.Photo.Add(attach);
@@ -925,11 +942,7 @@ namespace NoID.FHIR.Profile
         public Media FingerPrintFHIRMedia(FingerPrintMinutias fingerPrints, string deviceName, int originalDPI, int originalHeight, int originalWidth)
         {
             Media FingerPrintMedia = null;
-            DeviceName = deviceName;
-            OriginalDpi = originalDPI;
-            OriginalHeight = originalHeight;
-            OriginalWidth = originalWidth;
-
+            
             try
             {
                 if ((fingerPrints != null))
@@ -937,7 +950,7 @@ namespace NoID.FHIR.Profile
                     FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
                     FingerPrintMedia.AddExtension("Healthcare Node", FHIRUtilities.OrganizationExtension(OrganizationName, DomainName, ServerName));
                     FingerPrintMedia.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode, deviceName, originalDPI, originalHeight, originalWidth));
-
+                    
                     FingerPrintMedia.Identifier = new List<Identifier>();
 
                     Identifier idSession;
