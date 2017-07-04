@@ -81,6 +81,7 @@ namespace NoID.Network.Services
 
                 //TODO: send to selected match hub and get the remote hub ID.
                 // Hub ID in the same format: noid://domain/LocalID
+                bool biometricsSaved = false;
                 if (_patient.Photo.Count > 0)
                 {
                     dbMinutia = new FingerPrintMatchDatabase(DatabaseDirectory, BackupDatabaseDirectory, _minimumAcceptedMatchScore);
@@ -104,16 +105,31 @@ namespace NoID.Network.Services
                         }
                     }
                     dbMinutia.Dispose();
+                    biometricsSaved = true;
+                }
+                else
+                {
+                    //TODO: 
+                    //check for alternate biometrics.
+                    //if no alternate and no minutias, throw a critical error.  enrollment failed.
+                }
+                if (biometricsSaved)
+                {
                     MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
                     dbwrapper.AddPendingPatient(seq);
-                    //TODO: end atomic transaction.  
                 }
+                else
+                {
+                    _responseText = "Critical Error! No biometrics or alternates provided. Can not complete enrollment.";
+                    LogUtilities.LogEvent(_responseText);
+                }
+                //TODO: end atomic transaction.
                 _responseText = "Successful.";
-                LogUtilities.LogEvent("Ending AddNewPatient.ashx");
+                //LogUtilities.LogEvent("Ending AddNewPatient.ashx");
             }
             catch (Exception ex)
             {
-                _responseText = "Error in FHIRMessageRouter::FHIRMessageRouter: " + ex.Message;
+                _responseText = "Error in AddNewPatient::ProcessRequest: " + ex.Message;
                 LogUtilities.LogEvent(_responseText);
             }
         }
