@@ -28,6 +28,8 @@ namespace NoID.Browser
         private static readonly string AddNewPatientUri = ConfigurationManager.AppSettings["AddNewPatientUri"].ToString();
         private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
         private static readonly string IdentityChallengeUri = ConfigurationManager.AppSettings["IdentityChallengeUri"].ToString();
+        private static readonly string SecretQuestion1 = ConfigurationManager.AppSettings["SecretQuestion1"].ToString();
+        private static readonly string SecretQuestion2 = ConfigurationManager.AppSettings["SecretQuestion2"].ToString();
 
         FHIRUtilities.CaptureSiteSnoMedCode _captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
         FHIRUtilities.LateralitySnoMedCode _laterality = FHIRUtilities.LateralitySnoMedCode.Left;
@@ -72,7 +74,7 @@ namespace NoID.Browser
 			_patientFHIRProfile.Dispose();
 		}
 
-		private void TriggerResetSession(string trigger)
+        private void TriggerResetSession(string trigger)
         {
             if (ResetSession != null)
                 ResetSession(this, trigger);
@@ -249,11 +251,10 @@ namespace NoID.Browser
                 string postalCode,
                 string emailAddress,
                 string phoneCell,
-				//mark schroeder 20170704 added below but not used
 				string multipleBirthFlag,
 				string genderChangeFlag,
 				string password,
-				string patientdHub,
+				string patientHub, 
 				//mark schroeder 20170704 added below from front end. May or may not be useful later. They are global JS vars
 				string doesLeftBiometricExist,
 				string doesRightBiometricExist
@@ -288,6 +289,16 @@ namespace NoID.Browser
                 _patientFHIRProfile.NoIDType = "New";
                 _patientFHIRProfile.NoIDStatus = "Pending";
                 _patientFHIRProfile.CheckinDateTime = FHIRUtilities.DateTimeToFHIRString(DateTime.UtcNow);
+                _patientFHIRProfile.NoIDHubPassword = password;
+                _patientFHIRProfile.NoIDHubName = patientHub;
+                _patientFHIRProfile.MultipleBirth = multipleBirthFlag;
+                _patientFHIRProfile.GenderChangeFlag = genderChangeFlag;
+                _patientFHIRProfile.BiometricExceptionMissingReason = exceptionMissingReason;
+                _patientFHIRProfile.SecretQuestion1 = SecretQuestion1; //TODO: Implement non-fixed questions and get value from HTML
+                _patientFHIRProfile.SecretAnswer1 = secretAnswer1;
+                _patientFHIRProfile.SecretQuestion2 = SecretQuestion2; //TODO: Implement non-fixed questions and get value from HTML
+                _patientFHIRProfile.SecretAnswer2 = secretAnswer2;
+
                 // Send FHIR message
                 Authentication auth;
                 if (Utilities.Auth == null)

@@ -43,6 +43,13 @@ namespace NoID.Network.Services
         {
             try
             {
+                bool biometricsSaved = false;
+                string missingReason = "";
+                string question1 = "";
+                string question2 = "";
+                string answer1 = "";
+                string answer2 = "";
+
                 if (uint.TryParse(MinimumAcceptedMatchScore, out _minimumAcceptedMatchScore) == false)
                 {
                     _minimumAcceptedMatchScore = 30;
@@ -52,20 +59,15 @@ namespace NoID.Network.Services
                 StreamReader httpStreamReader = new StreamReader(httpStream);
                 Resource newResource = FHIRUtilities.StreamToFHIR(httpStreamReader);
 
-                /*
-                //reset the stream to the begining
-                httpStream.Position = 0;
-                httpStreamReader.DiscardBufferedData();
-                string jsonFHIRMessage = FHIRUtilities.StreamToFHIRString(httpStreamReader);
-                */
-
                 _patient = (Patient)newResource;
                 //TODO: make sure this FHIR message has a new pending status.
                 
                 //TODO: make this an atomic transaction.  
                 //          delete the FHIR message from Spark if there is an error in the minutia.
+
                 Patient ptSaved = (Patient)SendPatientToSparkServer();
                 //LogUtilities.LogEvent("AddNewPatient.ashx Saved FHIR in spark.");
+
                 if (ptSaved == null)
                 {
                     _responseText = "Error sending Patient FHIR message to the Spark FHIR endpoint. " + ExceptionString;
@@ -74,14 +76,14 @@ namespace NoID.Network.Services
 
                 SourceAFIS.Templates.NoID noID = new SourceAFIS.Templates.NoID();
                 noID.SessionID = ptSaved.Id.ToString();
-                //TODO: Add Argon2d hash here
+                //TODO: Add Argon2d hash here:
                 noID.LocalNoID = "noid://" + DomainName + "/" + StringUtilities.SHA256(DomainName + noID.SessionID + NodeSalt);
                 SessionQueue seq = Utilities.PatientToSessionQueue(_patient, ptSaved.Id.ToString(), noID.LocalNoID, "new", "pending");
                 seq.SubmitDate = DateTime.UtcNow;
 
                 //TODO: send to selected match hub and get the remote hub ID.
                 // Hub ID in the same format: noid://domain/LocalID
-                bool biometricsSaved = false;
+                
                 if (_patient.Photo.Count > 0)
                 {
                     dbMinutia = new FingerPrintMatchDatabase(DatabaseDirectory, BackupDatabaseDirectory, _minimumAcceptedMatchScore);
@@ -109,9 +111,60 @@ namespace NoID.Network.Services
                 }
                 else
                 {
-                    //TODO: 
-                    //check for alternate biometrics.
-                    //if no alternate and no minutias, throw a critical error.  enrollment failed.
+                    // check alternate pathway Q&A
+                    foreach (var id in _patient.Identifier)
+                    {
+                        if (id.System.ToLower().Contains("biometric") == true)
+                        {
+                            Extension extExceptionQA = id.Extension[0];
+                            foreach(var ext in extExceptionQA.Extension)
+                            {
+                                if (ext.Url.ToLower().Contains("reason") == true)
+                                {
+                                    missingReason = ext.Value.ToString();
+                                }
+                                else if(ext.Url.ToLower().Contains("question 1") == true)
+                                {
+                                    question1 = ext.Value.ToString();
+                                }
+                                else if (ext.Url.ToLower().Contains("answer 1") == true)
+                                {
+                                    answer1 = ext.Value.ToString();
+                                }
+                                else if (ext.Url.ToLower().Contains("question 2") == true)
+                                {
+                                    question2 = ext.Value.ToString();
+                                }
+                                else if (ext.Url.ToLower().Contains("answer 2") == true)
+                                {
+                                    answer2 = ext.Value.ToString();
+                                }
+                            }
+                            if (
+                                missingReason.Length > 0 && 
+                                question1.Length > 0 && answer1.Length > 0 &&
+                                question2.Length > 0 && answer2.Length > 0
+                                )
+                            {
+                                if (missingReason != "I am permanently physically unable to provide fingerprints")
+                                {
+                                    if (missingReason == "I am temporarily physically unable to provide fingerprints")
+                                    {
+                                        seq.PatientStatus = "hold**";
+                                    }
+                                    else if (missingReason == "I attempted the fingerprint scan process, but I could not get a successful scan on either hand")
+                                    {
+                                        seq.PatientStatus = "hold";
+                                    }                               
+                                }
+                                else
+                                {
+                                    seq.PatientStatus = "new***";
+                                }
+                                biometricsSaved = true;
+                            }
+                        }
+                    }
                 }
                 if (biometricsSaved)
                 {

@@ -449,6 +449,39 @@ namespace NoID.Utilities
             return ext;
         }
 
+        public static Extension BiometricException
+        (
+            string biometricExceptionMissingReason,
+            string secretQuestion1,
+            string secretAnswer1,
+            string secretQuestion2,
+            string secretAnswer2
+        )
+        {
+            /*
+                Example JSON FHIR Message
+                Biometric Exception
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "Missing Reason",                 "valueString": I am permanently physically unable to provide fingerprints   },
+                        {      "url": "Question 1",                     "valueString": What is your mother’s maiden name?                           },  
+                        {      "url": "Answer 1",                       "valueString": Rumpelstiltskin                                              },  
+                        {      "url": "Question 2",                     "valueString": What street did you grow up on?                              },  
+                        {      "url": "Answer 2",                       "valueString": Beale Street                                                 }  
+                    ]
+                }
+            */
+            Extension extCaptureSite = new Extension("Biometric Exception", new FhirString("Alternate Questions and Answers"));
+            extCaptureSite.AddExtension("Missing Reason", new FhirString(biometricExceptionMissingReason));
+            extCaptureSite.AddExtension("Question 1", new FhirString(secretQuestion1));
+            extCaptureSite.AddExtension("Answer 1", new FhirString(secretAnswer1));
+            extCaptureSite.AddExtension("Question 2", new FhirString(secretQuestion2));
+            extCaptureSite.AddExtension("Answer 2", new FhirString(secretAnswer2));
+            return extCaptureSite;
+        }
+
         public static string LateralityToString(LateralitySnoMedCode laterality)
         {
             return Enum.GetName(typeof(LateralitySnoMedCode), laterality);
