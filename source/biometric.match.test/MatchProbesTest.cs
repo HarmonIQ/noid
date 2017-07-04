@@ -36,10 +36,11 @@ namespace NoID.Match.Database.Tests
         private Person bestCapture;
         private MinutiaResult patientNoID;
         private bool fGoodPairFound = false;
+        private readonly uint _matchThreshold = 30;
 
         public MatchProbesTest()
         {
-            dbMinutia = new FingerPrintMatchDatabase(_dabaseFilePath, _dabaseBackupLocation);
+            dbMinutia = new FingerPrintMatchDatabase(_dabaseFilePath, _dabaseBackupLocation, _matchThreshold);
             try
             {
                 dbMinutia.LateralityCode = (FHIRUtilities.LateralitySnoMedCode)Int32.Parse(_lateralityCode);

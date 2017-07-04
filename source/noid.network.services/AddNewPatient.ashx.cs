@@ -23,15 +23,17 @@ namespace NoID.Network.Services
     /// </summary>
     public class AddNewPatient : IHttpHandler
     {
-        private static readonly Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
-        private static readonly string DatabaseDirectory = WebConfigurationManager.AppSettings["DatabaseLocation"];
-        private static readonly string BackupDatabaseDirectory = WebConfigurationManager.AppSettings["BackupLocation"];
-        private static readonly string NoIDMongoDBAddress = WebConfigurationManager.AppSettings["NoIDMongoDBAddress"].ToString();
-        private static readonly string SparkMongoDBAddress = WebConfigurationManager.AppSettings["SparkMongoDBAddress"].ToString();
-        private static readonly string OrganizationName = WebConfigurationManager.AppSettings["OrganizationName"].ToString();
-        private static readonly string DomainName = WebConfigurationManager.AppSettings["DomainName"].ToString();
-        private static readonly string NodeSalt = WebConfigurationManager.AppSettings["NodeSalt"].ToString();
-        
+        private readonly string MinimumAcceptedMatchScore = WebConfigurationManager.AppSettings["MinimumAcceptedMatchScore"];
+        private readonly Uri _sparkEndpoint = new Uri(WebConfigurationManager.AppSettings["SparkEndpointAddress"]);
+        private readonly string DatabaseDirectory = WebConfigurationManager.AppSettings["DatabaseLocation"];
+        private readonly string BackupDatabaseDirectory = WebConfigurationManager.AppSettings["BackupLocation"];
+        private readonly string NoIDMongoDBAddress = WebConfigurationManager.AppSettings["NoIDMongoDBAddress"].ToString();
+        private readonly string SparkMongoDBAddress = WebConfigurationManager.AppSettings["SparkMongoDBAddress"].ToString();
+        private readonly string OrganizationName = WebConfigurationManager.AppSettings["OrganizationName"].ToString();
+        private readonly string DomainName = WebConfigurationManager.AppSettings["DomainName"].ToString();
+        private readonly string NodeSalt = WebConfigurationManager.AppSettings["NodeSalt"].ToString();
+
+        private uint _minimumAcceptedMatchScore;
         private FingerPrintMatchDatabase dbMinutia;
         private string _responseText;
         private Patient _patient = null;
@@ -41,6 +43,11 @@ namespace NoID.Network.Services
         {
             try
             {
+                if (uint.TryParse(MinimumAcceptedMatchScore, out _minimumAcceptedMatchScore) == false)
+                {
+                    _minimumAcceptedMatchScore = 30;
+                }
+
                 Stream httpStream = context.Request.InputStream;
                 StreamReader httpStreamReader = new StreamReader(httpStream);
                 Resource newResource = FHIRUtilities.StreamToFHIR(httpStreamReader);
@@ -76,7 +83,7 @@ namespace NoID.Network.Services
                 // Hub ID in the same format: noid://domain/LocalID
                 if (_patient.Photo.Count > 0)
                 {
-                    dbMinutia = new FingerPrintMatchDatabase(DatabaseDirectory, BackupDatabaseDirectory);
+                    dbMinutia = new FingerPrintMatchDatabase(DatabaseDirectory, BackupDatabaseDirectory, _minimumAcceptedMatchScore);
                     foreach (var minutia in _patient.Photo)
                     {
                         byte[] byteMinutias = minutia.Data;

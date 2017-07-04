@@ -13,18 +13,17 @@ namespace NoID.Match.Database.FingerPrint
     {
         /*
          * TODO:
-         * Should we make MATCH_THRESHOLD and MAX_CANDIDATE_CAPASITY 
+         * Should we make MAX_CANDIDATE_CAPASITY 
          * a variable or keep it at a protocol level so all match nodes behave the same?
         */
-        private readonly static int MATCH_THRESHOLD = 30;
         private readonly static int MAX_CANDIDATE_CAPACITY = 20000;
         private MinutiaMatch _minutiaMatch;
         private FHIRUtilities.LateralitySnoMedCode _laterality;
         private FHIRUtilities.CaptureSiteSnoMedCode _captureSite;
 
-        public FingerPrintMatchDatabase(string databaseLocation, string datbaseBackupLocation)
+        public FingerPrintMatchDatabase(string databaseLocation, string datbaseBackupLocation, uint matchTheshold)
         {
-            _minutiaMatch = new MinutiaMatch(databaseLocation, datbaseBackupLocation, MATCH_THRESHOLD);
+            _minutiaMatch = new MinutiaMatch(databaseLocation, datbaseBackupLocation, matchTheshold);
         }
 
         ~FingerPrintMatchDatabase()
@@ -48,11 +47,6 @@ namespace NoID.Match.Database.FingerPrint
         public int CandidateCount
         {
             get { return _minutiaMatch.CandidateCount; }
-        }
-
-        public int MatchThreshold
-        {
-            get { return MATCH_THRESHOLD; }
         }
 
         public int MaximumCandidateCapacity

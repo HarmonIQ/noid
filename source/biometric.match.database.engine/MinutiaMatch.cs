@@ -16,18 +16,30 @@ namespace NoID.Match.Database.FingerPrint
     {
         private const uint DATABASE_BACKUP_INTERVAL = 600;
         private static AfisEngine Afis = new AfisEngine();
-        private readonly int _matchThreshold;
+        private readonly uint _matchThreshold;
         private static List<Template> _fingerPrintCandidateList = new List<Template>();
         private DBreezeWrapper _dBreezeWrapper;
         private Extractor Extractor = new Extractor();
         private Exception _exception;
 
-        public MinutiaMatch()
+        public MinutiaMatch(uint matchTheshold)
         {
-            _matchThreshold = 30;
+            if (matchTheshold > 0)
+            {
+                _matchThreshold = matchTheshold;
+            }
+            else
+            {
+                _matchThreshold = 30;
+            }
         }
 
-        public MinutiaMatch(string databaseDirectoryPath, string databaseBackupPath, int matchTheshold)
+        public uint MatchThreshold
+        {
+            get { return _matchThreshold; }
+        }
+
+        public MinutiaMatch(string databaseDirectoryPath, string databaseBackupPath, uint matchTheshold)
         {
             _matchThreshold = matchTheshold;
             try
@@ -96,12 +108,7 @@ namespace NoID.Match.Database.FingerPrint
                 }   
             }
         }
-
-        public int MatchThreshold
-        {
-            get { return _matchThreshold; }
-        }
-
+        
         public int CandidateCount
         {
             get { return _fingerPrintCandidateList.Count; }
