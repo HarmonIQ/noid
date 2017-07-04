@@ -146,6 +146,8 @@ namespace NoID.Browser
 		public bool postDoNotHaveValidBiometricButtonclick(string laterality) {
 			try
 			{
+				errorDescription = "";
+
 				if (laterality == "Left")
 				{
 					_hasValidLeftFingerprint = false;					
@@ -268,13 +270,13 @@ namespace NoID.Browser
                 if (client.SendFHIRPatientProfile(fhirAddress, auth, pt) == false)
                 {
                     // Error occured set error description
-                    errorDescription = client.ResponseText;
+                    errorDescription = HandleNullString(client.ResponseText);
                     return false;
                 }
                 else
                 {
                     // No error, return message.
-                    _reponseString = client.ResponseText;
+                    _reponseString = HandleNullString(client.ResponseText);
                 }
             }
             catch (Exception ex)
