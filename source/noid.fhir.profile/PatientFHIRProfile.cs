@@ -262,10 +262,10 @@ namespace NoID.FHIR.Profile
                         // Get captureSite and laterality from media
                         string captureSiteDescription = media.Extension[1].Value.Extension[1].Value.ToString();
                         string lateralityCode = media.Extension[1].Value.Extension[2].Value.ToString();
-                        string DeviceName = media.Extension[2].Value.Extension[1].Value.ToString();
-                        string OriginalDpi = media.Extension[2].Value.Extension[2].Value.ToString();
-                        string OriginalHeight = media.Extension[2].Value.Extension[3].Value.ToString();
-                        string OriginalWidth = media.Extension[2].Value.Extension[4].Value.ToString();
+                        string DeviceName = media.Extension[2].Value.Extension[0].Value.ToString();
+                        string OriginalDpi = media.Extension[2].Value.Extension[1].Value.ToString();
+                        string OriginalHeight = media.Extension[2].Value.Extension[2].Value.ToString();
+                        string OriginalWidth = media.Extension[2].Value.Extension[3].Value.ToString();
 
                         Template addMinutia = ConvertFHIR.FHIRToTemplate(media);
                         FingerPrintMinutias newFingerPrintMinutias = new FingerPrintMinutias(
