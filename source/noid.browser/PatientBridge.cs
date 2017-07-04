@@ -40,6 +40,9 @@ namespace NoID.Browser
 		string _secretAnswer1 = "";
 		string _secretAnswer2 = "";
 		string _existingDOBMatch = "";
+		//_cannotCaptureLeftFingerprint
+		bool _cannotCaptureLeftFingerprint = false;
+		bool _cannotCaptureRightFingerprint = false;
 
 		public delegate void PatientEventHandler(object sender, string trigger);
         public event PatientEventHandler ResetSession = delegate { };
@@ -51,7 +54,26 @@ namespace NoID.Browser
 
         ~PatientBridge() { }
 
-        private void TriggerResetSession(string trigger)
+		public void Dispose()
+		{
+			_hasValidLeftFingerprint = false;
+			_hasValidRightFingerprint = false;
+			_captureSite = FHIRUtilities.CaptureSiteSnoMedCode.IndexFinger;
+			_laterality = FHIRUtilities.LateralitySnoMedCode.Left;
+			_exceptionMissingReason = "";
+			_secretAnswer1 = "";
+			_secretAnswer2 = "";
+			_existingDOBMatch = "";
+			_cannotCaptureLeftFingerprint = false;
+			_cannotCaptureRightFingerprint = false;
+			base.alertFunction = "";
+			base.currentPage = "";
+			base.errorDescription = "";
+			base.showExceptionModal = "";
+			_patientFHIRProfile.Dispose();
+		}
+
+		private void TriggerResetSession(string trigger)
         {
             if (ResetSession != null)
                 ResetSession(this, trigger);
@@ -147,17 +169,21 @@ namespace NoID.Browser
 		public bool postDoNotHaveValidBiometricButtonclick(string laterality) {
 			try
 			{
-				errorDescription = "";
+				errorDescription = "";				
 
 				if (laterality == "Left")
 				{
-					_hasValidLeftFingerprint = false;					
-				}				
-				if (laterality == "Right")
-				{
-					_hasValidRightFingerprint = false;
+					_cannotCaptureLeftFingerprint = true;
+					_laterality = FHIRUtilities.StringToLaterality("Right");
+					return true;
 				}
-				if (_hasValidLeftFingerprint == false && _hasValidRightFingerprint == false)
+				else if (laterality == "Right")
+				{
+					_cannotCaptureRightFingerprint = true;
+					_laterality = FHIRUtilities.StringToLaterality("Unknown");
+				}
+
+				if (_cannotCaptureLeftFingerprint == true && _cannotCaptureRightFingerprint == true)
 				{
 					showExceptionModal = "yes";
 				}
@@ -222,8 +248,16 @@ namespace NoID.Browser
                 string state,
                 string postalCode,
                 string emailAddress,
-                string phoneCell
-            )
+                string phoneCell,
+				//mark schroeder 20170704 added below but not used
+				string multipleBirthFlag,
+				string genderChangeFlag,
+				string password,
+				string patientdHub,
+				//mark schroeder 20170704 added below from front end. May or may not be useful later. They are global JS vars
+				string doesLeftBiometricExist,
+				string doesRightBiometricExist
+			)
         {
             try
             {
@@ -462,6 +496,17 @@ namespace NoID.Browser
 			set { _hasValidRightFingerprint = value; }
 		}
 
+		public bool cannotCaptureLeftFingerprint
+		{
+			get { return _cannotCaptureLeftFingerprint; }
+			set { _cannotCaptureLeftFingerprint = value; }
+		}
+
+		public bool cannotCaptureRightFingerprint
+		{
+			get { return _cannotCaptureRightFingerprint; }
+			set {_cannotCaptureRightFingerprint = value; }
+		}
 		public string exceptionMissingReason
 		{
 			get { return _exceptionMissingReason; }
