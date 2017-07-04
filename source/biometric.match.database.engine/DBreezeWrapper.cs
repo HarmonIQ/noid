@@ -204,7 +204,7 @@ namespace NoID.Match.Database
             {
                 cleanDBreezeObjects();
                 DirectoryInfo databaseDirInfo = new DirectoryInfo(_databaseDirectory);
-                DirectoryInfo backupDirInfo = new DirectoryInfo(_databaseDirectory);
+                DirectoryInfo backupDirInfo = new DirectoryInfo(_backupDirectoryPath);
                 if (backupDirInfo.Exists == true)
                 {
                     backupDirInfo.Delete(true);
