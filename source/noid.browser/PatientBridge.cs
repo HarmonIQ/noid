@@ -40,7 +40,6 @@ namespace NoID.Browser
 		string _secretAnswer1 = "";
 		string _secretAnswer2 = "";
 		string _existingDOBMatch = "";
-		//_cannotCaptureLeftFingerprint
 		bool _cannotCaptureLeftFingerprint = false;
 		bool _cannotCaptureRightFingerprint = false;
 
@@ -95,7 +94,8 @@ namespace NoID.Browser
 			return true;
 		}
 
-		public bool postUnknownDOBExistingpatient(string passedLocalNoID)
+        //TODO: Update function in JavaScript and C# to postUnknownDOBExistingPatient
+        public bool postUnknownDOBExistingpatient(string passedLocalNoID)
 		{
             bool result = false;
             try
@@ -114,18 +114,18 @@ namespace NoID.Browser
                 Uri endpoint = new Uri(IdentityChallengeUri);
                 string resultResponse = client.SendIdentityChallenge(endpoint, auth, passedLocalNoID, "failedchallenge", "", SecurityUtilities.GetComputerName(), ClinicArea);
 
-                if (resultResponse.ToLower().Contains("error") == false)
+                if (resultResponse.ToLower() == "yes")
                 {
                     result = true;
                 }
-                else
+                else if (resultResponse.ToLower().Contains("error") == true)
                 {
-                    errorDescription = "Error in PatientBridge::postUnknownDOBExistingpatient: " + resultResponse;
+                    errorDescription = "Error in PatientBridge::postUnknownDOBExistingPatient: " + resultResponse.Substring(3);
                 }
             }
             catch (Exception ex)
             {
-                errorDescription = "Error in PatientBridge::postUnknownDOBExistingpatient: " + ex.Message;
+                errorDescription = "Error in PatientBridge::postUnknownDOBExistingPatient: " + ex.Message;
             }
             return result;
         }
@@ -149,19 +149,19 @@ namespace NoID.Browser
                 string isoBirthDate = formatDateOfBirth(birthYear, birthMonth, birthDay);
                 string resultResponse = client.SendIdentityChallenge(endpoint, auth, localNoID, "birthdate", isoBirthDate, SecurityUtilities.GetComputerName(), ClinicArea);
 
-                if (resultResponse.ToLower() == "match: yes.")
+                if (resultResponse.ToLower() == "yes")
                 {
                     _existingDOBMatch = "match";
                     result = true;
                 }
-                else
+                else if (resultResponse.ToLower().Contains("error") == true)
                 {
-                    errorDescription = "Error in PatientBridge::postUnknownDOBExistingpatient: " + resultResponse;
+                    errorDescription = "Error in PatientBridge::postConfirmExistingPatient: " + resultResponse.Substring(3);
                 }
 			}
 			catch (Exception ex)
 			{
-                errorDescription = "Error in PatientBridge::postUnknownDOBExistingpatient: " + ex.Message;
+                errorDescription = "Error in PatientBridge::postConfirmExistingPatient: " + ex.Message;
             }
 			return result;
 		}

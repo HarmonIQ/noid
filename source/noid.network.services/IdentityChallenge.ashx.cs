@@ -70,22 +70,22 @@ namespace NoID.Network.Services
                             seq.SessionComputerName = _computerName;
                             seq.ClinicArea = _clinicArea;
                             dbwrapper.AddPendingPatient(seq);
-                            context.Response.Write("Match: Yes.");
+                            context.Response.Write("yes");
                         }
                         else
                         {
-                            context.Response.Write("Match: No.");
+                            context.Response.Write("no");
                         }
                     }
                     else if (_confirmFieldName == "lastname")
                     {
                         //TODO: implement lastname, use metaphone or just accept exact matches?
-                        context.Response.Write("Match: No. " + _confirmFieldName + " not implemented");
+                        context.Response.Write("Error occurred.  " + _confirmFieldName + " is not implemented yet!");
                     }
                     else if (_confirmFieldName == "firstname")
                     {
                         //TODO: implement firstname, use root or just accept exact matches?
-                        context.Response.Write("Match: No. " + _confirmFieldName + " not implemented");
+                        context.Response.Write("Error occurred.  " + _confirmFieldName + " is not implemented yet!");
                     }
                     else if (_confirmFieldName == "failedchallenge")
                     {
@@ -95,13 +95,13 @@ namespace NoID.Network.Services
                         seq.SessionComputerName = _computerName;
                         seq.ClinicArea = _clinicArea;
                         dbwrapper.AddPendingPatient(seq);
-                        context.Response.Write("Successful.");
+                        context.Response.Write("yes");
                     }
                 }
             }
             catch (Exception ex)
             {
-                context.Response.Write("Match: No. UpdatePendingStatus::ProcessRequest Error: " + ex.Message);
+                context.Response.Write("no. Error occured for LocalNoID = " + _localNoID + ".  UpdatePendingStatus::ProcessRequest: " + ex.Message);
             }
             context.Response.End();
         }
