@@ -5,16 +5,12 @@
 using System;
 using System.Web;
 using System.IO;
-using System.Text;
 using System.Web.Configuration;
 using SourceAFIS.Templates;
 using Hl7.Fhir.Model;
-using Hl7.Fhir.Rest;
-using NoID.FHIR.Profile;
 using NoID.Utilities;
 using NoID.Match.Database.Client;
 using NoID.Match.Database.FingerPrint;
-using NoID.Database.Wrappers;
 
 namespace NoID.Network.Services
 {

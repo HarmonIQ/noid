@@ -56,6 +56,11 @@ namespace NoID.Match.Database.FingerPrint
             catch { }
         }
 
+        public bool DeleteMatchDatabase()
+        {
+            return _dBreezeWrapper.DeleteMatchDatabase();
+        }
+
         public Exception Exception
         {
             get { return _exception; }

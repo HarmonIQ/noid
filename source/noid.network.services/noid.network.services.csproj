@@ -101,6 +101,7 @@
     <Content Include="SearchBiometrics.ashx" />
     <Content Include="UpdatePendingStatus.ashx" />
     <Content Include="IdentityChallenge.ashx" />
+    <Content Include="PurgeAllDatabases.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -109,7 +110,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddNewPatient.ashx.cs">
@@ -123,6 +126,9 @@
       <DependentUpon>PatientLists.ashx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PurgeAllDatabases.ashx.cs">
+      <DependentUpon>PurgeAllDatabases.ashx</DependentUpon>
+    </Compile>
     <Compile Include="ReceiveFHIR.ashx.cs">
       <DependentUpon>ReceiveFHIR.ashx</DependentUpon>
     </Compile>

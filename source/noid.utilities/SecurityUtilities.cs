@@ -48,5 +48,10 @@ namespace NoID.Utilities
             }
             return hostName;
         }
+
+        public static string OperationSystemString
+        {
+            get { return Environment.OSVersion.ToString(); }
+        }
     }
 }

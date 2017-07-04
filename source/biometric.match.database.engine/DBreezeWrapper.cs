@@ -20,7 +20,10 @@ namespace NoID.Match.Database
         /// A wrapper for DBreeze used to store minutias templates
         /// Estimated 140 GB for 20 million minutia templates with the backups.
         /// </summary>
-        /// 
+        ///
+
+        #region "Private Variables"
+
         private const string MINUTIAE_TABLE_NAME = "MinutiaeTable";
         private readonly string _databaseDirectory;
         private readonly string _backupDirectoryPath;
@@ -31,6 +34,10 @@ namespace NoID.Match.Database
         private uint _backupInterval;
         private List<Exception> _exceptionList;
         private uint _lastIndex = 0;
+
+        #endregion
+
+        #region "Constructor/Destructor"
 
         public DBreezeWrapper(string databaseDirectory, string backupDirectoryPath, uint backupInterval = 300)
         {
@@ -80,53 +87,13 @@ namespace NoID.Match.Database
             Dispose();
         }
 
-        private bool IsDirectoryLocked(string directoryPath)
-        {
-            bool result = true;
-            try
-            {
-                string testFilePath = directoryPath + @"\test.write.lock";
-                FileInfo testFile = new FileInfo(testFilePath);
-                FileStream fs = testFile.Create();
-                byte[] testBytes = Encoding.ASCII.GetBytes("NoID testing write access for ths directory: " + directoryPath + "/n");
-                fs.Write(testBytes, 0, testBytes.Length);
-                fs.Flush();
-                fs.Close();
-                fs.Dispose();
-                testFile.Delete();
-                testFile = null;
-                result = false;
-            }
-            catch (System.IO.IOException ioEx)
-            {
-                // file used by another process or other IO Exception
-                _exceptionList.Add(ioEx);
-            }
-            catch(Exception ex)
-            {
-                _exceptionList.Add(ex);
-            }
-            return result;
-        }
+        #endregion
+
+        #region "Public Functions"
 
         public void Dispose()
         {
-            try
-            {
-                if (_configDBreeze != null)
-                {
-                    _configDBreeze.Dispose();
-                }
-                if (_backup != null)
-                {
-                    _backup.Dispose();
-                }
-                if (_dBreezeEngine != null)
-                {
-                    _dBreezeEngine.Dispose();
-                }
-            }
-            catch { }
+            cleanDBreezeObjects();
         }
 
         public List<Template> GetMinutiaList()
@@ -144,7 +111,7 @@ namespace NoID.Match.Database
                             Template result;
                             using (var stream = new MemoryStream(row.Value))
                             {
-                                BinaryFormatter deserializer = new BinaryFormatter();   
+                                BinaryFormatter deserializer = new BinaryFormatter();
                                 result = (Template)deserializer.Deserialize(stream);
                             }
                             listMinutiaTemplates.Add(result);
@@ -172,15 +139,6 @@ namespace NoID.Match.Database
             }
             return listMinutiaTemplates;
         }
-
-        private byte[] GetMinutiaBytes(Template minutia)
-        {
-            MemoryStream ms = new MemoryStream();
-            BinaryFormatter bf = new BinaryFormatter();
-            bf.Serialize(ms, minutia);
-            return ms.ToArray();
-        }
-
         public bool AddMinutia(Template newMinutia)
         {
             bool result = false;
@@ -206,7 +164,7 @@ namespace NoID.Match.Database
                     _exceptionList.Add(new Exception("DBreezeWrapper.AddMinutia error. DBreezeEngine is null."));
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (_exceptionList == null)
                 {
@@ -239,6 +197,98 @@ namespace NoID.Match.Database
             return result;
         }
 
+        public bool DeleteMatchDatabase()
+        {
+            bool result = false;
+            try
+            {
+                cleanDBreezeObjects();
+                DirectoryInfo databaseDirInfo = new DirectoryInfo(_databaseDirectory);
+                DirectoryInfo backupDirInfo = new DirectoryInfo(_databaseDirectory);
+                if (backupDirInfo.Exists == true)
+                {
+                    backupDirInfo.Delete(true);
+                }
+                if (databaseDirInfo.Exists == true)
+                {
+                    databaseDirInfo.Delete(true);
+                }
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                _exceptionList.Add(ex);
+            }
+            return result;
+        }
+        #endregion
+
+        #region "Private Functions"
+
+        bool IsDirectoryLocked(string directoryPath)
+        {
+            bool result = true;
+            try
+            {
+                string testFilePath = directoryPath + @"\test.write.lock";
+                FileInfo testFile = new FileInfo(testFilePath);
+                if (testFile.Exists == true)
+                {
+                    FileStream fs = testFile.Create();
+                    byte[] testBytes = Encoding.ASCII.GetBytes("NoID testing write access for ths directory: " + directoryPath + "/n");
+                    fs.Write(testBytes, 0, testBytes.Length);
+                    fs.Flush();
+                    fs.Close();
+                    fs.Dispose();
+                    testFile.Delete();
+                }
+                testFile = null;
+                result = false;
+            }
+            catch (System.IO.IOException ioEx)
+            {
+                // file used by another process or other IO Exception
+                _exceptionList.Add(ioEx);
+            }
+            catch (Exception ex)
+            {
+                _exceptionList.Add(ex);
+            }
+            return result;
+        }
+
+        void cleanDBreezeObjects()
+        {
+            try
+            {
+                if (_configDBreeze != null)
+                {
+                    _configDBreeze.Dispose();
+                }
+                if (_backup != null)
+                {
+                    _backup.Dispose();
+                }
+                if (_dBreezeEngine != null)
+                {
+                    _dBreezeEngine.Dispose();
+                }
+            }
+            catch { }
+        }
+
+        private byte[] GetMinutiaBytes(Template minutia)
+        {
+            MemoryStream ms = new MemoryStream();
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(ms, minutia);
+            return ms.ToArray();
+        }
+
+        #endregion
+
+        #region "Public Properties"
+
         public string DatabaseDirectory
         {
             get { return _databaseDirectory; }
@@ -249,37 +299,7 @@ namespace NoID.Match.Database
             get { return _backupDirectoryPath;  }
         }
 
-        /*
-        private string GetBackupDirectoryName()
-        {
-            string backupDatabaseDirectory = _databaseDirectory;
-            try
-            {
-                // Directory Delimitor. Unix/Linux/Mac/ect = / and Windows = \
-                string dirDelimitor = @"/"; // default to Unix
-                if (OperationSystemString.Contains("Win") == true)
-                {
-                    dirDelimitor = @"\";
-                }
+        #endregion
 
-                backupDatabaseDirectory += dirDelimitor + @"minutia.data.backups";
-                DirectoryInfo directoryInfo = new DirectoryInfo(backupDatabaseDirectory);
-                if (directoryInfo.Exists == false)
-                {
-                    directoryInfo.Create();
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-            return backupDatabaseDirectory;
-        }
-        */
-
-        private static string OperationSystemString
-        {
-            get { return Environment.OSVersion.ToString(); }
-        }
     }
 }
