@@ -274,7 +274,6 @@ namespace NoID.FHIR.Profile
 
                         AddFingerPrint(newFingerPrintMinutias, DeviceName, Int32.Parse(OriginalDpi), Int32.Parse(OriginalHeight), Int32.Parse(OriginalWidth));
                     }
-                    _biometricsCaptured = GetBiometricsCaptured();
                 }
             }
             else
@@ -365,6 +364,32 @@ namespace NoID.FHIR.Profile
                                     DevicePhysicalLocation = locationExtension.Value.ToString();
                                 }
                             }   
+                        }
+                        else if (metaExtension.Url.ToLower().Contains("capture") == true)
+                        {
+                            foreach (Extension locationExtension in metaExtension.Extension)
+                            {
+                                if (locationExtension.Url.ToLower().Contains("site") == true)
+                                {
+                                    BiometricsCaptured = locationExtension.Value.ToString();
+                                }
+                                else if (locationExtension.Url.ToLower().Contains("scanner") == true)
+                                {
+                                    //DeviceName = locationExtension.Value.ToString();
+                                }
+                                else if (locationExtension.Url.ToLower().Contains("dpi") == true)
+                                {
+                                    //OriginalDPI
+                                }
+                                else if (locationExtension.Url.ToLower().Contains("height") == true)
+                                {
+                                    //OriginalHeight
+                                }
+                                else if (locationExtension.Url.ToLower().Contains("width") == true)
+                                {
+                                    //OriginalWidth
+                                }
+                            }
                         }
                     }
                 }
@@ -675,7 +700,7 @@ namespace NoID.FHIR.Profile
             set { _deviceStartTime = value; }
         }
         
-        protected string GetBiometricsCaptured()
+        public string GetBiometricsCaptured()
         {
             string biometrics = "";
 
@@ -849,7 +874,8 @@ namespace NoID.FHIR.Profile
             try
             {
                 pt = new Patient();
-                GetBiometricsCaptured();
+
+                BiometricsCaptured = GetBiometricsCaptured();
                 // Add message status New, Return or Update
                 Meta meta = new Meta();
 
@@ -1014,6 +1040,7 @@ namespace NoID.FHIR.Profile
             {
                 if ((fingerPrints != null))
                 {
+                    //TODO: add capture date/time to message
                     FingerPrintMedia = new Media(); //Creates the fingerprint minutia template FHIR object as media type.
                     FingerPrintMedia.AddExtension("Healthcare Node", FHIRUtilities.OrganizationExtension(OrganizationName, DomainName, ServerName));
                     FingerPrintMedia.AddExtension("Biometic Capture", FHIRUtilities.CaptureSiteExtension(fingerPrints.CaptureSiteSnoMedCode, fingerPrints.LateralitySnoMedCode, deviceName, originalDPI, originalHeight, originalWidth));
