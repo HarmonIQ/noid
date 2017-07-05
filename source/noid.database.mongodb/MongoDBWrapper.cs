@@ -93,7 +93,6 @@ namespace NoID.Database.Wrappers
             return successful;
         }
 
-
         public bool AddPendingPatient(SessionQueue seq)
         {
             bool successful = false;
@@ -199,6 +198,30 @@ namespace NoID.Database.Wrappers
                 _exceptions.Add(ex);
             }
             return result;
+        }
+
+        public string AlternateSearch(AlternateSearch alternateSearch)
+        {
+            //TODO: finsih this
+            string result = "";
+
+            return result;
+        }
+
+        public bool AddAlternateSearch(AlternateSearch alternateSearch)
+        {
+            bool successful = false;
+            try
+            {
+                IMongoCollection<AlternateSearch> collection = _database.GetCollection<AlternateSearch>("SessionQueue");
+                collection.InsertOneAsync(alternateSearch);
+                successful = true;
+            }
+            catch (Exception ex)
+            {
+                _exceptions.Add(ex);
+            }
+            return successful;
         }
     }
 }

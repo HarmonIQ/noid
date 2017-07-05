@@ -68,6 +68,22 @@ namespace NoID.Network.Transport
             return true;
         }
 
+        public bool SendDemographicFHIRSearch(Uri endpoint, Authentication auth, Patient patient = null)
+        {
+            try
+            {
+                _responseText = "";
+                WebSend clientWebSend = new WebSend(endpoint, auth, patient);
+                _responseText = clientWebSend.PostHttpWebRequest();
+            }
+            catch (Exception ex)
+            {
+                _exception = new Exception("DataTransport::SendFHIRPatientProfile() failed to send to FHIR server: " + ex.Message);
+                return false;
+            }
+            return true;
+        }
+
         public bool SendFHIRMediaProfile(Uri endpoint, Authentication auth, Media media = null)
         {
             try

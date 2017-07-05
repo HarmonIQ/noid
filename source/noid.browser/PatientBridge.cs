@@ -26,6 +26,8 @@ namespace NoID.Browser
         private static readonly string DevicePhysicalLocation = ConfigurationManager.AppSettings["DevicePhysicalLocation"].ToString();
         private static readonly string ClinicArea = ConfigurationManager.AppSettings["ClinicArea"].ToString();
         private static readonly string AddNewPatientUri = ConfigurationManager.AppSettings["AddNewPatientUri"].ToString();
+        private static readonly string AltMatchByDemographicsUri = ConfigurationManager.AppSettings["AltMatchByDemographicsUri"].ToString();
+        
         private static readonly string SearchBiometricsUri = ConfigurationManager.AppSettings["SearchBiometricsUri"].ToString();
         private static readonly string IdentityChallengeUri = ConfigurationManager.AppSettings["IdentityChallengeUri"].ToString();
         private static readonly string SecretQuestion1 = ConfigurationManager.AppSettings["SecretQuestion1"].ToString();
@@ -45,8 +47,9 @@ namespace NoID.Browser
 		bool _cannotCaptureLeftFingerprint = false;
 		bool _cannotCaptureRightFingerprint = false;
 
-		public delegate void PatientEventHandler(object sender, string trigger);
+		public delegate void PatientEventHandler(object sender, string text);
         public event PatientEventHandler ResetSession = delegate { };
+        public event PatientEventHandler JavaScriptAsync = delegate { };
 
         public PatientBridge(string organizationName,  string serviceName) : base(organizationName, serviceName)
         {
@@ -78,6 +81,12 @@ namespace NoID.Browser
         {
             if (ResetSession != null)
                 ResetSession(this, trigger);
+        }
+
+        public void ExecuteJavaScriptAsync(string javaScriptToExecute)
+        {
+            if (JavaScriptAsync != null)
+                JavaScriptAsync(this, javaScriptToExecute);
         }
 
         public bool postMissingBiometricInfo(string exceptionMissingReason,	string secretAnswer1, string secretAnswer2)
@@ -221,14 +230,14 @@ namespace NoID.Browser
 
 		public bool postDemoForNoBioMatch
 			(
-			string languageSelected, 
+			string language, 
 			string firstName, 
 			string middleName, 
 			string lastName, 
 			string gender, 
-			string selectedBirthYear,
-			string selectedBirthMonth,
-			string selectedBirthDay,
+			string birthYear,
+			string birthMonth,
+			string birthDay,
 			string streetAddress,
 			string streetAddress2,
 			string city,
@@ -245,8 +254,86 @@ namespace NoID.Browser
 		{
 			try
 			{
-				errorDescription = "";				
-			}
+                if (selectedExceptionReason == "")
+                {
+                    return true;
+                }
+
+				errorDescription = "";
+                _patientFHIRProfile.Language = language;
+                _patientFHIRProfile.LastName = lastName;
+                _patientFHIRProfile.FirstName = firstName;
+                _patientFHIRProfile.MiddleName = middleName;
+
+                if (gender.ToLower() == "f")
+                {
+                    _patientFHIRProfile.Gender = "F";
+                }
+                else if (gender.ToLower() == "m")
+                {
+                    _patientFHIRProfile.Gender = "M";
+                }
+
+                _patientFHIRProfile.BirthDate = formatDateOfBirth(birthYear, birthMonth, birthDay);
+                _patientFHIRProfile.StreetAddress = streetAddress;
+                _patientFHIRProfile.StreetAddress2 = streetAddress2;
+                _patientFHIRProfile.City = city;
+                _patientFHIRProfile.State = state;
+                _patientFHIRProfile.PostalCode = postalCode;
+                _patientFHIRProfile.EmailAddress = emailAddress;
+                _patientFHIRProfile.PhoneCell = phoneCell;
+                _patientFHIRProfile.ClinicArea = ClinicArea;
+                _patientFHIRProfile.DevicePhysicalLocation = DevicePhysicalLocation;
+                _patientFHIRProfile.NoIDType = "Identity";
+                _patientFHIRProfile.NoIDStatus = "Pending";
+                _patientFHIRProfile.CheckinDateTime = FHIRUtilities.DateTimeToFHIRString(DateTime.UtcNow);
+                _patientFHIRProfile.BiometricExceptionMissingReason = exceptionMissingReason;
+                _patientFHIRProfile.SecretQuestion1 = selectedsecretQuestion1;
+                _patientFHIRProfile.SecretAnswer1 = secretAnswer1;
+                _patientFHIRProfile.SecretQuestion2 = selectedsecretQuestion2;
+                _patientFHIRProfile.SecretAnswer2 = secretAnswer2;
+
+                // Send FHIR message
+                Authentication auth;
+                if (Utilities.Auth == null)
+                {
+                    auth = SecurityUtilities.GetAuthentication(serviceName);
+                }
+                else
+                {
+                    auth = Utilities.Auth;
+                }
+                HttpsClient client = new HttpsClient();
+                Patient pt = _patientFHIRProfile.CreateFHIRPatientProfile();
+
+                // TODO: REMOVE THIS LINE!  ONLY FOR TESTING
+                //FHIRUtilities.SaveJSONFile(pt, @"C:\JSONTest");
+
+                fhirAddress = new Uri(AltMatchByDemographicsUri);
+                if (client.SendFHIRPatientProfile(fhirAddress, auth, pt) == false)
+                {
+                    // Error occured set error description
+                    errorDescription = HandleNullString(client.ResponseText);
+                    return false;
+                }
+                else
+                {
+                    if (client.ResponseText.ToLower().Contains("noid://") == true)
+                    {
+                        ExecuteJavaScriptAsync("showIdentity('" + client.ResponseText + "');");
+                        return true;
+                    }
+                    else if (client.ResponseText.ToLower().Contains("no match") == true)
+                    {
+                        return true;
+                    }
+                    else if (client.ResponseText.ToLower().Contains("error") == true)
+                    {
+                        errorDescription = "Error in PatientBridge::postDemoForNoBioMatch: " + client.ResponseText;
+                        return false;
+                    }
+                }
+            }
 			catch (Exception ex)
 			{
 				errorDescription = ex.Message;

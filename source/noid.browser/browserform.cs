@@ -96,6 +96,7 @@ namespace NoID.Browser
                     _patientBridge = new PatientBridge(organizationName, NoIDServiceName);
                     browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     _patientBridge.ResetSession += ResetSessions;
+                    _patientBridge.JavaScriptAsync += ExecuteJavaScriptAsync;
                     break;
                 case "provider":
                 case "provider-pc":

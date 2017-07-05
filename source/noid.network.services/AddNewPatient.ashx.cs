@@ -165,6 +165,8 @@ namespace NoID.Network.Services
                             }
                         }
                     }
+                    // log patient in alternatesearch container
+
                 }
                 if (biometricsSaved)
                 {
@@ -185,6 +187,8 @@ namespace NoID.Network.Services
                 _responseText = "Error in AddNewPatient::ProcessRequest: " + ex.Message;
                 LogUtilities.LogEvent(_responseText);
             }
+            context.Response.Write(_responseText);
+            context.Response.End();
         }
 
         
