@@ -310,7 +310,7 @@ namespace NoID.Browser
                 //FHIRUtilities.SaveJSONFile(pt, @"C:\JSONTest");
 
                 fhirAddress = new Uri(AltMatchByDemographicsUri);
-                if (client.SendFHIRPatientProfile(fhirAddress, auth, pt) == false)
+                if (client.SendDemographicFHIRSearch(fhirAddress, auth, pt) == false)
                 {
                     // Error occured set error description
                     errorDescription = HandleNullString(client.ResponseText);
@@ -320,7 +320,8 @@ namespace NoID.Browser
                 {
                     if (client.ResponseText.ToLower().Contains("noid://") == true)
                     {
-                        ExecuteJavaScriptAsync("showIdentity('" + client.ResponseText + "');");
+                        string localNoID = client.ResponseText;
+                        ExecuteJavaScriptAsync("showNoBioIdentity('" + localNoID + "');");
                         return true;
                     }
                     else if (client.ResponseText.ToLower().Contains("no match") == true)

@@ -203,8 +203,8 @@ namespace NoID.Database.Wrappers
         public string AlternateSearch(AlternateSearch alternateSearch)
         {
             //TODO: finsih this
-            string result = "";
-
+            //string result = "noid://test/ands348234udsahda4e384hasodh3-248-hdasd";
+            string result = "no match found";
             return result;
         }
 
@@ -213,7 +213,7 @@ namespace NoID.Database.Wrappers
             bool successful = false;
             try
             {
-                IMongoCollection<AlternateSearch> collection = _database.GetCollection<AlternateSearch>("SessionQueue");
+                IMongoCollection<AlternateSearch> collection = _database.GetCollection<AlternateSearch>("AlternateSearch");
                 collection.InsertOneAsync(alternateSearch);
                 successful = true;
             }

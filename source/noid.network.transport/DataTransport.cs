@@ -78,7 +78,7 @@ namespace NoID.Network.Transport
             }
             catch (Exception ex)
             {
-                _exception = new Exception("DataTransport::SendFHIRPatientProfile() failed to send to FHIR server: " + ex.Message);
+                _exception = new Exception("DataTransport::SendDemographicFHIRSearch() failed to send to FHIR server: " + ex.Message);
                 return false;
             }
             return true;
