@@ -790,7 +790,7 @@
                                         </h4>
                                         <p></p>
                                         <h5>
-                                           <div id="passwordPatternRequirement" style="visibility:hidden">*Min one uppercase letter, one number, 6 character length,  and optional special characters</div>
+                                          *Min one uppercase letter, one number, 8 character length,  and one special character
                                         </h5>
                                         <h5>
                                             *This step is not required
@@ -802,7 +802,7 @@
                                 <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button onclick="populateReviewPage();" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button onmousedown="checkPassword();" onkeydown="checkPassword();" onclick="populateReviewPage();" type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="step11">
