@@ -873,6 +873,13 @@ namespace NoID.FHIR.Profile
             Patient pt;
             try
             {
+                /*
+
+                _patientFHIRProfile.NoIDHubPassword = password;
+                _patientFHIRProfile.NoIDHubName = patientHub;
+                _patientFHIRProfile.GenderChangeFlag = genderChangeFlag;
+
+                */
                 pt = new Patient();
 
                 BiometricsCaptured = GetBiometricsCaptured();
@@ -890,8 +897,14 @@ namespace NoID.FHIR.Profile
                         FingerPrintMinutiasList[0].OriginalWidth)
                         );
                 }
-                
+                meta.Extension.Add(FHIRUtilities.NoIDHubInfo(NoIDHubName, NoIDHubPassword));
+                if (GenderChangeFlag.ToLower().Contains("yes") == true || MultipleBirth.ToLower().Contains("no") == false)
+                {
+                    meta.Extension.Add(FHIRUtilities.GenderAndTwinInfo(GenderChangeFlag, MultipleBirth));
+                }
+
                 pt.Meta = meta;
+
                 //TODO: Move fingerprint minutias to Identifier.Extension
                 Identifier idSession = new Identifier();
                 idSession.System = ServerName + "/fhir/SessionID";
@@ -945,7 +958,7 @@ namespace NoID.FHIR.Profile
                 
                 if (!(MultipleBirth == null) && MultipleBirth.Length > 0)
                 {
-                    if (MultipleBirth.ToLower() == "no")
+                    if (MultipleBirth.ToLower().Substring(0,2) == "no")
                     {
                         pt.MultipleBirth = new FhirString("No");
                     }
