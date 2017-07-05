@@ -8,13 +8,70 @@ window.oncontextmenu = function (event) {
     event.stopPropagation();
     return false;
 };
-//function saveUnknownDOBExistingpatient() {
-//    NoIDBridge.postUnknownDOBExistingpatient(sessionID);
-//    if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
-//        //error, show user message
-//        alert("postUnknownDOBExistingpatient message " + NoIDBridge.errorDescription);
-//    }
-//};
+function checkPassword() {
+    var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+    var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+    text = document.getElementById("PortalPassword").value;
+    if (text.length > 0) {
+        var isValid = strongRegex.test(text);
+        if (isValid == true) {
+            return true;
+        }
+        else {
+            alert('Your password did not meet the minimun requirements: At leat one uppercase letter, one lowercase letter, one number, one special character, and minimum of 8 characters long.');
+            document.getElementById("PortalPassword").value = "";            
+            return false;
+        }
+    };
+};
+function refreshProviderQueue() {
+    NoIDBridge.refreshProviderQueue();
+    if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
+        //error, show user message
+        alert("refreshProviderQueue error: " + NoIDBridge.errorDescription);
+    }
+    var t = setTimeout(refreshProviderQueue, 30000);
+};
+function saveDemoForNoBioMatch() {
+    var language = document.getElementById('selectedLanguage');
+    var languageSelected = language.options[language.selectedIndex].text;
+    var firstName = document.getElementById("FirstName").value;
+    var middleName = document.getElementById("MiddleName").value;
+    var lastName = document.getElementById("LastName").value;
+    var birthYear = document.getElementById('BirthYear');
+    var selectedBirthYear = birthYear.options[birthYear.selectedIndex].text;
+    var birthMonth = document.getElementById('BirthMonth');
+    var selectedBirthMonth = birthMonth.options[birthMonth.selectedIndex].text;
+    var birthDay = document.getElementById('BirthDay');
+    var selectedBirthDay = birthDay.options[birthDay.selectedIndex].text;
+    if (document.getElementById("GenderMale").checked) {
+        var gender = document.getElementById("GenderMale").value;
+    };
+    if (document.getElementById("GenderFemale").checked) {
+        var gender = document.getElementById("GenderFemale").value;
+    };
+    var streetAddress = document.getElementById("StreetAddress").value;
+    var streetAddress2 = document.getElementById("StreetAddress2").value;
+    var city = document.getElementById("City").value;
+    var state = document.getElementById("State").value;
+    var postalCode = document.getElementById("ZipCode").value;
+    var phoneCell = document.getElementById("PhoneNumber").value;
+    var emailAddress = document.getElementById("EmailAddress").value;
+    var exceptionReason = document.getElementById('exceptionMissingReason');
+    var selectedExceptionReason = exceptionReason.options[exceptionReason.selectedIndex].text;
+    var secretExAnswer1 = document.getElementById('secretAnswer1').value;
+    var secretExAnswer2 = document.getElementById('secretAnswer2').value;
+    var secretQuestion1 = document.getElementById('exceptionSecretQuestion1');
+    var selectedsecretQuestion1 = secretQuestion1.options[secretQuestion1.selectedIndex].value;
+    var secretQuestion2 = document.getElementById('exceptionSecretQuestion2');
+    var selectedsecretQuestion2 = secretQuestion2.options[secretQuestion2.selectedIndex].value;
+
+    NoIDBridge.postDemoForNoBioMatch(languageSelected, firstName, middleName, lastName, gender, selectedBirthYear, selectedBirthMonth, selectedBirthDay, streetAddress, streetAddress2, city, state, postalCode, emailAddress, phoneCell, selectedExceptionReason, secretExAnswer1, secretExAnswer2, selectedsecretQuestion1, selectedsecretQuestion2);
+    if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
+        //error, show user message
+        alert("postDemoForNoBioMatch error: " + NoIDBridge.errorDescription);
+    }
+};
 function savePatient() {
     //mark schroeder 20170621
     var language = document.getElementById('selectedLanguage');
@@ -63,9 +120,13 @@ function savePatient() {
     var selectedExceptionReason = exceptionReason.options[exceptionReason.selectedIndex].text;
     var secretExAnswer1 = document.getElementById('secretAnswer1').value;
     var secretExAnswer2 = document.getElementById('secretAnswer2').value;
+    var secretQuestion1 = document.getElementById('exceptionSecretQuestion1');
+    var selectedsecretQuestion1 = secretQuestion1.options[secretQuestion1.selectedIndex].value;
+    var secretQuestion2 = document.getElementById('exceptionSecretQuestion2');
+    var selectedsecretQuestion2 = secretQuestion2.options[secretQuestion2.selectedIndex].value;
 
     
-    NoIDBridge.postDemographics(languageSelected, firstName, middleName, lastName, gender, selectedBirthYear, selectedBirthMonth, selectedBirthDay, streetAddress, streetAddress2, city, state, postalCode, emailAddress, phoneCell, selectedMultipleBirthFlag, selectedGenderChangeFlag, password, selectedPatientdHub, doesLeftBiometricExist, doesRightBiometricExist, selectedExceptionReason, secretExAnswer1, secretExAnswer2);
+    NoIDBridge.postDemographics(languageSelected, firstName, middleName, lastName, gender, selectedBirthYear, selectedBirthMonth, selectedBirthDay, streetAddress, streetAddress2, city, state, postalCode, emailAddress, phoneCell, selectedMultipleBirthFlag, selectedGenderChangeFlag, password, selectedPatientdHub, doesLeftBiometricExist, doesRightBiometricExist, selectedExceptionReason, secretExAnswer1, secretExAnswer2, selectedsecretQuestion1, selectedsecretQuestion2);
     if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
         //no error continue with new page
         alert("postDemographics Error " + NoIDBridge.errorDescription);

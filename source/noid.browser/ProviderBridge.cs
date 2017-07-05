@@ -159,7 +159,22 @@ namespace NoID.Browser
             }
             return true;
         }
-        public bool postNewEditedDemographics
+		public bool refreshProviderQueue()
+		{
+			try
+			{
+				_patients = GetCheckinList();
+				_patientApprovalTable = CreatePatientApprovalQueue();
+				ExecuteJavaScriptAsync("location.reload();");				
+			}
+			catch (Exception ex)
+			{
+				errorDescription = ex.Message;
+				return false;
+			}
+			return true;
+		}
+		public bool postNewEditedDemographics
             (
             string sessionID,
             string name,
