@@ -163,7 +163,7 @@
             NoIDBridge.postApproveOrDeny(sessionid, action);
             //document.getElementById('submitEditDemographics').style.visibility = "hidden";
             //document.getElementById('editDemographics').style.visibility = "hidden";
-            if (NoIDBridge.errorDescription == '') {
+            if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
                 //no error continue with new page
                 alert(action + " successful");                
             }
@@ -175,7 +175,7 @@
         function showtPatientDetailsProviderView(sessionid) {
             //document.getElementById('divPatientApprovalQueueDetailView').innerHTML = NoIDBridge.getPatientDetailsProviderView(sessionid);
             NoIDBridge.getPatientDetailsProviderView(sessionid);           
-            if (NoIDBridge.errorDescription != '') {
+            if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
                 //no error continue with new page
                 alert(NoIDBridge.errorDescription);
             }
@@ -227,7 +227,7 @@
             document.getElementById('editDemographics').style.visibility = "visible";
 
             NoIDBridge.postNewEditedDemographics(sessionID, name, dob, gender, phone, email, patientAddress1, patientAddress2, patientCity, patientState, patientPostalCode);
-            if (NoIDBridge.errorDescription != '') {
+            if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
                 //no error continue with new page
                 alert(NoIDBridge.errorDescription);
             }
@@ -249,7 +249,7 @@
             //document.getElementById('submitEditDemographics').style.visibility = "hidden";
             //document.getElementById('editDemographics').style.visibility = "visible";
  
-            if (NoIDBridge.errorDescription != '') {
+            if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
                 //no error continue with new page
                 alert(NoIDBridge.errorDescription);
             }

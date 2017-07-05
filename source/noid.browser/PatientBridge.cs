@@ -254,10 +254,12 @@ namespace NoID.Browser
 				string multipleBirthFlag,
 				string genderChangeFlag,
 				string password,
-				string patientHub, 
-				//mark schroeder 20170704 added below from front end. May or may not be useful later. They are global JS vars
+				string patientdHub,				
 				string doesLeftBiometricExist,
-				string doesRightBiometricExist
+				string doesRightBiometricExist,
+				string missingBiometricReason,
+				string secretExAnswer1,
+				string secretExAnswer2
 			)
         {
             try
