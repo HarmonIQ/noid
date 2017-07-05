@@ -254,7 +254,7 @@ namespace NoID.Browser
 				string multipleBirthFlag,
 				string genderChangeFlag,
 				string password,
-				string patientdHub,				
+				string patientHub,				
 				string doesLeftBiometricExist,
 				string doesRightBiometricExist,
 				string missingBiometricReason,
