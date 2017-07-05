@@ -264,7 +264,9 @@ namespace NoID.Browser
 #endif
                                     if (dataTransport.ResponseText.ToLower().Contains("error") == true || dataTransport.ResponseText.ToLower().Contains("index") == true)
                                     {
-                                        MessageBox.Show("Critical Identity Error Occured In Fingerprint Capture method. Please contact your adminstrator: " + dataTransport.ResponseText + " Error code = 909");
+                                        string message = "Critical Identity Error Occured In Fingerprint Capture method. Please contact your adminstrator: " + dataTransport.ResponseText + " Error code = 909";
+                                        MessageBox.Show(message);
+                                        browser.GetMainFrame().ExecuteJavaScriptAsync("pageRefresh();");
                                         return;
                                     }
 									if (dataTransport.ResponseText.ToLower().Contains(@"noid://") == true)
@@ -274,13 +276,20 @@ namespace NoID.Browser
 										PatientBridge.PatientFHIRProfile.NoIDStatus = "Pending";										
 										browser.GetMainFrame().ExecuteJavaScriptAsync("showIdentity('" + PatientBridge.PatientFHIRProfile.LocalNoID + "');");
 									}
+                                    else if (dataTransport.ResponseText.ToLower() == "pending")
+                                    {
+                                        MessageBox.Show("You are already checked in.  If you believe this is an error, please contact staff");
+                                        browser.GetMainFrame().ExecuteJavaScriptAsync("pageRefresh();");
+                                        return;
+                                    }
 									else
 									{
                                         if (PatientBridge.hasValidLeftFingerprint == true)
                                         {
                                             if (MatchLeftAndRight() == true)
                                             {
-                                                MessageBox.Show("Both right and left capture sites match.  Error, we need to start over.");
+                                                MessageBox.Show("Both right and left capture sites are the same.  Please start over.");
+                                                browser.GetMainFrame().ExecuteJavaScriptAsync("pageRefresh();");
                                                 return;
                                             }
                                         }

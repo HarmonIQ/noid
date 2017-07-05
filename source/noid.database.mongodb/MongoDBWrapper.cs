@@ -63,6 +63,30 @@ namespace NoID.Database.Wrappers
             });
         }
 
+        public string GetCurrentStatus(string localNoID)
+        {
+            string lastStatus = "";
+            try
+            {
+                List<SessionQueue> listSessionQueue = null;
+                var _collection = _database.GetCollection<SessionQueue>("SessionQueue");
+                var filter = Builders<SessionQueue>.Filter.Eq("LocalReference", localNoID);
+                listSessionQueue = _collection.Find(filter).ToList();
+                if (listSessionQueue != null)
+                {
+                    if (listSessionQueue.Count > 0)
+                    {
+                        lastStatus = listSessionQueue[listSessionQueue.Count - 1].ApprovalStatus;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _exceptions.Add(ex);
+            }
+            return lastStatus;
+        }
+
         public bool UpdateSessionQueueRecord(string _id, string approvalStatus, string reviewUser, string computerName)
         {
             bool successful = false;
