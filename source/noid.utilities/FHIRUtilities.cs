@@ -429,6 +429,47 @@ namespace NoID.Utilities
             return ext;
         }
 
+        public static Extension NoIDHubInfo(string noIDHubName, string noIDHubPassword)
+        {
+            /*
+                Example JSON FHIR Message
+                NoID Hub Information 
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "HubName",                        "valueString": First Hub South                              }
+                        {      "url": "PortalPassword",                 "valueString": <hashed>                                     }
+                    ]
+                }
+            */
+
+            Extension ext = new Extension("HubInformation", new FhirString("HubInfo"));
+            ext.AddExtension("HubName", new FhirString(noIDHubName)); 
+            ext.AddExtension("PortalPassword", new FhirString(noIDHubPassword)); 
+            return ext;
+        }
+
+        public static Extension GenderAndTwinInfo(string genderChanged, string multipleBirth)
+        {
+            /*
+                Example JSON FHIR Message
+                Gender and Twin Info
+                content:"content": 
+                {  
+                    "extension": 
+                    [ 
+                        {      "url": "GenderChanged",             "valueString": Yes                              }
+                    ]
+                }
+            */
+
+            Extension ext = new Extension("Gender and Twin Info", new FhirString("GenderInfo"));
+            ext.AddExtension("Gender Changed", new FhirString(genderChanged));
+            ext.AddExtension("Multiple Birth", new FhirString(multipleBirth));
+            return ext;
+        }
+
         public static Extension ClinicLocationExtension(string ClinicArea, string DevicePhysicalLocation)
         {
             /*
