@@ -34,6 +34,7 @@ namespace NoID.FHIR.Profile
         private string _lastName = "";
         private string _middleName = "";
         private string _gender = ""; // F, M or O
+        private string _genderChangeFlag = ""; // true/false
         private string _birthDate = "";
         private string _streetAddress = "";
         private string _streetAddress2 = "";
@@ -51,11 +52,11 @@ namespace NoID.FHIR.Profile
         private string _checkinDateTime = "";
         private string _noidHubName = "";
         private string _noidHubPassword = "";
-        private string _biometricAlternateReason = "";
-        private string _biometricAlternateQuestion1 = "";
-        private string _biometricAlternateAnswer1 = "";
-        private string _biometricAlternateQuestion2 = "";
-        private string _biometricAlternateAnswer2 = "";
+        private string _biometricExceptionMissingReason = "";
+        private string _secretQuestion1 = "";
+        private string _secretAnswer1 = "";
+        private string _secretQuestion2 = "";
+        private string _secretAnswer2 = "";
         private string _localNoID = "";
         private string _sessionID = "";
         private string _remoteNoID = "";
@@ -64,7 +65,7 @@ namespace NoID.FHIR.Profile
         private string _devicePhysicalLocation = "";
         private string _deviceStartTime = "";
         private string _domainName = "mynoid.com";
-
+        
         #region Constructors
 
         [JsonConstructor]
@@ -293,7 +294,8 @@ namespace NoID.FHIR.Profile
 			_lastName = "";
 			_middleName = "";
 			_gender = ""; // F, M or O
-			_birthDate = "";
+            _genderChangeFlag = "";
+            _birthDate = "";
 			_streetAddress = "";
 			_streetAddress2 = "";
 			_city = "";
@@ -310,11 +312,11 @@ namespace NoID.FHIR.Profile
 			_checkinDateTime = "";
 			_noidHubName = "";
 			_noidHubPassword = "";
-			_biometricAlternateReason = "";
-			_biometricAlternateQuestion1 = "";
-			_biometricAlternateAnswer1 = "";
-			_biometricAlternateQuestion2 = "";
-			_biometricAlternateAnswer2 = "";
+            _biometricExceptionMissingReason = "";
+            _secretQuestion1 = "";
+            _secretAnswer1 = "";
+            _secretQuestion2 = "";
+            _secretAnswer2 = "";
 			_localNoID = "";
 			_sessionID = "";
 			_remoteNoID = "";
@@ -479,6 +481,13 @@ namespace NoID.FHIR.Profile
             set { _gender = value; }
         }
 
+        [JsonProperty("GenderChangeFlag")]
+        public string GenderChangeFlag
+        {
+            get { return _genderChangeFlag; }
+            set { _genderChangeFlag = value; }
+        }
+
         [JsonProperty("BirthDate")]
         public string BirthDate
         {
@@ -577,39 +586,39 @@ namespace NoID.FHIR.Profile
             set { _noidHubPassword = value; }
         }
 
-        [JsonProperty("BiometricAlternateReason")]
-        public string BiometricAlternateReason
+        [JsonProperty("BiometricExceptionMissingReason")]
+        public string BiometricExceptionMissingReason
         {
-            get { return _biometricAlternateReason; }
-            set { _biometricAlternateReason = value; }
+            get { return _biometricExceptionMissingReason; }
+            set { _biometricExceptionMissingReason = value; }
         }
 
-        [JsonProperty("BiometricAlternateQuestion1")]
-        public string BiometricAlternateQuestion1
+        [JsonProperty("SecretQuestion1")]
+        public string SecretQuestion1
         {
-            get { return _biometricAlternateQuestion1; }
-            set { _biometricAlternateQuestion1 = value; }
+            get { return _secretQuestion1; }
+            set { _secretQuestion1 = value; }
         }
 
-        [JsonProperty("BiometricAlternateAnswer1")]
-        public string BiometricAlternateAnswer1
+        [JsonProperty("SecretAnswer1")]
+        public string SecretAnswer1
         {
-            get { return _biometricAlternateAnswer1; }
-            set { _biometricAlternateAnswer1 = value; }
+            get { return _secretAnswer1; }
+            set { _secretAnswer1 = value; }
         }
 
-        [JsonProperty("BiometricAlternateQuestion2")]
-        public string BiometricAlternateQuestion2
+        [JsonProperty("SecretQuestion2")]
+        public string SecretQuestion2
         {
-            get { return _biometricAlternateQuestion2; }
-            set { _biometricAlternateQuestion2 = value; }
+            get { return _secretQuestion2; }
+            set { _secretQuestion2 = value; }
         }
 
-        [JsonProperty("BiometricAlternateAnswer2")]
-        public string BiometricAlternateAnswer2
+        [JsonProperty("SecretAnswer2")]
+        public string SecretAnswer2
         {
-            get { return _biometricAlternateAnswer2; }
-            set { _biometricAlternateAnswer2 = value; }
+            get { return _secretAnswer2; }
+            set { _secretAnswer2 = value; }
         }
 
         /// <summary>
@@ -857,7 +866,7 @@ namespace NoID.FHIR.Profile
                 }
                 
                 pt.Meta = meta;
-
+                //TODO: Move fingerprint minutias to Identifier.Extension
                 Identifier idSession = new Identifier();
                 idSession.System = ServerName + "/fhir/SessionID";
                 if (SessionID == null || SessionID.Length == 0)
@@ -867,7 +876,27 @@ namespace NoID.FHIR.Profile
                 idSession.Value = SessionID;
                 pt.Identifier.Add(idSession);
 
-                //TODO: Move fingerprint minutias to Identifier.Extension
+                
+                if (BiometricExceptionMissingReason.Length > 0)
+                {
+                    if (SecretQuestion1.Length > 0 && SecretAnswer1.Length > 0 && SecretQuestion2.Length > 0 && SecretAnswer2.Length > 0)
+                    {
+                        Identifier idBiometricException = new Identifier();
+                        idBiometricException.System = ServerName + "/fhir/BiometricException";
+                        idBiometricException.Value = "Biometric Exception Pathway";
+                        Extension extBiometricException;
+                        extBiometricException = FHIRUtilities.BiometricException(
+                                BiometricExceptionMissingReason, 
+                                SecretQuestion1, SecretAnswer1, 
+                                SecretQuestion2, SecretAnswer2
+                                );
+                        idBiometricException.Extension.Add(extBiometricException);
+                        pt.Identifier.Add(idBiometricException);
+                    }
+                    {
+                        //throw an error back to the page.
+                    }
+                }
 
                 ResourceReference managingOrganization = new ResourceReference(OrganizationName, DomainName);
                 pt.ManagingOrganization = managingOrganization;
