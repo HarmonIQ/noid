@@ -102,6 +102,7 @@
     <Content Include="UpdatePendingStatus.ashx" />
     <Content Include="IdentityChallenge.ashx" />
     <Content Include="PurgeAllDatabases.ashx" />
+    <Content Include="AltMatchByDemographics.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -117,6 +118,9 @@
   <ItemGroup>
     <Compile Include="AddNewPatient.ashx.cs">
       <DependentUpon>AddNewPatient.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="AltMatchByDemographics.ashx.cs">
+      <DependentUpon>AltMatchByDemographics.ashx</DependentUpon>
     </Compile>
     <Compile Include="FHIRMessageRouter.cs" />
     <Compile Include="IdentityChallenge.ashx.cs">

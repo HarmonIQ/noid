@@ -117,7 +117,6 @@ namespace NoID.Database.Wrappers
             return successful;
         }
 
-
         public bool AddPendingPatient(SessionQueue seq)
         {
             bool successful = false;
@@ -223,6 +222,30 @@ namespace NoID.Database.Wrappers
                 _exceptions.Add(ex);
             }
             return result;
+        }
+
+        public string AlternateSearch(AlternateSearch alternateSearch)
+        {
+            //TODO: finsih this
+            //string result = "noid://test/ands348234udsahda4e384hasodh3-248-hdasd";
+            string result = "no match found";
+            return result;
+        }
+
+        public bool AddAlternateSearch(AlternateSearch alternateSearch)
+        {
+            bool successful = false;
+            try
+            {
+                IMongoCollection<AlternateSearch> collection = _database.GetCollection<AlternateSearch>("AlternateSearch");
+                collection.InsertOneAsync(alternateSearch);
+                successful = true;
+            }
+            catch (Exception ex)
+            {
+                _exceptions.Add(ex);
+            }
+            return successful;
         }
     }
 }
