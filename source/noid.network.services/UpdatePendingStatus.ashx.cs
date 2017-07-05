@@ -49,14 +49,26 @@ namespace NoID.Network.Services
                 MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
                 if (dbwrapper.UpdateSessionQueueRecord(_sessionID, _action, _userName, _computerName) == false)
                 {
-
+                    if (dbwrapper.Exceptions.Count > 0)
+                    {
+                        string errorMessage = dbwrapper.Exceptions[0].Message;
+                        context.Response.Write("UpdatePendingStatus::ProcessRequest Error: " + errorMessage);
+                    }
+                    else
+                    {
+                        context.Response.Write("UpdatePendingStatus::ProcessRequest Error: Could not find sessionID " + _sessionID + ".");
+                    }
                 }
-                context.Response.Write("Successfully updated the pending status.");
+                else
+                {
+                    context.Response.Write("Successfully updated the pending status.");
+                }
             }
             catch (Exception ex)
             {
                 context.Response.Write("UpdatePendingStatus::ProcessRequest Error: " + ex.Message);
             }
+            context.Response.End();
         }
 
         public bool IsReusable
