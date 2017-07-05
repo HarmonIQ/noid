@@ -87,7 +87,8 @@
                                                                 <td style="width: 300px; padding:0; margin:0;text-align: left;"><strong>Address: </strong><br /><input type="text" id="patientAddress1" value="" style="border: none" disabled /><br /><input type="text" id="patientAddress2" value="" style="border: none" disabled /><br /><input type="text" id="patientCity" value="" style="border: none; width:50%;" disabled />, <input type="text" id="patientState" value="" style="width:20%; border: none" disabled /> <input type="text" value="" style="width:30%; border: none" disabled id="patientPostalCode" /></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br /><input type="text" id="biometricStatus" style="border:none" value="" disabled /></td>
+                                                                <!--<td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br /><input type="text" id="biometricStatus" style="border:none" value="" disabled /></td>-->
+                                                                <td style='width: 300px; padding:0; margin:0;text-align: left;'><strong>Biometric Status:</strong><br /><div id="biometricStatus"></div></td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -98,6 +99,9 @@
                                             </div>
                                             <div class="row">
                                                 <h4><div class="col-md-3" id="rowCount">Row Count: <span id="spnApprovalQueueCount"></span></div></h4>
+                                            </div>
+                                            <div class="row" id="provderExceptionMessages">
+                                                **Indicates Exception. Please verify exception status and proceed with approve or deny
                                             </div>
                                         </div>
                                     </div>
@@ -112,7 +116,7 @@
     </div>  
     <script type="text/javascript">
         
-        startTime();
+        startTime();       
         
         $(document).ready(function () {
             //Initialize tooltips
@@ -163,7 +167,7 @@
             NoIDBridge.postApproveOrDeny(sessionid, action);
             //document.getElementById('submitEditDemographics').style.visibility = "hidden";
             //document.getElementById('editDemographics').style.visibility = "hidden";
-            if (NoIDBridge.errorDescription != '' && NoIDBridge.errorDescription != null) {
+            if (NoIDBridge.errorDescription == '') {
                 //no error continue with new page
                 alert(action + " successful");                
             }
@@ -245,7 +249,8 @@
             document.getElementById('patientCity').value = patientCity;
             document.getElementById('patientState').value = patientState;
             document.getElementById('patientPostalCode').value = patientPostalCode;
-            document.getElementById('biometricStatus').value = biometricStatus;
+            //document.getElementById('biometricStatus').value = biometricStatus;
+            document.getElementById('biometricStatus').innerText = biometricStatus;
             //document.getElementById('submitEditDemographics').style.visibility = "hidden";
             //document.getElementById('editDemographics').style.visibility = "visible";
  
@@ -283,6 +288,7 @@
 
             return false;
         });
+        setTimeout(refreshProviderQueue, 30000);
     </script>
 </body>
 </html>

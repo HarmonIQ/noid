@@ -693,7 +693,7 @@
                                 <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button type="button" class="btn btn-primary btn-lg next-step pull-down" id="demo2Next" onclick="saveDemoForNoBioMatch();"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="step8">
@@ -771,7 +771,7 @@
                                 <li><button type="button" class="btn btn-primary btn-lg prev-step pull-down"><i class="fa fa-chevron-left" aria-hidden="true"></i> Back</button></li>
                             </ul>
                             <ul class="list-inline pull-right pull-right2">
-                                <li><button type="button" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
+                                <li><button type="button" id="btnHUB" class="btn btn-primary btn-lg next-step pull-down"><i class="fa fa-chevron-right" aria-hidden="true"></i> Next</button></li>
                             </ul>
                         </div>
                         <div class="tab-pane" role="tabpanel" id="step10">
@@ -786,11 +786,11 @@
                                         <h4>
                                             Please create a password to access your NoID audit portal (First Identity HUB USA South):
                                             <p></p>
-                                            <input type="text" class="form-control" id="PortalPassword" placeholder="Password">
+                                            <input type="password" class="form-control" id="PortalPassword" placeholder="Password">
                                         </h4>
                                         <p></p>
                                         <h5>
-                                            *Min one uppercase letter, one number, 6 character length,  and optional special characters
+                                           <div id="passwordPatternRequirement" style="visibility:hidden">*Min one uppercase letter, one number, 6 character length,  and optional special characters</div>
                                         </h5>
                                         <h5>
                                             *This step is not required

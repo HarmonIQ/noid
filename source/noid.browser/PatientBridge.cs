@@ -219,7 +219,43 @@ namespace NoID.Browser
             return true;
         }
 
-        public PatientFHIRProfile PatientFHIRProfile
+		public bool postDemoForNoBioMatch
+			(
+			string languageSelected, 
+			string firstName, 
+			string middleName, 
+			string lastName, 
+			string gender, 
+			string selectedBirthYear,
+			string selectedBirthMonth,
+			string selectedBirthDay,
+			string streetAddress,
+			string streetAddress2,
+			string city,
+			string state,
+			string postalCode,
+			string emailAddress,
+			string phoneCell,
+			string selectedExceptionReason,
+			string secretExAnswer1,
+			string secretExAnswer2,
+			string selectedsecretQuestion1,
+			string selectedsecretQuestion2
+			)
+		{
+			try
+			{
+				errorDescription = "";				
+			}
+			catch (Exception ex)
+			{
+				errorDescription = ex.Message;
+				return false;
+			}
+			return true;
+		}
+
+		public PatientFHIRProfile PatientFHIRProfile
         {
             get { return _patientFHIRProfile; }
             set { _patientFHIRProfile = value; }
@@ -259,7 +295,9 @@ namespace NoID.Browser
 				string doesRightBiometricExist,
 				string missingBiometricReason,
 				string secretExAnswer1,
-				string secretExAnswer2
+				string secretExAnswer2,
+				string selectedsecretQuestion1,
+				string selectedsecretQuestion2
 			)
         {
             try
