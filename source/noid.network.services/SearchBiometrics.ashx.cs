@@ -11,6 +11,7 @@ using Hl7.Fhir.Model;
 using NoID.Utilities;
 using NoID.Match.Database.Client;
 using NoID.Match.Database.FingerPrint;
+using NoID.Database.Wrappers;
 
 namespace NoID.Network.Services
 {
@@ -57,7 +58,17 @@ namespace NoID.Network.Services
                     if (minutiaResult.NoID != null && minutiaResult.NoID.Length > 0)
                     {
                         // Fingerprint found in database
-                        _responseText = minutiaResult.NoID;  //TODO: for now, it returns the localNoID.  should return a FHIR response.
+                        // check if patient is already pending.
+                        MongoDBWrapper dbwrapper = new MongoDBWrapper(NoIDMongoDBAddress, SparkMongoDBAddress);
+                        string currentStatus = dbwrapper.GetCurrentStatus(minutiaResult.NoID);
+                        if (currentStatus.ToLower() != "pending")
+                        {
+                            _responseText = minutiaResult.NoID;  //TODO: for now, it returns the localNoID.  should return a FHIR response.
+                        }
+                        else
+                        {
+                            _responseText = "pending";
+                        }
                         LogUtilities.LogEvent(_responseText);
                     }
                     else
