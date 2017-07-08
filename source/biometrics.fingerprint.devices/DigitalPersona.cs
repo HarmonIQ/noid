@@ -25,52 +25,65 @@ namespace NoID.Biometrics.Managers
 
         public DigitalPersona()
         {
-            _readers = ReaderCollection.GetReaders();
-            if (_readers.Count > 0)
+            try
             {
-                _reader = _readers[0];
-                if (!OpenReader())
+                _readers = ReaderCollection.GetReaders();
+                if (_readers.Count > 0)
                 {
-                    _exception = new Exception("");
-                }
-                else
-                {
-                    if (!(_reader is null))
+                    _reader = _readers[0];
+                    if (!OpenReader())
                     {
-                        _name = _reader.Description.Id.ProductName;
-                        _manufacturer = _reader.Description.Id.VendorName;
-                        _vendorID = _reader.Description.Id.VendorId.ToString();
-                        _productID = _reader.Description.Id.ProductId.ToString();
+                        _exception = new Exception("");
                     }
                     else
                     {
-                        _exception = new Exception("DigitalPersona reader is null.");
+                        if (!(_reader is null))
+                        {
+                            _name = _reader.Description.Id.ProductName;
+                            _manufacturer = _reader.Description.Id.VendorName;
+                            _vendorID = _reader.Description.Id.VendorId.ToString();
+                            _productID = _reader.Description.Id.ProductId.ToString();
+                        }
+                        else
+                        {
+                            _exception = new Exception("DigitalPersona reader is null.");
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
         ~DigitalPersona() { }
+
         public override string Name
         {
             get { return _name; }
         }
+
         public override string Manufacturer
         {
             get { return _manufacturer; }
         }
+
         public override string VendorID
         {
             get { return _vendorID; }
         }
+
         public override string ProductID
         {
             get { return _productID; }
         }
+
         public override string Driver
         {
             get { return _driver; }
         }
+
         public override string DriverLocation
         {
             get { return _driverLocation; }

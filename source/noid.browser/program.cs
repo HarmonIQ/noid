@@ -50,12 +50,32 @@ namespace NoID.Browser
                 Cef.Initialize(new CefSettings(), performDependencyCheck: true, browserProcessHandler: null);
 
                 var browser = new BrowserForm();
-                Application.Run(browser);
+                try
+                {
+                    Application.Run(browser);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Could not connect to fingerprint scanner. NoID is going to close.  Error = " + ex.Message);
+                    Close();
+                }
             }
             else
             {
                 var login = new LoginForm();
                 Application.Run(login);
+            }
+        }
+
+        static void Close()
+        {
+            if (Application.MessageLoop)
+            {
+               Application.Exit();
+            }
+            else
+            {
+                Environment.Exit(1);
             }
         }
     }
