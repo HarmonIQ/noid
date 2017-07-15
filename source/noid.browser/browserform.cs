@@ -45,7 +45,6 @@ namespace NoID.Browser
         private static PatientBridge _patientBridge;
         private static ProviderBridge _providerBridge;
 
-        private const float PROBE_MATCH_THRESHOLD = 70;
         private readonly ChromiumWebBrowser browser;
 
         //TODO: Abstract biometricDevice so it will work with any fingerprint scanner.
@@ -97,6 +96,18 @@ namespace NoID.Browser
                     browser.RegisterJsObject("NoIDBridge", _patientBridge);
                     _patientBridge.ResetSession += ResetSessions;
                     _patientBridge.JavaScriptAsync += ExecuteJavaScriptAsync;
+                    try
+                    {
+                        biometricDevice = new DigitalPersona();
+                        if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
+                        {
+                            this.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Could not connect to fingerprint scanner. NoID is going to close.  Error = " + ex.Message);
+                    }
                     break;
                 case "provider":
                 case "provider-pc":
@@ -123,11 +134,6 @@ namespace NoID.Browser
                     break;
             }
 
-            biometricDevice = new DigitalPersona();
-            if (!biometricDevice.StartCaptureAsync(this.OnCaptured))
-            {
-                this.Close();
-            }
 #if NAVIGATE
             toolStripContainer.ContentPanel.Controls.Add(browser);
 #else
